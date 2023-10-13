@@ -12,10 +12,9 @@ const routes = {
 
 function App() {
   const routeResult = useRoutes(routes);
-  // Insert navbar here
   return (
     <div className="App">
-      <NavBar name="Test" />
+      <NavBar />
       {routeResult || <NotFoundPage />}
     </div>
   );
