@@ -1,4 +1,33 @@
-.button-container > * {
+.button-container>* {
     display: flex;
     align-items: center;
+}
+
+.root-layout {
+    height: 100%;
+}
+
+.jumbo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+/* When viewport is desktop width = 1280px */
+
+@media (min-width: 1280px) {
+    .root-layout {
+        width: 1280px;
+    }
+}
+
+/* When viewport is under 1280 go to mobile width */
+
+@media (max-width: 1280px) {
+    .root-layout {
+        width: 100%;
+    }
 }
