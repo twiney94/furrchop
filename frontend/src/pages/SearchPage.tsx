@@ -1,4 +1,5 @@
-import { Box, Image, Badge } from "@chakra-ui/react";
+import { Box, Image, Stack, Text, Heading, Button } from "@chakra-ui/react";
+import Chopper from "../components/search/Chopper";
 
 const results = [
 	{
@@ -82,13 +83,15 @@ const SearchPage = () => {
 	};
 
 	return (
-		<Box w="100%" h='100%' className="flex flex-col">
+		<Box w="100%" h="100%" className="flex flex-col">
 			<Box w="100%" bg="red.500" className="h-16">
 				yp
 			</Box>
-			<Box w="100%" bg="blue.500" className="flex grow">
+			<Box w="100%" bg="blue.500" className="flex flex-col grow">
 				<Box w="30%" borderWidth="1px" borderRadius="lg" overflow="hidden">
-					hello
+					{results.map((result) => (
+						<Chopper key={result.id} infos={result} />
+					))}
 				</Box>
 				<Box w="70%">ploi</Box>
 			</Box>
