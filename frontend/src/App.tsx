@@ -20,6 +20,19 @@ const theme = extendTheme({
 		heading: `'canada-type-gibson', sans-serif`,
 		body: `'canada-type-gibson', sans-serif`,
 	},
+	colors: {
+		brand: {
+			100: "#e4cbfd",
+			200: "#d8b2fc",
+			300: "#cc99fb",
+			400: "#c080fa",
+			500: "#beadfa",
+			600: "#b58df9",
+			700: "#ac6df8",
+			800: "#a34df7",
+			900: "#a68cf7",
+		},
+	},
 });
 
 // Routes structure

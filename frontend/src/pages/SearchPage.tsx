@@ -1,5 +1,6 @@
-import { Box, Image, Stack, Text, Heading, Button } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import Chopper from "../components/search/Chopper";
+import Filters from "../components/search/Filters";
 
 const results = [
 	{
@@ -84,9 +85,7 @@ const SearchPage = () => {
 
 	return (
 		<Box w="100%" h="100%" className="flex flex-col">
-			<Box w="100%" bg="red.500" className="h-16">
-				yp
-			</Box>
+			<Filters />
 			<Box w="100%" bg="blue.500" className="flex flex-col grow">
 				<Box w="30%" borderWidth="1px" borderRadius="lg" overflow="hidden">
 					{results.map((result) => (
