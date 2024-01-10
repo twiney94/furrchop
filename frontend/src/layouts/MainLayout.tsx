@@ -9,7 +9,7 @@ const MainLayout = () => {
 				<Header mode="default" />
 			</div>
 
-			<main>
+			<main className="w-full grow">
 				<Outlet />
 			</main>
 		</div>
