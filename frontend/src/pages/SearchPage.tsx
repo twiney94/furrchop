@@ -86,13 +86,13 @@ const SearchPage = () => {
 	return (
 		<Box w="100%" h="100%" className="flex flex-col">
 			<Filters />
-			<Box w="100%" bg="blue.500" className="flex flex-col grow">
-				<Box w="30%" borderWidth="1px" borderRadius="lg" overflow="hidden">
+			<Box w="100%" bg="blue.500" className="flex grow">
+				<Box w="30%" borderWidth="1px" borderRadius="lg" overflow="auto" bg="yellow.400">
 					{results.map((result) => (
 						<Chopper key={result.id} infos={result} />
 					))}
 				</Box>
-				<Box w="70%">ploi</Box>
+				<Box w="70%" className="flex grow">ploi</Box>
 			</Box>
 		</Box>
 	);
