@@ -27,14 +27,17 @@ interface ChopperInfos {
 
 const ChopperCard = ({ infos }: { infos: ChopperInfos }) => {
   return (
-    <div className="card bg-yellow-300 grow">
+    <div className="bg-yellow-300 grow">
       <Card
         direction={{ base: "column", sm: "row" }}
         overflow="hidden"
         variant="outline"
+		borderRadius={0}
+		padding='4'
       >
         <Image
           objectFit="cover"
+		  borderRadius='xl'
           maxW={{ base: "100%", sm: "200px" }}
           src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
           alt="Caffe Latte"
@@ -52,7 +55,7 @@ const ChopperCard = ({ infos }: { infos: ChopperInfos }) => {
 
           <CardFooter>
             <Button variant="solid" colorScheme="blue">
-              Buy Latte
+              Book
             </Button>
           </CardFooter>
         </Stack>
