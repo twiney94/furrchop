@@ -28,7 +28,7 @@ interface ChopperInfos {
 const ChopperCard = ({ infos }: { infos: ChopperInfos }) => {
   return (
       <Card
-	  	className="hover:shadow-xl transition duration-500 ease-in-out z-1 hover:z-10"
+	  	className="hover:shadow-xl transition duration-300 ease-in-out z-1 hover:z-10"
         direction={{ base: "column", sm: "row" }}
         overflow="hidden"
         variant="outline"
