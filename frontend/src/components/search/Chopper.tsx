@@ -27,13 +27,14 @@ interface ChopperInfos {
 
 const ChopperCard = ({ infos }: { infos: ChopperInfos }) => {
   return (
-    <div className="bg-yellow-300 grow">
       <Card
+	  	className="hover:shadow-xl transition duration-500 ease-in-out z-1 hover:z-10"
         direction={{ base: "column", sm: "row" }}
         overflow="hidden"
         variant="outline"
 		borderRadius={0}
 		padding='4'
+		minH='200px'
       >
         <Image
           objectFit="cover"
@@ -60,7 +61,6 @@ const ChopperCard = ({ infos }: { infos: ChopperInfos }) => {
           </CardFooter>
         </Stack>
       </Card>
-    </div>
   );
 };
 
