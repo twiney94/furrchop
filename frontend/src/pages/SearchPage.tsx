@@ -1,6 +1,10 @@
 import { Box } from "@chakra-ui/react";
 import Chopper from "../components/search/Chopper";
 import Filters from "../components/search/Filters";
+import Map from "../components/search/Map";
+
+// css module
+import "./searchpage.module.css"
 
 const results = [
   {
@@ -11,6 +15,11 @@ const results = [
     address: "123 rue du chien",
     rating: 4.5,
     reviews: 449,
+    location: {
+      lat: 45.50884,
+      lng: -73.58781,
+      address: "123 rue du chien",
+    },
     availabilities: [
       // Example, 4 availabilities for 11/01/2024
       {
@@ -44,6 +53,11 @@ const results = [
     address: "123 rue du chien",
     rating: 4.5,
     reviews: 449,
+    location: {
+      lat: 45.50884,
+      lng: -73.58781,
+      address: "123 rue du chien",
+    },
     availabilities: [
       // Example, 4 availabilities for 11/01/2024
       {
@@ -77,6 +91,11 @@ const results = [
     address: "123 rue du chien",
     rating: 4.5,
     reviews: 449,
+    location: {
+      lat: 45.50884,
+      lng: -73.58781,
+      address: "123 rue du chien",
+    },
     availabilities: [
       // Example, 4 availabilities for 11/01/2024
       {
@@ -110,6 +129,11 @@ const results = [
     address: "123 rue du chien",
     rating: 4.5,
     reviews: 449,
+    location: {
+      lat: 45.50884,
+      lng: -73.58781,
+      address: "123 rue du chien",
+    },
     availabilities: [
       // Example, 4 availabilities for 11/01/2024
       {
@@ -138,26 +162,17 @@ const results = [
 ];
 
 const SearchPage = () => {
-  const property = {
-    imageUrl: "https://bit.ly/2Z4KKcF",
-    imageAlt: "Rear view of modern home with pool",
-    beds: 3,
-    baths: 2,
-    title: "Modern home in city center in the heart of historic Los Angeles",
-    formattedPrice: "$1,900.00",
-    reviewCount: 34,
-    rating: 4,
-  };
 
   return (
     <Box w="100%" h="100%" className="flex flex-col">
       <Filters />
-      <Box w="100%" bg="blue.500" className="flex grow">
+      <Box w="100%" bg="blue.500" className="flex grow max-h-[84vh]">
         <Box
           h={{ base: "auto", sm: "100%" }}
-		  overflowY={{ base: "auto", sm: "hidden" }}
+          overflowY={{ base: "auto", sm: "auto" }}
           w="30%"
           borderWidth="1px"
+          maxH={{ base: "100%", sm: "100%" }}
           overflow="auto"
           bg="white"
           border="none"
@@ -167,12 +182,12 @@ const SearchPage = () => {
           {results.map((result) => (
             <Chopper key={result.id} infos={result} />
           ))}
-		  {results.map((result) => (
+          {results.map((result) => (
             <Chopper key={result.id} infos={result} />
           ))}
         </Box>
         <Box w="70%" className="flex grow">
-          ploi
+          <Map />
         </Box>
       </Box>
     </Box>
