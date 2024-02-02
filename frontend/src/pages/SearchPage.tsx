@@ -16,8 +16,8 @@ const results = [
     rating: 4.5,
     reviews: 449,
     location: {
-      lat: 45.50884,
-      lng: -73.58781,
+      lat: 37.79478,
+      lng: -122.446342,
       address: "123 rue du chien",
     },
     availabilities: [
@@ -187,7 +187,7 @@ const SearchPage = () => {
           ))}
         </Box>
         <Box w="70%" className="flex grow">
-          <Map />
+          <Map results={results} />
         </Box>
       </Box>
     </Box>
