@@ -5,6 +5,7 @@ import Map from "../components/search/Map";
 
 // css module
 import "./searchpage.module.css"
+import { MapProvider, useMap } from "react-map-gl";
 
 const results = [
   {
@@ -162,33 +163,47 @@ const results = [
 ];
 
 const SearchPage = () => {
+  const { map } = useMap();
+
+  const handleChopperClick = (chopper) => {
+    console.log("Chopper clicked", chopper.id);
+    if (map) {
+      map.flyTo({
+        center: [chopper.location.lng, chopper.location.lat],
+      });
+    }
+  }
 
   return (
     <Box w="100%" h="100%" className="flex flex-col">
       <Filters />
       <Box w="100%" bg="blue.500" className="flex grow max-h-[84vh]">
-        <Box
-          h={{ base: "auto", sm: "100%" }}
-          overflowY={{ base: "auto", sm: "auto" }}
-          w="30%"
-          borderWidth="1px"
-          maxH={{ base: "100%", sm: "100%" }}
-          overflow="auto"
-          bg="white"
-          border="none"
-          borderRadius={0}
-          className="flex flex-col justify-start"
-        >
-          {results.map((result) => (
-            <Chopper key={result.id} infos={result} />
-          ))}
-          {results.map((result) => (
-            <Chopper key={result.id} infos={result} />
-          ))}
-        </Box>
-        <Box w="70%" className="flex grow">
-          <Map results={results} />
-        </Box>
+        <MapProvider>
+          <Box
+            h={{ base: "auto", sm: "100%" }}
+            overflowY={{ base: "auto", sm: "auto" }}
+            w="30%"
+            borderWidth="1px"
+            maxH={{ base: "100%", sm: "100%" }}
+            overflow="auto"
+            bg="white"
+            border="none"
+            borderRadius={0}
+            className="flex flex-col justify-start"
+          >
+            {results.map((result) => (
+              <Box onClick={() => handleChopperClick(result)}>
+                <Chopper key={result.id} infos={result} />
+              </Box>
+            ))}
+            {results.map((result) => (
+              <Chopper key={result.id} infos={result} />
+            ))}
+          </Box>
+          <Box w="70%" className="flex grow">
+            <Map results={results} />
+          </Box>
+        </MapProvider>
       </Box>
     </Box>
   );

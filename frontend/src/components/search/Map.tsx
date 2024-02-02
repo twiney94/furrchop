@@ -6,6 +6,7 @@ const Map = ({ results }) => {
     return (
         <Box w="100%" h="100%">
             <GLMap
+                id="map"
                 mapboxAccessToken={import.meta.env.VITE_MAPBOX_GLJS_TOKEN}
                 initialViewState={{
                     longitude: -122.4,
