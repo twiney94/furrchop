@@ -20,11 +20,11 @@ jobs:
 
     - name: Install Composer Dependencies
       run: |
-        cd backend && composer install --no-scripts --no-interaction
+        cd backend/api && composer install --no-scripts --no-interaction
 
     - name: Run Tests
       run: |
-        cd backend && bin/phpunit
+        cd backend/api && bin/phpunit
 
   deploy:
     runs-on: ubuntu-latest
@@ -40,12 +40,12 @@ jobs:
 
     - name: Install Composer Dependencies
       run: |
-        cd backend && composer install --optimize-autoloader --no-scripts --no-interaction
+        cd backend/api && composer install --optimize-autoloader --no-scripts --no-interaction
 
     - name: Set up API Platform
       run: |
-        cd backend && bin/console doctrine:schema:create
-        cd backend && bin/console hautelook:fixtures:load --no-interaction
+        cd backend/api && bin/console doctrine:schema:create
+        cd backend/api && bin/console hautelook:fixtures:load --no-interaction
 
     - name: Deploy to Production
       run: |
