@@ -6,7 +6,10 @@ import {
   Stack,
   Text,
   Button,
+  Icon,
+  Flex,
 } from "@chakra-ui/react";
+import { MdLocationOn, MdOutlineStarBorder } from "react-icons/md";
 
 import type ChopperType from "../../types/chopper";
 
@@ -31,19 +34,58 @@ const ChopperCard = ({ infos, id }: { infos: ChopperType; id: string }) => {
       />
 
       <Stack>
-        <CardBody>
-          <Text fontSize="xl" fontWeight="500">
+        <CardBody display={"flex"} alignItems={"left"} flexDir={"column"}>
+          <Text fontSize="xl" fontWeight="500" textAlign="left">
             {infos.title}
           </Text>
-
-          <Text>
-            Caffè latte is a coffee beverage of Italian origin made with
-            espresso and steamed milk.
+          <Text
+            fontSize="md"
+            fontWeight="400"
+            justifyItems="left"
+            className="flex items-center text-gray-400"
+          >
+            <Icon as={MdLocationOn} />
+            {infos.location.address}
           </Text>
+          <Text
+            fontSize="md"
+            fontWeight="400"
+            justifyItems="left"
+            className="flex items-center text-gray-400"
+          >
+            <Icon as={MdOutlineStarBorder} />
+            {infos.rating} ({infos.reviews} reviews)
+          </Text>
+          <Flex direction="column" align="left" gap={2} marginTop={4}>
+            <Flex gap={2} align="center" justify="flex-start">
+              <Text className="w-20">Morning:</Text>
+              <Button variant="outline" size="sm" colorScheme="purple" isDisabled>
+                Sun 04
+              </Button>
+              <Button variant="outline" size="sm" colorScheme="purple"isDisabled>
+                Mon 05
+              </Button>
+              <Button variant="outline" size="sm" colorScheme="purple">
+                Tue 06
+              </Button>
+            </Flex>
+            <Flex gap={2} align="center" justify="flex-start">
+              <Text className="w-20">Afternoon:</Text>
+              <Button variant="outline" size="sm" colorScheme="purple" isDisabled>
+                Sun 04
+              </Button>
+              <Button variant="outline" size="sm" colorScheme="purple">
+                Mon 05
+              </Button>
+              <Button variant="outline" size="sm" colorScheme="purple" isDisabled>
+                Tue 06
+              </Button>
+            </Flex>
+          </Flex>
         </CardBody>
 
         <CardFooter py={0}>
-          <Button variant="solid" colorScheme="blue">
+          <Button variant="solid" colorScheme="purple">
             Book
           </Button>
         </CardFooter>
