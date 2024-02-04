@@ -229,9 +229,9 @@ const SearchPage = () => {
                 ref={mapRef as any}
                 mapboxAccessToken={import.meta.env.VITE_MAPBOX_GLJS_TOKEN}
                 initialViewState={{
-                  longitude: -122.4,
-                  latitude: 37.8,
-                  zoom: 14,
+                  longitude: results[0].location.lng,
+                  latitude: results[0].location.lat,
+                  zoom: 16,
                 }}
                 style={{ width: "100%", height: "100%" }}
                 mapStyle="mapbox://styles/mapbox/streets-v9"
