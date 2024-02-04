@@ -1,14 +1,16 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Button, IconButton } from "@chakra-ui/react";
 import Chopper from "../components/search/Chopper";
 import Filters from "../components/search/Filters";
-import { Map, Marker, MapProvider, useMap  } from "react-map-gl";
-import { useRef } from "react";
+import { Map, Marker, MapProvider, useMap, MapRef } from "react-map-gl";
+import { Ref, useCallback, useMemo, useRef } from "react";
 
 // css module
 import "./searchpage.module.css";
 
 // type data
 import type ChopperType from "../types/chopper";
+import mapboxgl from "mapbox-gl";
+import { CheckIcon, StarIcon } from "@chakra-ui/icons";
 
 const results = [
   {
@@ -166,16 +168,24 @@ const results = [
 ];
 
 const SearchPage = () => {
-  const map = useMap();
-  const mapRef = useRef(null)
+  const mapRef = useRef<MapRef>();
 
   const handleChopperClick = (chopper: ChopperType) => {
     console.log("Chopper clicked", chopper.id);
-    console.log(map);
-    if (map) {
-      mapRef.current?.flyTo({ center: [chopper.location.lng, chopper.location.lat] });
+    if (mapRef) {
+      mapRef.current?.flyTo({
+        center: [chopper.location.lng, chopper.location.lat],
+      });
     } else {
       console.error("Map is not initialized");
+    }
+  };
+
+  const goToChopperOnList = (chopper: ChopperType) => {
+    // Scroll to the chopper on the list
+    const chopperElement = document.getElementById(`chopper-${chopper.id}`);
+    if (chopperElement) {
+      chopperElement.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -198,11 +208,19 @@ const SearchPage = () => {
           >
             {results.map((result) => (
               <Box onClick={() => handleChopperClick(result)}>
-                <Chopper key={result.id} infos={result} />
+                <Chopper
+                  key={result.id}
+                  infos={result}
+                  id={`chopper-${result.id}`}
+                />
               </Box>
             ))}
             {results.map((result) => (
-              <Chopper key={result.id} infos={result} />
+              <Chopper
+                key={result.id}
+                id={`chopper-${result.id}`}
+                infos={result}
+              />
             ))}
           </Box>
           <Box w="70%" className="flex grow">
@@ -225,9 +243,16 @@ const SearchPage = () => {
                     key={result.id}
                     longitude={result.location.lng}
                     latitude={result.location.lat}
-                    color="red"
                   >
-                    <div>Marker</div>
+                    <IconButton
+                      isRound={true}
+                      variant="solid"
+                      colorScheme="purple"
+                      aria-label="Done"
+                      fontSize="20px"
+                      onClick={() => goToChopperOnList(result)}
+                      icon={<StarIcon />}
+                    />
                   </Marker>
                 ))}
               </Map>
