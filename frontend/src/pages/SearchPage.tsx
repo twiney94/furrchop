@@ -226,7 +226,7 @@ const SearchPage = () => {
             <Box w="100%" h="100%">
               <Map
                 id="map"
-                ref={mapRef}
+                ref={mapRef as any}
                 mapboxAccessToken={import.meta.env.VITE_MAPBOX_GLJS_TOKEN}
                 initialViewState={{
                   longitude: -122.4,
