@@ -1,16 +1,15 @@
-import { Box, Button, IconButton } from "@chakra-ui/react";
+import { Box, IconButton } from "@chakra-ui/react";
 import Chopper from "../components/search/Chopper";
 import Filters from "../components/search/Filters";
-import { Map, Marker, MapProvider, useMap, MapRef } from "react-map-gl";
-import { Ref, useCallback, useMemo, useRef } from "react";
+import { Map, Marker, MapProvider, MapRef } from "react-map-gl";
+import { useRef } from "react";
 
 // css module
 import "./searchpage.module.css";
 
 // type data
 import type ChopperType from "../types/chopper";
-import mapboxgl from "mapbox-gl";
-import { CheckIcon, StarIcon } from "@chakra-ui/icons";
+import { StarIcon } from "@chakra-ui/icons";
 
 const results = [
   {
