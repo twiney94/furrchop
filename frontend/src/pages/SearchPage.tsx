@@ -1,11 +1,14 @@
 import { Box } from "@chakra-ui/react";
 import Chopper from "../components/search/Chopper";
 import Filters from "../components/search/Filters";
-import Map from "../components/search/Map";
+import { Map, Marker, MapProvider, useMap  } from "react-map-gl";
+import { useRef } from "react";
 
 // css module
-import "./searchpage.module.css"
-import { MapProvider, useMap } from "react-map-gl";
+import "./searchpage.module.css";
+
+// type data
+import type ChopperType from "../types/chopper";
 
 const results = [
   {
@@ -163,16 +166,18 @@ const results = [
 ];
 
 const SearchPage = () => {
-  const { map } = useMap();
+  const map = useMap();
+  const mapRef = useRef(null)
 
-  const handleChopperClick = (chopper) => {
+  const handleChopperClick = (chopper: ChopperType) => {
     console.log("Chopper clicked", chopper.id);
+    console.log(map);
     if (map) {
-      map.flyTo({
-        center: [chopper.location.lng, chopper.location.lat],
-      });
+      mapRef.current?.flyTo({ center: [chopper.location.lng, chopper.location.lat] });
+    } else {
+      console.error("Map is not initialized");
     }
-  }
+  };
 
   return (
     <Box w="100%" h="100%" className="flex flex-col">
@@ -201,7 +206,32 @@ const SearchPage = () => {
             ))}
           </Box>
           <Box w="70%" className="flex grow">
-            <Map results={results} />
+            <Box w="100%" h="100%">
+              <Map
+                id="map"
+                ref={mapRef}
+                mapboxAccessToken={import.meta.env.VITE_MAPBOX_GLJS_TOKEN}
+                initialViewState={{
+                  longitude: -122.4,
+                  latitude: 37.8,
+                  zoom: 14,
+                }}
+                style={{ width: "100%", height: "100%" }}
+                mapStyle="mapbox://styles/mapbox/streets-v9"
+              >
+                {/* For each result add marker */}
+                {results.map((result) => (
+                  <Marker
+                    key={result.id}
+                    longitude={result.location.lng}
+                    latitude={result.location.lat}
+                    color="red"
+                  >
+                    <div>Marker</div>
+                  </Marker>
+                ))}
+              </Map>
+            </Box>
           </Box>
         </MapProvider>
       </Box>
