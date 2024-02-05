@@ -169,13 +169,18 @@ export default function RootLayout() {
                   <FormControl w="100%">
                     <FormLabel>What service are you looking for?</FormLabel>
                     <AutoComplete openOnFocus>
-                      <AutoCompleteInput variant="filled" placeholder="Groomer, haircut, special services..." value={serviceInputRef.current?.value} />
+                      <AutoCompleteInput variant="filled" placeholder="Groomer, haircut, special services..." value={serviceInputRef.current?.value} ref={serviceInputRef} />
                       <AutoCompleteList>
                         {servicesSuggestions.map((suggestion, cid) => (
                           <AutoCompleteItem
                             key={`option-${cid}`}
                             value={suggestion}
                             textTransform="capitalize"
+                            onClick={() => {
+                              if (serviceInputRef.current)
+                                serviceInputRef.current.value = suggestion;
+                            }
+                            }
                           >
                             {suggestion}
                           </AutoCompleteItem>
