@@ -11,12 +11,12 @@ import store from "./stores/app";
 
 // Pages
 import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
 import BaseLayout from "./layouts/BaseLayout";
 import SearchPage from "./pages/SearchPage";
 import MainLayout from "./layouts/MainLayout";
 import BookingPage from "./pages/BookingPage";
 import NotFound from "./pages/NotFound";
+import Enroll from "./pages/EnrollPage";
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -45,11 +45,13 @@ const router = createBrowserRouter(
     <Route path="/">
       <Route element={<BaseLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="about" element={<AboutPage />} />
       </Route>
       <Route element={<MainLayout />}>
         <Route path="search" element={<SearchPage />} />
         <Route path="book" element={<BookingPage />} />
+        <Route path="404" element={<NotFound />} />
+        <Route path="enroll" element={<Enroll />} />
+
         <Route path="*" element={<NotFound />} />
       </Route>
     </Route>
