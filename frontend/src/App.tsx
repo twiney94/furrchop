@@ -3,11 +3,11 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Outlet,
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { Provider } from "react-redux";
-import store from "./stores/app";
+import { AuthProvider } from "./hooks/useAuth";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -17,6 +17,8 @@ import SearchPage from "./pages/SearchPage";
 import MainLayout from "./layouts/MainLayout";
 import BookingPage from "./pages/BookingPage";
 import NotFound from "./pages/NotFound";
+import AuthPage from "./pages/AuthPage";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -39,17 +41,33 @@ const theme = extendTheme({
   },
 });
 
+const AuthProviderLayout = () => (
+  <AuthProvider>
+    <Outlet />
+  </AuthProvider>
+);
+
 // Routes structure
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/">
+    <Route path="/" element={<AuthProviderLayout />}>
       <Route element={<BaseLayout />}>
         <Route index element={<HomePage />} />
         <Route path="about" element={<AboutPage />} />
       </Route>
       <Route element={<MainLayout />}>
         <Route path="search" element={<SearchPage />} />
-        <Route path="book" element={<BookingPage />} />
+        <Route
+          path="book"
+          element={
+            <ProtectedRoute>
+              <BookingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="login" element={<AuthPage mode="login" />} />
+        <Route path="register" element={<AuthPage mode="register" />} />
+        <Route path="forgot-password" />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Route>
@@ -60,9 +78,7 @@ function App() {
   return (
     <>
       <ChakraProvider theme={theme}>
-        <Provider store={store}>
-          <RouterProvider router={router} />
-        </Provider>
+        <RouterProvider router={router} />
       </ChakraProvider>
     </>
   );
