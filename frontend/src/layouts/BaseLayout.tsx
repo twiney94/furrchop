@@ -1,14 +1,7 @@
-import {
-  NavLink,
-  useNavigate,
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
-import furrChopLogoWhite from "/furrchopwhite.svg";
 import homePageJumbo from "/happydog.png";
 import {
-  Flex,
-  Avatar,
-  Button,
   Container,
   Text,
   Stack,
@@ -28,12 +21,7 @@ import {
   AutoCompleteItem,
   AutoCompleteList,
 } from "@choc-ui/chakra-autocomplete";
-
-
-const user = {
-  name: "Ryan Florence",
-  imageUrl: "https://bit.ly/ryan-florence",
-};
+import { Header } from "../components/Header";
 
 export default function RootLayout() {
   const locationInputRef = useRef<HTMLInputElement>(null);
@@ -54,15 +42,17 @@ export default function RootLayout() {
     "Anal gland expression",
     "Flea bath",
     "Deshedding",
-    "Furminator"
-  ]
+    "Furminator",
+  ];
 
   const showPosition = async (position: any) => {
     loadingLocation.current = true;
 
     const address = await fetch(
-      `${import.meta.env.VITE_MAPBOX_GEOCODE_URI}/${import.meta.env.VITE_MAPBOX_GEOCODE_ENDPOINT
-      }/${position.coords.longitude},${position.coords.latitude
+      `${import.meta.env.VITE_MAPBOX_GEOCODE_URI}/${
+        import.meta.env.VITE_MAPBOX_GEOCODE_ENDPOINT
+      }/${position.coords.longitude},${
+        position.coords.latitude
       }.json?access_token=${import.meta.env.VITE_MAPBOX_GLJS_TOKEN}`
     )
       .then((response) => response.json())
@@ -116,22 +106,8 @@ export default function RootLayout() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="root-layout p-6"
-        >
-          <header>
-            <nav className="flex h-12 flex-grow justify-between">
-              <img src={furrChopLogoWhite} alt="FurrChop" className="h-full" />
-              <Flex className="items-center gap-4 font-light text-white">
-                <NavLink to="/">Home</NavLink>
-                <NavLink to="about">About</NavLink>
-                <NavLink to="help">Help</NavLink>
-                <Button colorScheme="teal" variant="outline">
-                  Sign Up
-                </Button>
-                <Avatar name={user.name} src={user.imageUrl} />
-              </Flex>
-            </nav>
-          </header>
+        <div className="root-layout p-6">
+          <Header />
           <Container
             maxW="100%"
             minH={`calc(100% - 48px)`}
@@ -169,7 +145,12 @@ export default function RootLayout() {
                   <FormControl w="100%">
                     <FormLabel>What service are you looking for?</FormLabel>
                     <AutoComplete openOnFocus>
-                      <AutoCompleteInput variant="filled" placeholder="Groomer, haircut, special services..." value={serviceInputRef.current?.value} ref={serviceInputRef} />
+                      <AutoCompleteInput
+                        variant="filled"
+                        placeholder="Groomer, haircut, special services..."
+                        value={serviceInputRef.current?.value}
+                        ref={serviceInputRef}
+                      />
                       <AutoCompleteList>
                         {servicesSuggestions.map((suggestion, cid) => (
                           <AutoCompleteItem
@@ -179,8 +160,7 @@ export default function RootLayout() {
                             onClick={() => {
                               if (serviceInputRef.current)
                                 serviceInputRef.current.value = suggestion;
-                            }
-                            }
+                            }}
                           >
                             {suggestion}
                           </AutoCompleteItem>
@@ -190,12 +170,16 @@ export default function RootLayout() {
                   </FormControl>
                 </label>
                 <label className="flex flex-col grow items-start py-4 font-normal text-[#8D999F]">
-
                   <FormControl w="100%">
                     <FormLabel>Where?</FormLabel>
                     <InputGroup>
-                      <Input variant="filled" ref={locationInputRef} type="text" placeholder="Address, city..." />
-                      <InputRightElement >
+                      <Input
+                        variant="filled"
+                        ref={locationInputRef}
+                        type="text"
+                        placeholder="Address, city..."
+                      />
+                      <InputRightElement>
                         <IconButton
                           onClick={getLocation}
                           isLoading={loadingLocation.current}
