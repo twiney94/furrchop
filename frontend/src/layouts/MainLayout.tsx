@@ -6,7 +6,7 @@ const MainLayout = () => {
 	return (
 		<div className="flex flex-col max-h-screen w-screen items-center">
 			<div className="p-6">
-				<Header />
+				<Header purple />
 			</div>
 
 			<main className="w-full grow">

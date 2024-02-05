@@ -6,6 +6,8 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./stores/app";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -56,7 +58,9 @@ function App() {
   return (
     <>
       <ChakraProvider theme={theme}>
-        <RouterProvider router={router} />
+        <Provider store={store}>
+          <RouterProvider router={router} />
+        </Provider>
       </ChakraProvider>
     </>
   );

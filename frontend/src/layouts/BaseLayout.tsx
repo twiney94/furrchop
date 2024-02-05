@@ -107,7 +107,7 @@ export default function RootLayout() {
         }}
       >
         <div className="root-layout p-6">
-          <Header />
+          <Header/>
           <Container
             maxW="100%"
             minH={`calc(100% - 48px)`}

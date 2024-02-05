@@ -1,15 +1,36 @@
-import { Avatar, Flex } from "@chakra-ui/react";
+import { Flex, IconButton } from "@chakra-ui/react";
 import furrChopLogoPurple from "/furrchoppurple.png";
+import furrCHopLogoWhite from "/furrchopwhite.svg";
 import styles from "./header.module.css";
 import { AiOutlineUser } from "react-icons/ai";
+import { RootState } from "../stores/app";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-export const Header = () => {
+interface Props {
+  purple?: boolean;
+}
+
+export const Header = (props?: Props) => {
+  // isLoggedIn state import to check if user is logged in
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
   return (
     <header className={styles.header}>
       <nav className="flex h-12 flex-grow justify-between">
-        <img src={furrChopLogoPurple} alt="FurrChop" className="h-full" />
+        <img
+          src={props?.purple ? furrChopLogoPurple : furrCHopLogoWhite}
+          alt="FurrChop"
+          className="h-full"
+        />
         <Flex className="items-center gap-4 font-light text-black">
-          <Avatar bg="brand.500" icon={<AiOutlineUser fontSize="1.5rem" />} />
+          <IconButton
+            aria-label="User"
+            icon={<AiOutlineUser />}
+            onClick={() =>
+              isLoggedIn ? navigate("/profile") : navigate("/login")
+            }
+          />
         </Flex>
       </nav>
     </header>
