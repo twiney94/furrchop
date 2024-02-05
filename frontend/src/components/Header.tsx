@@ -1,36 +1,17 @@
 import { Avatar, Flex } from "@chakra-ui/react";
-import furrChopLogoWhite from "/furrchopwhite.svg";
 import furrChopLogoPurple from "/furrchoppurple.png";
 import styles from "./header.module.css";
+import { AiOutlineUser } from "react-icons/ai";
 
-const user = {
-  name: "Ryan Florence",
-  imageUrl: "https://bit.ly/ryan-florence",
-};
-
-export const Header = (props: { mode?: string }) => {
-  const { mode } = props;
-  if (mode === "default") {
-    return (
-      <header className={styles.header}>
-        <nav className="flex h-12 flex-grow justify-between">
-          <img src={furrChopLogoPurple} alt="FurrChop" className="h-full" />
-          <Flex className="items-center gap-4 font-light text-black">
-            <Avatar name={user.name} src={user.imageUrl} />
-          </Flex>
-        </nav>
-      </header>
-    );
-  } else {
-    return (
-      <header>
-        <nav className="flex h-12 flex-grow justify-between">
-          <img src={furrChopLogoWhite} alt="FurrChop" className="h-full" />
-          <Flex className="items-center gap-4 font-light text-white">
-            <Avatar name={user.name} src={user.imageUrl} />
-          </Flex>
-        </nav>
-      </header>
-    );
-  }
+export const Header = () => {
+  return (
+    <header className={styles.header}>
+      <nav className="flex h-12 flex-grow justify-between">
+        <img src={furrChopLogoPurple} alt="FurrChop" className="h-full" />
+        <Flex className="items-center gap-4 font-light text-black">
+          <Avatar bg="brand.500" icon={<AiOutlineUser fontSize="1.5rem" />} />
+        </Flex>
+      </nav>
+    </header>
+  );
 };
