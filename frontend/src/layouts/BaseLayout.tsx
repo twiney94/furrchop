@@ -1,4 +1,10 @@
-import { Outlet, NavLink } from "react-router-dom";
+import {
+  Outlet,
+  NavLink,
+  Router,
+  useRoutes,
+  useNavigate,
+} from "react-router-dom";
 import { useRef } from "react";
 import furrChopLogoWhite from "/furrchopwhite.svg";
 import homePageJumbo from "/homepage-jumbo.png";
@@ -26,6 +32,7 @@ export default function RootLayout() {
   const loadingLocation = useRef(false);
   const toast = useToast();
   const toastIdRef = useRef<string | number | undefined>("");
+  const navigate = useNavigate();
 
   const showPosition = async (position: any) => {
     loadingLocation.current = true;
@@ -67,11 +74,13 @@ export default function RootLayout() {
   };
 
   const handleSearch = () => {
-    if (locationInputRef.current && serviceInputRef.current)
-      console.log(
-        locationInputRef.current.value,
-        serviceInputRef.current.value
-      );
+    if (locationInputRef.current && serviceInputRef.current) {
+      if (locationInputRef.current.value && serviceInputRef.current.value) {
+        navigate(
+          `/search?service=${serviceInputRef.current.value}&location=${locationInputRef.current.value}`
+        );
+      }
+    }
   };
 
   return (
