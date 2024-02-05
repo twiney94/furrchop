@@ -1,4 +1,5 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { useNavigate } from "react-router-dom";
 
 interface AuthState {
   username: string;
@@ -38,13 +39,14 @@ export const doLogin = (username: string) => async (dispatch: AppDispatch) => {
   // Firing a spinner while fetching login info.
   // Replace incrementProgress, decrementProgress, and handleError with your actual implementations
   dispatch(incrementProgress()); // Assuming incrementProgress is a valid action creator
+  const navigate = useNavigate();
   try {
     const userResponse = await fakeLoginRequest(username);
     dispatch(authLogin(userResponse));
     // if successful change our route to "dashboard"
-    history.push("/dashboard");
+    navigate("/dashboard");
   } catch (error) {
-    handleError(error); // Assuming handleError is a valid function
+    handleError();
   } finally {
     dispatch(decrementProgress()); // Assuming decrementProgress is a valid action creator
   }
@@ -63,15 +65,13 @@ export type AppDispatch = typeof store.dispatch;
 export default store;
 
 function incrementProgress(): any {
-    throw new Error("Function not implemented.");
+  throw new Error("Function not implemented.");
 }
 
-
-function handleError(error: unknown) {
-    throw new Error("Function not implemented.");
+function handleError() {
+  throw new Error("Function not implemented.");
 }
-
 
 function decrementProgress(): any {
-    throw new Error("Function not implemented.");
+  throw new Error("Function not implemented.");
 }

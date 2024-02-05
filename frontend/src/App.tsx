@@ -6,7 +6,6 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { Provider } from "react-redux";
 
 // Pages
 import HomePage from "./pages/HomePage";
