@@ -1,4 +1,4 @@
-import { Flex, IconButton } from "@chakra-ui/react";
+import { Button, Flex, IconButton } from "@chakra-ui/react";
 import furrChopLogoPurple from "/furrchoppurple.png";
 import furrCHopLogoWhite from "/furrchopwhite.svg";
 import styles from "./header.module.css";
@@ -24,6 +24,14 @@ export const Header = (props?: Props) => {
           className="h-full"
         />
         <Flex className="items-center gap-4 font-light text-black">
+          <Button
+            aria-label="Groomer"
+            variant="outline"
+			colorScheme="purple"
+            onClick={() => navigate("/search")}
+          >
+            Are you a groomer?
+          </Button>
           <IconButton
             aria-label="User"
             icon={<AiOutlineUser />}
