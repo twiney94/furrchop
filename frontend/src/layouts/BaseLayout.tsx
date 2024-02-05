@@ -1,11 +1,10 @@
 import {
-  Outlet,
   NavLink,
   useNavigate,
 } from "react-router-dom";
 import { useRef } from "react";
 import furrChopLogoWhite from "/furrchopwhite.svg";
-import homePageJumbo from "/homepage-jumbo.png";
+import homePageJumbo from "/happydog.png";
 import {
   Flex,
   Avatar,
@@ -15,9 +14,21 @@ import {
   Stack,
   IconButton,
   useToast,
+  FormControl,
+  FormLabel,
+  Input,
+  InputRightElement,
+  InputGroup,
 } from "@chakra-ui/react";
 import "./baselayout.module.css";
 import { MdOutlineMyLocation } from "react-icons/md";
+import {
+  AutoComplete,
+  AutoCompleteInput,
+  AutoCompleteItem,
+  AutoCompleteList,
+} from "@choc-ui/chakra-autocomplete";
+
 
 const user = {
   name: "Ryan Florence",
@@ -32,14 +43,26 @@ export default function RootLayout() {
   const toastIdRef = useRef<string | number | undefined>("");
   const navigate = useNavigate();
 
+  const servicesSuggestions = [
+    "Groomer",
+    "Haircut",
+    "Special services",
+    "Nail trimming",
+    "Bathing",
+    "Teeth cleaning",
+    "Ear cleaning",
+    "Anal gland expression",
+    "Flea bath",
+    "Deshedding",
+    "Furminator"
+  ]
+
   const showPosition = async (position: any) => {
     loadingLocation.current = true;
 
     const address = await fetch(
-      `${import.meta.env.VITE_MAPBOX_GEOCODE_URI}/${
-        import.meta.env.VITE_MAPBOX_GEOCODE_ENDPOINT
-      }/${position.coords.longitude},${
-        position.coords.latitude
+      `${import.meta.env.VITE_MAPBOX_GEOCODE_URI}/${import.meta.env.VITE_MAPBOX_GEOCODE_ENDPOINT
+      }/${position.coords.longitude},${position.coords.latitude
       }.json?access_token=${import.meta.env.VITE_MAPBOX_GLJS_TOKEN}`
     )
       .then((response) => response.json())
@@ -84,20 +107,17 @@ export default function RootLayout() {
   return (
     <div className="pageContainer">
       <div
-        className="jumbo"
+        className="jumbo h-screen w-screen flex items-center justify-center"
         style={{
-          backgroundImage: `url(${homePageJumbo})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundColor: `red`,
+          backgroundImage: `url(${homePageJumbo}), linear-gradient(to right, #B6A0E5, #e4cbfd)`,
+          backgroundSize: "contain",
+          backgroundPosition: "right",
           backgroundRepeat: "no-repeat",
-          height: "60vh",
-          width: "100vw",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
         }}
       >
-        <div className="root-layout p-6">
+        <div className="root-layout p-6"
+        >
           <header>
             <nav className="flex h-12 flex-grow justify-between">
               <img src={furrChopLogoWhite} alt="FurrChop" className="h-full" />
@@ -146,38 +166,43 @@ export default function RootLayout() {
                 my="8"
               >
                 <label className="flex flex-col grow items-start ml-10 py-4 font-normal text-[#8D999F]">
-                  <span className="w-full flex justify-start px-2">
-                    Do you know the name?
-                  </span>
-                  <input
-                    ref={serviceInputRef}
-                    className="w-full p-2 placeholder:text-black"
-                    type="text"
-                    placeholder="Groomer, haircut, special services..."
-                    autoComplete="off"
-                  />
+                  <FormControl w="100%">
+                    <FormLabel>What service are you looking for?</FormLabel>
+                    <AutoComplete openOnFocus>
+                      <AutoCompleteInput variant="filled" placeholder="Groomer, haircut, special services..." value={serviceInputRef.current?.value} />
+                      <AutoCompleteList>
+                        {servicesSuggestions.map((suggestion, cid) => (
+                          <AutoCompleteItem
+                            key={`option-${cid}`}
+                            value={suggestion}
+                            textTransform="capitalize"
+                          >
+                            {suggestion}
+                          </AutoCompleteItem>
+                        ))}
+                      </AutoCompleteList>
+                    </AutoComplete>
+                  </FormControl>
                 </label>
                 <label className="flex flex-col grow items-start py-4 font-normal text-[#8D999F]">
-                  <span className="w-full flex justify-start px-2">Where?</span>
-                  <Flex className="relative w-full items-center">
-                    <input
-                      ref={locationInputRef}
-                      className="w-full h-fit p-2 placeholder:text-black grow"
-                      type="text"
-                      placeholder="Address, city..."
-                      autoComplete="off"
-                    />
-                    <IconButton
-                      onClick={getLocation}
-                      isLoading={loadingLocation.current}
-                      aria-label="Search database"
-                      icon={<MdOutlineMyLocation />}
-                      className="absolute right-2"
-                    />
-                  </Flex>
+
+                  <FormControl w="100%">
+                    <FormLabel>Where?</FormLabel>
+                    <InputGroup>
+                      <Input variant="filled" ref={locationInputRef} type="text" placeholder="Address, city..." />
+                      <InputRightElement >
+                        <IconButton
+                          onClick={getLocation}
+                          isLoading={loadingLocation.current}
+                          aria-label="Search database"
+                          icon={<MdOutlineMyLocation />}
+                        />
+                      </InputRightElement>
+                    </InputGroup>
+                  </FormControl>
                 </label>
                 <button
-                  className="bg-[#B6A0E5] text-white grow my-6 mr-10"
+                  className="bg-[#B6A0E5] text-white grow my-4 mr-10"
                   onClick={handleSearch}
                 >
                   Search
@@ -186,11 +211,6 @@ export default function RootLayout() {
             </Stack>
           </Container>
         </div>
-      </div>
-      <div className="content my-8">
-        <main>
-          <Outlet />
-        </main>
       </div>
     </div>
   );
