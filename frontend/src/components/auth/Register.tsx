@@ -40,7 +40,7 @@ const Register = () => {
         phoneNumber: "",
       }}
       validationSchema={RegistrationSchema}
-      onSubmit={async (values, actions) => {
+      onSubmit={async (values) => {
         console.log("registering from component")
         await register(values);
       }}
