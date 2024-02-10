@@ -34,3 +34,15 @@ export const register = async (userDetails: {
     throw error;
   }
 };
+
+export const activateAccount = async (): Promise<any> => {
+  const urlParams = window.location.pathname;
+  const token = urlParams.split("/")[2];
+  const decodedToken = atob(token);
+  try {
+    const response = await axios.post(`${API_URI}/activate`, { uuid: decodedToken });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -1,7 +1,10 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "./useLocalStorage";
-import { authenticate } from "../services/auth";
+import {
+  authenticate,
+  activateAccount as serviceActivateAccount,
+} from "../services/auth";
 import { useToast } from "@chakra-ui/react";
 
 interface Children {
@@ -24,6 +27,7 @@ interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  activateAccount: () => Promise<void>;
   loading: boolean;
   showToast: (options: ToastOptions) => void;
 }
@@ -33,6 +37,7 @@ const defaultContextValue: AuthContextType = {
   login: async () => {},
   logout: () => {},
   loading: false,
+  activateAccount: async () => {},
   showToast: () => {},
 };
 
@@ -79,13 +84,13 @@ export const AuthProvider = ({ children }: Children) => {
     setLoading(true);
     try {
       const userData = await register(userDetails);
-      setUser(userData); // Assuming your registration process also logs the user in
+      setUser(userData);
       showToast({
         title: "Registration Successful",
         description: "Your account has been created.",
         status: "success",
       });
-      navigate("/profile"); // Adjust as necessary
+      navigate("/profile");
     } catch (error) {
       showToast({
         title: "Registration Failed",
@@ -94,6 +99,30 @@ export const AuthProvider = ({ children }: Children) => {
           "An unexpected error occurred during registration.",
         status: "error",
       });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const activateAccount = async () => {
+    setLoading(true);
+    try {
+      const data = await serviceActivateAccount();
+      showToast({
+        title: "Account Activated",
+        description: "Your account has been successfully activated! Log in to continue.",
+        status: "success",
+      });
+      navigate("/login");
+    } catch (error) {
+      showToast({
+        title: "Activation Failed",
+        description:
+          (error as Error).message ||
+          "An error occurred during account activation.",
+        status: "error",
+      });
+      navigate("/");
     } finally {
       setLoading(false);
     }
@@ -112,6 +141,7 @@ export const AuthProvider = ({ children }: Children) => {
       login,
       logout,
       register,
+      activateAccount,
       loading,
       showToast,
     }),

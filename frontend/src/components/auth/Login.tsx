@@ -9,7 +9,6 @@ import {
   Text,
   Box,
   FormErrorMessage,
-  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +20,6 @@ const Login = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const navigate = useNavigate();
-  const toast = useToast();
   const { login, loading } = useAuth();
 
   const [emailInput, setEmailInput] = useState("");
