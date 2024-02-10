@@ -19,7 +19,7 @@ class Shop
 
     #[ORM\OneToOne(inversedBy: 'shop', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $userId = null;
+    private ?User $user = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -49,14 +49,14 @@ class Shop
         return $this->id;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId(User $userId): static
+    public function setUser(User $user): static
     {
-        $this->userId = $userId;
+        $this->user = $user;
 
         return $this;
     }

@@ -83,6 +83,14 @@ const router = createBrowserRouter(
         />
         <Route path="forgot-password" />
         <Route
+          path="activate/:token"
+          element={
+            <UnloggedRoute>
+              <AuthPage mode="activate" />
+            </UnloggedRoute>
+          }
+        />
+        <Route
           path="profile"
           element={
             <ProtectedRoute>

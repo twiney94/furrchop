@@ -2,44 +2,158 @@
 
 namespace App\Entity;
 
+
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Controller\ActivationController;
+use App\Controller\RegistrationController;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ApiResource]
-class User
+#[ORM\Table(name: "`user`")] // Notice the backticks
+#[ApiResource(
+    operations: [
+        new Post(
+            uriTemplate: "/register",
+            controller: RegistrationController::class,
+            name: 'registration',
+        ),
+        new Get(),
+        new GetCollection(),
+        new Patch(),
+        new Delete(),
+        new Put()
+    ],
+    normalizationContext: ['groups' => 'user:read']
+)]
+#[ApiResource(
+    operations: [
+        new Post(
+            uriTemplate: '/activate',
+            controller: ActivationController::class,
+            openapiContext: [
+                'requestBody' => [
+                    'content' => [
+                        'application/json' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'uuid' => [
+                                        'type' => 'string',
+                                        'description' => 'The UUID of the user to activate',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'responses' => [
+                    '200' => [
+                        'description' => 'User account has been activated',
+                        'content' => [
+                            'application/json' => [
+                                'example' => ['message' => 'User account has been activated'],
+                            ],
+                        ],
+                    ],
+                    '400' => [
+                        'description' => 'Bad Request',
+                        'content' => [
+                            'application/json' => [
+                                'example' => ['message' => 'UUID is missing in the request body'],
+                            ],
+                        ],
+                    ],
+                    '404' => [
+                        'description' => 'Not Found',
+                        'content' => [
+                            'application/json' => [
+                                'example' => ['message' => 'User with ID {ID} not found'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            openapi: true,
+            name: 'activate_account',
+        ),
+    ],
+)]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?Uuid $id;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $lastName = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: 'email', type: 'string', length: 255, unique: true)]
+    #[Groups(['user:read'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $phoneNumber = null;
 
     #[ORM\Column]
+    #[Groups(['user:read'])]
+    private array $roles = [];
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    #[Groups(['user:read', 'user:activate'])]
+    private ?bool $isVerified = false;
+
+    #[ORM\Column]
+    #[Groups(['user:read'])]
     private ?bool $type = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read'])]
     private ?string $validKbis = null;
 
     #[ORM\OneToOne(mappedBy: 'userId', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['user:read'])]
     private ?Shop $shop = null;
 
-    public function getId(): ?int
+    #[ORM\Column(type: 'datetime_immutable')]
+    #[Groups(['user:read'])]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[Groups(['user:read'])]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->id = Uuid::v4();
+        $this->createdAt = new \DateTimeImmutable();
+    }
+
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -133,15 +247,78 @@ class User
         return $this->shop;
     }
 
-    public function setShop(Shop $shop): static
+    public function setShop(?Shop $shop): static
     {
         // set the owning side of the relation if necessary
-        if ($shop->getUserId() !== $this) {
+        if ($shop !== null && $shop->getUserId() !== $this) {
             $shop->setUserId($this);
         }
 
         $this->shop = $shop;
 
         return $this;
+    }
+
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string)$this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+        if ($roles === []) {
+            $this->roles[] = 'ROLE_USER';
+        }
+
+        return $this;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getIsVerified(): ?bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(?bool $isVerified): void
+    {
+        $this->isVerified = $isVerified;
     }
 }
