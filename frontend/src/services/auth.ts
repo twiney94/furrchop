@@ -1,18 +1,16 @@
 // auth.ts
-import axios from "axios";
+import { httpCall } from "./http";
 
 interface LoginResponse {
   token: string;
 }
-
-const API_URI = import.meta.env.VITE_BACKEND_API;
 
 export const authenticate = async (
   email: string,
   password: string
 ): Promise<LoginResponse> => {
   try {
-    const response = await axios.post<LoginResponse>(`${API_URI}/auth`, {
+    const response = await httpCall("POST", "auth", {
       email,
       password,
     });
@@ -28,7 +26,8 @@ export const register = async (userDetails: {
   [key: string]: any;
 }): Promise<any> => {
   try {
-    const response = await axios.post(`${API_URI}/register`, userDetails);
+    console.log(userDetails);
+    const response = await httpCall("POST", "register", userDetails);
     return response.data;
   } catch (error) {
     throw error;
@@ -40,7 +39,9 @@ export const activateAccount = async (): Promise<any> => {
   const token = urlParams.split("/")[2];
   const decodedToken = atob(token);
   try {
-    const response = await axios.post(`${API_URI}/activate`, { uuid: decodedToken });
+    const response = await httpCall("POST", "activate", {
+      uuid: decodedToken,
+    });
     return response.data;
   } catch (error) {
     throw error;

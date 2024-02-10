@@ -22,7 +22,7 @@ class ActivationController extends AbstractController
     }
 
 
-    public function _invoke(Request $request): Response
+    public function __invoke(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
         $userId = $data['uuid'] ?? null;

@@ -44,6 +44,7 @@ use Symfony\Component\Uid\Uuid;
             uriTemplate: '/activate',
             controller: ActivationController::class,
             openapiContext: [
+                'summary' => 'Activate an user',
                 'requestBody' => [
                     'content' => [
                         'application/json' => [
@@ -120,13 +121,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     #[Groups(['user:read'])]
-    private array $roles = [];
+    private array $roles = ['ROLE_USER'];
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     #[Groups(['user:read', 'user:activate'])]
     private ?bool $isVerified = false;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     #[Groups(['user:read'])]
     private ?bool $type = null;
 

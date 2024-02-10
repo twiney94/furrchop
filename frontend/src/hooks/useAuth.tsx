@@ -4,6 +4,7 @@ import { useLocalStorage } from "./useLocalStorage";
 import {
   authenticate,
   activateAccount as serviceActivateAccount,
+  register as serviceRegister,
 } from "../services/auth";
 import { useToast } from "@chakra-ui/react";
 
@@ -27,6 +28,11 @@ interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  register: (userDetails: {
+    email: string;
+    password: string;
+    [key: string]: any;
+  }) => Promise<void>;
   activateAccount: () => Promise<void>;
   loading: boolean;
   showToast: (options: ToastOptions) => void;
@@ -36,6 +42,7 @@ const defaultContextValue: AuthContextType = {
   user: null,
   login: async () => {},
   logout: () => {},
+  register: async () => {},
   loading: false,
   activateAccount: async () => {},
   showToast: () => {},
@@ -83,14 +90,15 @@ export const AuthProvider = ({ children }: Children) => {
   }) => {
     setLoading(true);
     try {
-      const userData = await register(userDetails);
-      setUser(userData);
+      console.log("registering from useAuth");
+      await serviceRegister(userDetails);
       showToast({
         title: "Registration Successful",
-        description: "Your account has been created.",
+        description:
+          "Your account has been created, check your email to validate the account.",
         status: "success",
       });
-      navigate("/profile");
+      navigate("/login");
     } catch (error) {
       showToast({
         title: "Registration Failed",
@@ -106,15 +114,18 @@ export const AuthProvider = ({ children }: Children) => {
 
   const activateAccount = async () => {
     setLoading(true);
+    console.log("activating account");
     try {
       await serviceActivateAccount();
       showToast({
         title: "Account Activated",
-        description: "Your account has been successfully activated! Log in to continue.",
+        description:
+          "Your account has been successfully activated! Log in to continue.",
         status: "success",
       });
       navigate("/login");
     } catch (error) {
+      console.error(error)
       showToast({
         title: "Activation Failed",
         description:
