@@ -3,8 +3,6 @@ import furrChopLogoPurple from "/furrchoppurple.png";
 import furrCHopLogoWhite from "/furrchopwhite.svg";
 import styles from "./header.module.css";
 import { AiOutlineUser } from "react-icons/ai";
-import { RootState } from "../stores/app";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -12,8 +10,6 @@ interface Props {
 }
 
 export const Header = (props?: Props) => {
-  // isLoggedIn state import to check if user is logged in
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const navigate = useNavigate();
   return (
     <header className={styles.header}>
@@ -27,9 +23,7 @@ export const Header = (props?: Props) => {
           <IconButton
             aria-label="User"
             icon={<AiOutlineUser />}
-            onClick={() =>
-              isLoggedIn ? navigate("/profile") : navigate("/login")
-            }
+            onClick={() => navigate("/profile")}
           />
         </Flex>
       </nav>
