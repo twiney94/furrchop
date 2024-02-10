@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }: Children) => {
   const activateAccount = async () => {
     setLoading(true);
     try {
-      const data = await serviceActivateAccount();
+      await serviceActivateAccount();
       showToast({
         title: "Account Activated",
         description: "Your account has been successfully activated! Log in to continue.",

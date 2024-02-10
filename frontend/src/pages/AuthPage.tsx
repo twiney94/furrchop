@@ -11,7 +11,6 @@ import groomingDog from "/groomingdog.jpeg";
 import Login from "../components/auth/Login";
 import Register from "../components/auth/Register";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 interface Props {
@@ -19,11 +18,10 @@ interface Props {
 }
 
 const AuthPage = ({ mode }: Props) => {
-  const [error, setError] = useState<{ show: boolean; message?: string }>({
+  const [error] = useState<{ show: boolean; message?: string }>({
     show: false,
   });
-  const navigate = useNavigate();
-  const { showToast, activateAccount } = useAuth();
+  const { activateAccount } = useAuth();
 
   useEffect(() => {
     if (mode === "activate") {
