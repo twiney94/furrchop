@@ -2,14 +2,40 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ShopRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ShopRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Patch(
+            security: "is_granted('ROLE_ADMIN') or object.getUser() == user",
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN') or object.getUser() == user",
+        ),
+        new Put(
+            security: "is_granted('ROLE_ADMIN') or object.getUser() == user",
+        ),
+        new Post(
+            security: "is_granted('ROLE_OWNER')",
+        )
+    ]
+)]
+#[ApiFilter(SearchFilter::class, properties: ['services.name' => 'ipartial', 'name' => 'ipartial', 'description' => 'ipartial', 'openHours' => 'ipartial', 'openDays' => 'ipartial', 'address' => 'iexact'])]
 class Shop
 {
     #[ORM\Id]
@@ -17,26 +43,25 @@ class Shop
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'shop', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $user = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $openHours = null;
+    private ?array $openHours = [];
 
     #[ORM\Column(length: 255)]
-    private ?string $openDays = null;
+    private ?array $openDays = [];
 
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
-    #[ORM\ManyToMany(targetEntity: Service::class, mappedBy: 'shopId')]
+    #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Service::class )]
     private Collection $services;
 
     public function __construct()
@@ -85,30 +110,6 @@ class Shop
         return $this;
     }
 
-    public function getOpenHours(): ?string
-    {
-        return $this->openHours;
-    }
-
-    public function setOpenHours(string $openHours): static
-    {
-        $this->openHours = $openHours;
-
-        return $this;
-    }
-
-    public function getOpenDays(): ?string
-    {
-        return $this->openDays;
-    }
-
-    public function setOpenDays(string $openDays): static
-    {
-        $this->openDays = $openDays;
-
-        return $this;
-    }
-
     public function getAddress(): ?string
     {
         return $this->address;
@@ -133,7 +134,7 @@ class Shop
     {
         if (!$this->services->contains($service)) {
             $this->services->add($service);
-            $service->addShopId($this);
+            $service->setShop($this);
         }
 
         return $this;
@@ -141,10 +142,20 @@ class Shop
 
     public function removeService(Service $service): static
     {
-        if ($this->services->removeElement($service)) {
-            $service->removeShopId($this);
-        }
+        $this->services->removeElement($service);
+        $service->setShop(null);
 
         return $this;
+    }
+
+
+    public function getOpenHours(): ?array
+    {
+        return $this->openHours;
+    }
+
+    public function setOpenHours(?array $openHours): void
+    {
+        $this->openHours = $openHours;
     }
 }

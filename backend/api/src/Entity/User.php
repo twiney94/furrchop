@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Put;
 use App\Controller\ActivationController;
 use App\Controller\RegistrationController;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -22,7 +23,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: "`user`")] // Notice the backticks
+#[ORM\Table(name: "`user`")]
 #[ApiResource(
     operations: [
         new Post(
@@ -30,11 +31,21 @@ use Symfony\Component\Uid\Uuid;
             controller: RegistrationController::class,
             name: 'registration',
         ),
-        new Get(),
-        new GetCollection(),
-        new Patch(),
-        new Delete(),
-        new Put()
+        new Get(
+            security: "is_granted('ROLE_ADMIN') or object == user",
+        ),
+        new GetCollection(
+            security: "is_granted('ROLE_ADMIN')",
+        ),
+        new Patch(
+            security: "is_granted('ROLE_ADMIN') or object == user",
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN')",
+        ),
+        new Put(
+            security: "is_granted('ROLE_ADMIN') or object == user",
+        )
     ],
     normalizationContext: ['groups' => 'user:read']
 )]
@@ -135,10 +146,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?string $validKbis = null;
 
-    #[ORM\OneToOne(mappedBy: 'userId', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Shop::class)]
     #[Groups(['user:read'])]
-    private ?Shop $shop = null;
+    private ?Collection $shops = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
     #[Groups(['user:read'])]
@@ -243,23 +253,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getShop(): ?Shop
-    {
-        return $this->shop;
-    }
-
-    public function setShop(?Shop $shop): static
-    {
-        // set the owning side of the relation if necessary
-        if ($shop !== null && $shop->getUserId() !== $this) {
-            $shop->setUserId($this);
-        }
-
-        $this->shop = $shop;
-
-        return $this;
-    }
-
 
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
@@ -308,6 +301,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getShop(): ?Shop
+    {
+        return $this->shop;
+    }
+
+    public function setShop(?Shop $shop): static
+    {
+        $this->shop = $shop;
+        return $this;
+    }
+
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
@@ -321,5 +325,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(?bool $isVerified): void
     {
         $this->isVerified = $isVerified;
+    }
+
+    public function getShops(): ?Collection
+    {
+        return $this->shops;
+    }
+
+    public function setShops(?Collection $shops): void
+    {
+        $this->shops = $shops;
     }
 }

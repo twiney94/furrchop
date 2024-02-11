@@ -48,7 +48,7 @@ use Doctrine\ORM\Mapping as ORM;
                         'description' => 'Booking has been canceled',
                         'content' => [
                             'application/json' => [
-                                'example' => ['message' =>'Booking has been canceled'],
+                                'example' => ['message' => 'Booking has been canceled'],
                             ],
                         ],
                     ],
@@ -71,14 +71,27 @@ use Doctrine\ORM\Mapping as ORM;
                 ],
             ],
             openapi: true,
+            security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
             name: 'cancel booking',
         ),
-        new Get(),
-        new GetCollection(),
-        new Patch(),
-        new Delete(),
-        new Put(),
-        new Post()
+        new Get(
+            security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
+        ),
+        new GetCollection(
+            security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
+        ),
+        new Patch(
+            security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN')",
+        ),
+        new Put(
+            security: "is_granted('ROLE_ADMIN') or object == user",
+        ),
+        new Post(
+
+        )
     ],
 )]
 #[ApiFilter(SearchFilter::class, properties: ['status' => 'iexact', 'animal' => 'iexact'])]
@@ -95,14 +108,13 @@ class Booking
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateTime = null;
 
-    #[ORM\OneToOne(inversedBy: 'booking', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Service $serviceId = null;
+    #[ORM\ManyToOne(targetEntity: Service::class)]
+    private ?Service $service = null;
 
     #[ORM\Column(length: 255)]
     private ?string $animal = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $comment = null;
 
     #[ORM\Column(length: 255)]
@@ -126,14 +138,14 @@ class Booking
         return $this;
     }
 
-    public function getServiceId(): ?Service
+    public function getService(): ?Service
     {
-        return $this->serviceId;
+        return $this->service;
     }
 
-    public function setServiceId(Service $serviceId): static
+    public function setService(Service $service): static
     {
-        $this->serviceId = $serviceId;
+        $this->service = $service;
 
         return $this;
     }
