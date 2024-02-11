@@ -21,12 +21,13 @@ export const ProfilePage = ({ mode }: { mode: string }) => {
     <Box className="flex justify-center h-full bg-slate-100 py-8">
       <Grid
         minH={"100%"}
+        maxH={"100%"}
         templateRows="repeat(1, 1fr)"
         templateColumns="repeat(5, 1fr)"
         gap={4}
         w="70%"
       >
-        <GridItem colSpan={1}>
+        <GridItem colSpan={1} overflow="hidden">
           <Actions />
         </GridItem>
         <GridItem colSpan={4}>{renderContent()}</GridItem>

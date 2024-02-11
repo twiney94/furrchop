@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Put;
 use App\Controller\ActivationController;
 use App\Controller\RegistrationController;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -158,10 +159,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Booking::class)]
+    private Collection $bookings;
+
+
     public function __construct()
     {
         $this->id = Uuid::v4();
         $this->createdAt = new \DateTimeImmutable();
+        $this->bookings = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -335,5 +341,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setShops(?Collection $shops): void
     {
         $this->shops = $shops;
+    }
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        $this->bookings->removeElement($booking);
+        $booking->setUser(null);
+
+        return $this;
     }
 }

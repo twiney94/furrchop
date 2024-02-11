@@ -64,9 +64,14 @@ class Shop
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Service::class )]
     private Collection $services;
 
+    #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Booking::class)]
+    private Collection $bookings;
+
+
     public function __construct()
     {
         $this->services = new ArrayCollection();
+        $this->bookings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -144,6 +149,32 @@ class Shop
     {
         $this->services->removeElement($service);
         $service->setShop(null);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->setShop($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        $this->bookings->removeElement($booking);
+        $booking->setShop(null);
 
         return $this;
     }

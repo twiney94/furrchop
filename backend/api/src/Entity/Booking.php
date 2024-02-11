@@ -89,9 +89,7 @@ use Doctrine\ORM\Mapping as ORM;
         new Put(
             security: "is_granted('ROLE_ADMIN') or object == user",
         ),
-        new Post(
-
-        )
+        new Post()
     ],
 )]
 #[ApiFilter(SearchFilter::class, properties: ['status' => 'iexact', 'animal' => 'iexact'])]
@@ -105,14 +103,14 @@ class Booking
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateTime = null;
+    #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTimeInterface $beginDateTime = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTimeInterface $endDateTime = null;
 
     #[ORM\ManyToOne(targetEntity: Service::class)]
     private ?Service $service = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $animal = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $comment = null;
@@ -120,23 +118,17 @@ class Booking
     #[ORM\Column(length: 255)]
     private ?string $status = StatusEnum::VALIDATED;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(targetEntity: Shop::class)]
+    private ?Shop $shop = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    public function getDateTime(): ?\DateTimeInterface
-    {
-        return $this->dateTime;
-    }
-
-    public function setDateTime(\DateTimeInterface $dateTime): static
-    {
-        $this->dateTime = $dateTime;
-
-        return $this;
-    }
+    
 
     public function getService(): ?Service
     {
@@ -146,18 +138,6 @@ class Booking
     public function setService(Service $service): static
     {
         $this->service = $service;
-
-        return $this;
-    }
-
-    public function getAnimal(): ?string
-    {
-        return $this->animal;
-    }
-
-    public function setAnimal(string $animal): static
-    {
-        $this->animal = $animal;
 
         return $this;
     }
@@ -182,5 +162,45 @@ class Booking
     public function setStatus(?string $status): void
     {
         $this->status = $status;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): void
+    {
+        $this->user = $user;
+    }
+
+    public function getShop(): ?Shop
+    {
+        return $this->shop;
+    }
+
+    public function setShop(?Shop $shop): void
+    {
+        $this->shop = $shop;
+    }
+
+    public function getBeginDateTime(): ?\DateTimeInterface
+    {
+        return $this->beginDateTime;
+    }
+
+    public function setBeginDateTime(?\DateTimeInterface $beginDateTime): void
+    {
+        $this->beginDateTime = $beginDateTime;
+    }
+
+    public function getEndDateTime(): ?\DateTimeInterface
+    {
+        return $this->endDateTime;
+    }
+
+    public function setEndDateTime(?\DateTimeInterface $endDateTime): void
+    {
+        $this->endDateTime = $endDateTime;
     }
 }
