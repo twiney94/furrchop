@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
-import homePageJumbo from "/happydog.png";
+import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
+import homePageJumbo from '/happydog.png';
 import {
   Container,
   Text,
@@ -12,37 +12,37 @@ import {
   Input,
   InputRightElement,
   InputGroup,
-} from "@chakra-ui/react";
-import "./baselayout.module.css";
-import { MdOutlineMyLocation } from "react-icons/md";
+} from '@chakra-ui/react';
+import './baselayout.module.css';
+import { MdOutlineMyLocation } from 'react-icons/md';
 import {
   AutoComplete,
   AutoCompleteInput,
   AutoCompleteItem,
   AutoCompleteList,
-} from "@choc-ui/chakra-autocomplete";
-import { Header } from "../components/Header";
+} from '@choc-ui/chakra-autocomplete';
+import { Header } from '../components/Header';
 
 export default function RootLayout() {
   const locationInputRef = useRef<HTMLInputElement>(null);
   const serviceInputRef = useRef<HTMLInputElement>(null);
   const loadingLocation = useRef(false);
   const toast = useToast();
-  const toastIdRef = useRef<string | number | undefined>("");
+  const toastIdRef = useRef<string | number | undefined>('');
   const navigate = useNavigate();
 
   const servicesSuggestions = [
-    "Groomer",
-    "Haircut",
-    "Special services",
-    "Nail trimming",
-    "Bathing",
-    "Teeth cleaning",
-    "Ear cleaning",
-    "Anal gland expression",
-    "Flea bath",
-    "Deshedding",
-    "Furminator",
+    'Groomer',
+    'Haircut',
+    'Special services',
+    'Nail trimming',
+    'Bathing',
+    'Teeth cleaning',
+    'Ear cleaning',
+    'Anal gland expression',
+    'Flea bath',
+    'Deshedding',
+    'Furminator',
   ];
 
   const showPosition = async (position: any) => {
@@ -71,15 +71,15 @@ export default function RootLayout() {
       navigator.geolocation.getCurrentPosition(showPosition);
     } else {
       addToast();
-      console.log("Geolocation is not supported by this browser.");
+      console.log('Geolocation is not supported by this browser.');
     }
   };
 
   const addToast = () => {
     toastIdRef.current = toast({
-      title: "Unable to get location",
-      description: "Geolocation is not supported",
-      status: "error",
+      title: 'Unable to get location',
+      description: 'Geolocation is not supported',
+      status: 'error',
       duration: 2000,
     });
   };
@@ -101,13 +101,13 @@ export default function RootLayout() {
         style={{
           backgroundColor: `red`,
           backgroundImage: `url(${homePageJumbo}), linear-gradient(to right, #B6A0E5, #e4cbfd)`,
-          backgroundSize: "contain",
-          backgroundPosition: "right",
-          backgroundRepeat: "no-repeat",
+          backgroundSize: 'contain',
+          backgroundPosition: 'right',
+          backgroundRepeat: 'no-repeat',
         }}
       >
         <div className="root-layout p-6">
-          <Header/>
+          <Header />
           <Container
             maxW="100%"
             minH={`calc(100% - 48px)`}

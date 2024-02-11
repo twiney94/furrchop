@@ -1,24 +1,24 @@
-import "./App.css";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import './App.css';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Outlet,
   Route,
   RouterProvider,
-} from "react-router-dom";
-import { AuthProvider } from "./hooks/useAuth";
+} from 'react-router-dom';
+import { AuthProvider } from './hooks/useAuth';
 
 // Pages
-import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
-import BaseLayout from "./layouts/BaseLayout";
-import SearchPage from "./pages/SearchPage";
-import MainLayout from "./layouts/MainLayout";
-import BookingPage from "./pages/BookingPage";
-import NotFound from "./pages/NotFound";
-import AuthPage from "./pages/AuthPage";
-import { UnloggedRoute, ProtectedRoute } from "./components/ProtectedRoute";
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import BaseLayout from './layouts/BaseLayout';
+import SearchPage from './pages/SearchPage';
+import MainLayout from './layouts/MainLayout';
+import BookingPage from './pages/BookingPage';
+import NotFound from './pages/NotFound';
+import AuthPage from './pages/AuthPage';
+import { UnloggedRoute, ProtectedRoute } from './components/ProtectedRoute';
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -28,15 +28,15 @@ const theme = extendTheme({
   },
   colors: {
     brand: {
-      100: "#e4cbfd",
-      200: "#d8b2fc",
-      300: "#cc99fb",
-      400: "#c080fa",
-      500: "#beadfa",
-      600: "#b58df9",
-      700: "#ac6df8",
-      800: "#a34df7",
-      900: "#a68cf7",
+      100: '#e4cbfd',
+      200: '#d8b2fc',
+      300: '#cc99fb',
+      400: '#c080fa',
+      500: '#beadfa',
+      600: '#b58df9',
+      700: '#ac6df8',
+      800: '#a34df7',
+      900: '#a68cf7',
     },
   },
 });
