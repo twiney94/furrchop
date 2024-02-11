@@ -18,7 +18,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\BookingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
@@ -110,7 +110,7 @@ class Booking
     private ?\DateTimeInterface $endDateTime = null;
 
     #[ORM\ManyToOne(targetEntity: Service::class)]
-    private ?Service $service = null;
+    private Service $service;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $comment = null;
@@ -119,10 +119,12 @@ class Booking
     private ?string $status = StatusEnum::VALIDATED;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    private ?User $user = null;
+    #[Assert\NotNull]
+    private User $user;
 
     #[ORM\ManyToOne(targetEntity: Shop::class)]
-    private ?Shop $shop = null;
+    #[Assert\NotNull]
+    private Shop $shop;
 
     public function getId(): ?int
     {
