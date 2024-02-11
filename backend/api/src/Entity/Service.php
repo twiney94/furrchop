@@ -22,24 +22,24 @@ use Doctrine\ORM\Mapping as ORM;
         new Get(),
         new GetCollection(),
         new Patch(
-            security: "is_granted('ROLE_ADMIN') or object.getShop().getUser() == user",
+            security: "is_granted('SERVICE_EDIT', object)",
         ),
         new Delete(
-            security: "is_granted('ROLE_ADMIN') or object.getShop().getUser() == user",
+            security: "is_granted('SERVICE_DELETE', object)",
         ),
         new Put(
-            security: "is_granted('ROLE_ADMIN') or object.getShop().getUser() == user",
+            security: "is_granted('SERVICE_EDIT', object)",
         ),
         new Post(
-            security: "is_granted('ROLE_ADMIN') or object.getShop().getUser() == user",
+            securityPostDenormalize: "is_granted('SERVICE_CREATE', object)"
         )
     ],
-    normalizationContext: ['groups' =>
-        [
-            'service:read',
-            'service:write',
-        ]
-    ],
+//    normalizationContext: ['groups' =>
+//        [
+//            'service:read',
+//            'service:write',
+//        ]
+//    ],
 
 )]
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
@@ -77,7 +77,6 @@ class Service
     {
         return $this->id;
     }
-
 
 
     public function getName(): ?string

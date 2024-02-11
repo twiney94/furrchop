@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -13,6 +14,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Controller\BookingController;
+use App\DataProvider\BookingProvider;
 use App\Enum\Booking\StatusEnum;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\BookingRepository;
@@ -78,7 +80,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
         ),
         new GetCollection(
-            security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
+            provider: BookingProvider::class
         ),
         new Patch(
             security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
@@ -109,7 +111,7 @@ class Booking
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
     private ?\DateTimeInterface $endDateTime = null;
 
-    #[ORM\ManyToOne(targetEntity: Service::class)]
+    #[ORM\ManyToOne(targetEntity: Service::class, inversedBy: 'bookings')]
     private Service $service;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -118,19 +120,18 @@ class Booking
     #[ORM\Column(length: 255)]
     private ?string $status = StatusEnum::VALIDATED;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[Assert\NotNull]
-    private User $user;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'bookings')]
+    private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Shop::class)]
+    #[ORM\ManyToOne(targetEntity: Shop::class, inversedBy: 'bookings')]
     #[Assert\NotNull]
-    private Shop $shop;
+    private ?Shop $shop = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
 
     public function getService(): ?Service
     {

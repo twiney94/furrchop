@@ -43,7 +43,7 @@ class Shop
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'shops')]
     private ?User $user = null;
 
     #[ORM\Column(length: 255, unique: true)]
