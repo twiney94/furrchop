@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Enum\Booking\StatusEnum;
 use App\Repository\ShopRepository;
 use App\Repository\UserRepository;
 use Psr\Log\LoggerInterface;
@@ -63,6 +64,9 @@ class ShopScheduleController extends AbstractController
             }
 
             $bookings = $employee->getBookings();
+            $bookings = $bookings->filter(function ($booking) {
+                return $booking->getStatus() === StatusEnum::VALIDATED;
+            });
             foreach ($bookings as $booking) {
                 $bookingDate = $booking->getBeginDateTime();
                 $bookingEndDate = $booking->getEndDateTime();
