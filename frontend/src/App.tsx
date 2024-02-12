@@ -59,7 +59,7 @@ const router = createBrowserRouter(
       <Route element={<MainLayout />}>
         <Route path="search" element={<SearchPage />} />
         <Route
-          path="book"
+          path="book/:shopId"
           element={
             <ProtectedRoute>
               <BookingPage />

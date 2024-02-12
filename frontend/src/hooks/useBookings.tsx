@@ -8,6 +8,15 @@ interface Booking {
   // Define other booking properties
 }
 
+interface Service {
+  id: string;
+  shop: string;
+  name: string;
+  description: string;
+  price: number;
+  duration: number;
+}
+
 interface BookingsContextType {
   bookings: Booking[] | null;
   loading: boolean;
@@ -15,6 +24,7 @@ interface BookingsContextType {
   fetchBookings: () => Promise<void>;
   createBooking: (bookingDetails: any) => Promise<void>;
   updateBooking: (id: string, bookingDetails: any) => Promise<void>;
+  getServices: (shopId: string) => Promise<void>;
 }
 
 const defaultContextValue: BookingsContextType = {
@@ -24,11 +34,16 @@ const defaultContextValue: BookingsContextType = {
   fetchBookings: async () => {},
   createBooking: async () => {},
   updateBooking: async () => {},
+  getServices: async () => {},
 };
 
 const BookingsContext = createContext<BookingsContextType>(defaultContextValue);
 
-export const BookingsProvider = ({ children }: { children: React.ReactNode }) => {
+export const BookingsProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [bookings, setBookings] = useState<Booking[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -95,6 +110,23 @@ export const BookingsProvider = ({ children }: { children: React.ReactNode }) =>
     }
   };
 
+  const getServices = async (shopId: string) => {
+    console.log("getting services");
+    setLoading(true);
+    try {
+      const response = await httpCall("GET", `services?shop.id=${shopId}`, {});
+      return response.data;
+    } catch (error) {
+      setError("Failed to fetch services.");
+      toast({
+        title: "Error",
+        description: "Failed to fetch services.",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const value = useMemo(
     () => ({
@@ -104,6 +136,7 @@ export const BookingsProvider = ({ children }: { children: React.ReactNode }) =>
       fetchBookings,
       createBooking,
       updateBooking,
+      getServices,
     }),
     [bookings, loading, error]
   );
