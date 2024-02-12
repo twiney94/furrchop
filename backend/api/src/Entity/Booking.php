@@ -127,6 +127,10 @@ class Booking
     #[Assert\NotNull]
     private ?Shop $shop = null;
 
+    #[ORM\ManyToOne(inversedBy: 'bookings')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Employee $employee = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -205,5 +209,17 @@ class Booking
     public function setEndDateTime(?\DateTimeInterface $endDateTime): void
     {
         $this->endDateTime = $endDateTime;
+    }
+
+    public function getEmployee(): ?Employee
+    {
+        return $this->employee;
+    }
+
+    public function setEmployee(?Employee $employee): static
+    {
+        $this->employee = $employee;
+
+        return $this;
     }
 }

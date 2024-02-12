@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
@@ -11,10 +12,12 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\ShopScheduleController;
 use App\Repository\ShopRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ShopRepository::class)]
 #[ApiResource(
@@ -35,6 +38,15 @@ use Doctrine\ORM\Mapping as ORM;
         )
     ]
 )]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/shops/{id}/schedules',
+            controller: ShopScheduleController::class,
+            name: 'get shop schedules'
+        )
+    ]
+)]
 #[ApiFilter(SearchFilter::class, properties: ['services.name' => 'ipartial', 'name' => 'ipartial', 'description' => 'ipartial', 'openHours' => 'ipartial', 'openDays' => 'ipartial', 'address' => 'iexact'])]
 class Shop
 {
@@ -47,31 +59,38 @@ class Shop
     private ?User $user = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Groups(['shop:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['shop:schedules'])]
     private ?array $openHours = [];
 
     #[ORM\Column(length: 255)]
+    #[Groups(['shop:schedules'])]
     private ?array $openDays = [];
 
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
-    #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Service::class )]
+    #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Service::class)]
     private Collection $services;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Booking::class)]
     private Collection $bookings;
+
+    #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Employee::class, orphanRemoval: true)]
+    private Collection $employees;
 
 
     public function __construct()
     {
         $this->services = new ArrayCollection();
         $this->bookings = new ArrayCollection();
+        $this->employees = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,5 +207,36 @@ class Shop
     public function setOpenHours(?array $openHours): void
     {
         $this->openHours = $openHours;
+    }
+
+    /**
+     * @return Collection<int, Employee>
+     */
+    #[Groups(['shop:schedules'])]
+    public function getEmployees(): Collection
+    {
+        return $this->employees;
+    }
+
+    public function addEmployee(Employee $employee): static
+    {
+        if (!$this->employees->contains($employee)) {
+            $this->employees->add($employee);
+            $employee->setShop($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmployee(Employee $employee): static
+    {
+        if ($this->employees->removeElement($employee)) {
+            // set the owning side to null (unless already changed)
+            if ($employee->getShop() === $this) {
+                $employee->setShop(null);
+            }
+        }
+
+        return $this;
     }
 }
