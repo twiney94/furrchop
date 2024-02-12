@@ -1,18 +1,19 @@
-import { Box, Heading, Button } from "@chakra-ui/react";
-import { useAuth } from "../hooks/useAuth";
+import { Box, Heading, Card, Text, Icon } from "@chakra-ui/react";
+import { MdLocationOn } from "react-icons/md";
+import Services from "../components/booking/services/Services";
 
 const BookingPage = () => {
-
-  const logout = useAuth().logout;
-
   return (
-    <Box>
-      <Heading as="h1" size="2xl" textAlign="center" mb={8}>
-        <Button colorScheme="purple" onClick={() => logout()}>
-          Logout
-        </Button>
-        Book
-      </Heading>
+    <Box display={"flex"} justifyContent={"center"}>
+      <Card w={"70%"} p={8} textAlign="left">
+        <Heading as="h1" size="md" fontWeight={500}>
+          Los Santos - Paris 11
+        </Heading>
+        <Text fontSize="md" display={"flex"} gap={2} mb={8} textDecoration={"underline"} color={"gray.500"}>
+          <Icon as={MdLocationOn} /> 106 Av. de la République
+        </Text>
+        <Services />
+      </Card>
     </Box>
   );
 };

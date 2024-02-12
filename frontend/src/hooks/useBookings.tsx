@@ -15,7 +15,6 @@ interface BookingsContextType {
   fetchBookings: () => Promise<void>;
   createBooking: (bookingDetails: any) => Promise<void>;
   updateBooking: (id: string, bookingDetails: any) => Promise<void>;
-  deleteBooking: (id: string) => Promise<void>;
 }
 
 const defaultContextValue: BookingsContextType = {
@@ -25,7 +24,6 @@ const defaultContextValue: BookingsContextType = {
   fetchBookings: async () => {},
   createBooking: async () => {},
   updateBooking: async () => {},
-  deleteBooking: async () => {},
 };
 
 const BookingsContext = createContext<BookingsContextType>(defaultContextValue);
@@ -97,27 +95,6 @@ export const BookingsProvider = ({ children }: { children: React.ReactNode }) =>
     }
   };
 
-  const deleteBooking = async (id: string) => {
-    setLoading(true);
-    try {
-      await httpCall("DELETE", `bookings/${id}`, {});
-      toast({
-        title: "Success",
-        description: "Booking deleted successfully.",
-        status: "success",
-      });
-      fetchBookings(); // Refresh the list
-    } catch (error) {
-      setError("Failed to delete booking.");
-      toast({
-        title: "Error",
-        description: "Failed to delete booking.",
-        status: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const value = useMemo(
     () => ({
@@ -127,7 +104,6 @@ export const BookingsProvider = ({ children }: { children: React.ReactNode }) =>
       fetchBookings,
       createBooking,
       updateBooking,
-      deleteBooking,
     }),
     [bookings, loading, error]
   );
