@@ -4,13 +4,45 @@ namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Controller\RegistrationController;
 use App\Repository\ServiceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Patch(
+            security: "is_granted('SERVICE_EDIT', object)",
+        ),
+        new Delete(
+            security: "is_granted('SERVICE_DELETE', object)",
+        ),
+        new Put(
+            security: "is_granted('SERVICE_EDIT', object)",
+        ),
+        new Post(
+            securityPostDenormalize: "is_granted('SERVICE_CREATE', object)"
+        )
+    ],
+//    normalizationContext: ['groups' =>
+//        [
+//            'service:read',
+//            'service:write',
+//        ]
+//    ],
+
+)]
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
-#[ApiFilter(SearchFilter::class, properties: ['services.name' => 'ipartial', 'name' => 'ipartial', 'description' => 'ipartial', 'openHours' => 'ipartial', 'openDays' => 'ipartial', 'address' => 'iexact'])]
 class Service
 {
     #[ORM\Id]
@@ -18,8 +50,8 @@ class Service
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToMany(targetEntity: Shop::class, inversedBy: 'services')]
-    private Collection $shopId;
+    #[ORM\ManyToOne(targetEntity: Shop::class, inversedBy: 'services')]
+    private ?Shop $shop;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
@@ -33,12 +65,12 @@ class Service
     #[ORM\Column]
     private ?int $duration = null;
 
-    #[ORM\OneToOne(mappedBy: 'serviceId', cascade: ['persist', 'remove'])]
-    private ?Booking $booking = null;
+    #[ORM\OneToMany(mappedBy: 'service', targetEntity: Booking::class)]
+    private Collection $bookings;
 
     public function __construct()
     {
-        $this->shopId = new ArrayCollection();
+        $this->bookings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -46,29 +78,6 @@ class Service
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, Shop>
-     */
-    public function getShopId(): Collection
-    {
-        return $this->shopId;
-    }
-
-    public function addShopId(Shop $shopId): static
-    {
-        if (!$this->shopId->contains($shopId)) {
-            $this->shopId->add($shopId);
-        }
-
-        return $this;
-    }
-
-    public function removeShopId(Shop $shopId): static
-    {
-        $this->shopId->removeElement($shopId);
-
-        return $this;
-    }
 
     public function getName(): ?string
     {
@@ -118,19 +127,34 @@ class Service
         return $this;
     }
 
-    public function getBooking(): ?Booking
+    public function getShop(): ?Shop
     {
-        return $this->booking;
+        return $this->shop;
     }
 
-    public function setBooking(Booking $booking): static
+    public function setShop(?Shop $shop): void
     {
-        // set the owning side of the relation if necessary
-        if ($booking->getServiceId() !== $this) {
-            $booking->setServiceId($this);
+        $this->shop = $shop;
+    }
+
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings[] = $booking;
+            $booking->setService($this);
         }
 
-        $this->booking = $booking;
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        $this->bookings->removeElement($booking);
 
         return $this;
     }

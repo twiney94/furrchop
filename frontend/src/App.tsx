@@ -19,6 +19,7 @@ import BookingPage from "./pages/BookingPage";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
 import { UnloggedRoute, ProtectedRoute } from "./components/ProtectedRoute";
+import { ProfilePage } from "./pages/ProfilePage";
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -94,7 +95,15 @@ const router = createBrowserRouter(
           path="profile"
           element={
             <ProtectedRoute>
-              <BookingPage />
+              <ProfilePage mode="past-bookings" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="me"
+          element={
+            <ProtectedRoute>
+              <ProfilePage mode="me" />
             </ProtectedRoute>
           }
         />

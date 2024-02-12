@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -13,12 +14,13 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Controller\BookingController;
+use App\DataProvider\BookingProvider;
 use App\Enum\Booking\StatusEnum;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\BookingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
@@ -48,7 +50,7 @@ use Doctrine\ORM\Mapping as ORM;
                         'description' => 'Booking has been canceled',
                         'content' => [
                             'application/json' => [
-                                'example' => ['message' =>'Booking has been canceled'],
+                                'example' => ['message' => 'Booking has been canceled'],
                             ],
                         ],
                     ],
@@ -71,13 +73,24 @@ use Doctrine\ORM\Mapping as ORM;
                 ],
             ],
             openapi: true,
+            security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
             name: 'cancel booking',
         ),
-        new Get(),
-        new GetCollection(),
-        new Patch(),
-        new Delete(),
-        new Put(),
+        new Get(
+            security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
+        ),
+        new GetCollection(
+            provider: BookingProvider::class
+        ),
+        new Patch(
+            security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN')",
+        ),
+        new Put(
+            security: "is_granted('ROLE_ADMIN') or object == user",
+        ),
         new Post()
     ],
 )]
@@ -92,60 +105,46 @@ class Booking
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateTime = null;
+    #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTimeInterface $beginDateTime = null;
 
-    #[ORM\OneToOne(inversedBy: 'booking', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Service $serviceId = null;
+    #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
+    private ?\DateTimeInterface $endDateTime = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $animal = null;
+    #[ORM\ManyToOne(targetEntity: Service::class, inversedBy: 'bookings')]
+    private Service $service;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $comment = null;
 
     #[ORM\Column(length: 255)]
     private ?string $status = StatusEnum::VALIDATED;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'bookings')]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(targetEntity: Shop::class, inversedBy: 'bookings')]
+    #[Assert\NotNull]
+    private ?Shop $shop = null;
+
+    #[ORM\ManyToOne(inversedBy: 'bookings')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Employee $employee = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDateTime(): ?\DateTimeInterface
+
+    public function getService(): ?Service
     {
-        return $this->dateTime;
+        return $this->service;
     }
 
-    public function setDateTime(\DateTimeInterface $dateTime): static
+    public function setService(Service $service): static
     {
-        $this->dateTime = $dateTime;
-
-        return $this;
-    }
-
-    public function getServiceId(): ?Service
-    {
-        return $this->serviceId;
-    }
-
-    public function setServiceId(Service $serviceId): static
-    {
-        $this->serviceId = $serviceId;
-
-        return $this;
-    }
-
-    public function getAnimal(): ?string
-    {
-        return $this->animal;
-    }
-
-    public function setAnimal(string $animal): static
-    {
-        $this->animal = $animal;
+        $this->service = $service;
 
         return $this;
     }
@@ -170,5 +169,57 @@ class Booking
     public function setStatus(?string $status): void
     {
         $this->status = $status;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): void
+    {
+        $this->user = $user;
+    }
+
+    public function getShop(): ?Shop
+    {
+        return $this->shop;
+    }
+
+    public function setShop(?Shop $shop): void
+    {
+        $this->shop = $shop;
+    }
+
+    public function getBeginDateTime(): ?\DateTimeInterface
+    {
+        return $this->beginDateTime;
+    }
+
+    public function setBeginDateTime(?\DateTimeInterface $beginDateTime): void
+    {
+        $this->beginDateTime = $beginDateTime;
+    }
+
+    public function getEndDateTime(): ?\DateTimeInterface
+    {
+        return $this->endDateTime;
+    }
+
+    public function setEndDateTime(?\DateTimeInterface $endDateTime): void
+    {
+        $this->endDateTime = $endDateTime;
+    }
+
+    public function getEmployee(): ?Employee
+    {
+        return $this->employee;
+    }
+
+    public function setEmployee(?Employee $employee): static
+    {
+        $this->employee = $employee;
+
+        return $this;
     }
 }
