@@ -6,6 +6,8 @@ use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
+// ALl tests must extend ("extends") this class (DefaultApiTestCase) to have access to the methods
+
 class DefaultApiTestCase extends ApiTestCase
 {
     public const ENDPOINT_SERVICES = '/services';
