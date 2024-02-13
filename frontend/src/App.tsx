@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
 import { UnloggedRoute, ProtectedRoute } from "./components/ProtectedRoute";
 import { ProfilePage } from "./pages/ProfilePage";
+import { BookingsProvider } from "./hooks/useBookings";
 import WaitReview from "./components/profile/WaitReview";
 import AlreadyReview from "./components/profile/AlreadyReview";
 import WaitReviewPage from "./components/profile/WaitReview";
@@ -52,6 +53,12 @@ const AuthProviderLayout = () => (
   </AuthProvider>
 );
 
+const BookingProviderLayout = () => (
+  <BookingsProvider>
+    <Outlet />
+  </BookingsProvider>
+);
+
 // Routes structure
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -62,14 +69,24 @@ const router = createBrowserRouter(
       </Route>
       <Route element={<MainLayout />}>
         <Route path="search" element={<SearchPage />} />
-        <Route
-          path="book"
-          element={
-            <ProtectedRoute>
-              <BookingPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route element={<BookingProviderLayout />}>
+          <Route
+            path="book/:shopId"
+            element={
+              <ProtectedRoute>
+                <BookingPage mode="landing" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="booking/:serviceId"
+            element={
+              <ProtectedRoute>
+                <BookingPage mode="confirmation" />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
         <Route
           path="login"
           element={

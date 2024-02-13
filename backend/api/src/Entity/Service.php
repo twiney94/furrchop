@@ -43,6 +43,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 )]
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
+#[ApiFilter(SearchFilter::class, properties: ['shop.id' => 'exact'])]
 class Service
 {
     #[ORM\Id]

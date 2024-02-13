@@ -27,10 +27,8 @@ class ShopScheduleController extends AbstractController
 
     public function __invoke(Request $request, SerializerInterface $serializer): Response
     {
-        $data = json_decode($request->getContent(), true);
-        $startDate = $data["startDate"] ?? null;
-        $endDate = $data["endDate"] ?? null;
-
+        $startDate = $request->query->get('startDate');
+        $endDate = $request->query->get('endDate');
 
         if (!$startDate || !$endDate) {
             throw new BadRequestHttpException("Start and end date are required to access the shop schedule.");

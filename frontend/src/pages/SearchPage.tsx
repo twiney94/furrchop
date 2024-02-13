@@ -10,6 +10,7 @@ import "./searchpage.module.css";
 // type data
 import type ChopperType from "../types/chopper";
 import { StarIcon } from "@chakra-ui/icons";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const results = [
   {
@@ -168,6 +169,7 @@ const results = [
 
 const SearchPage = () => {
   const mapRef = useRef<MapRef>();
+  const navigate = useNavigate();
 
   const handleChopperClick = (chopper: ChopperType) => {
     console.log("Chopper clicked", chopper.id);
@@ -206,13 +208,13 @@ const SearchPage = () => {
             className="flex flex-col justify-start"
           >
             {results.map((result) => (
-              <Box onClick={() => handleChopperClick(result)}>
+              <div onClick={() => handleChopperClick(result)}>
                 <Chopper
                   key={result.id}
                   infos={result}
                   id={`chopper-${result.id}`}
                 />
-              </Box>
+              </div>
             ))}
             {results.map((result) => (
               <Chopper
