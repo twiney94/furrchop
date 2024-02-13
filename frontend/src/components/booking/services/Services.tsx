@@ -1,4 +1,4 @@
-import { Flex, Heading, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import ServiceCard from "./ServiceCard";
 import { useBookings } from "../../../hooks/useBookings";
 import { useEffect, useState } from "react";

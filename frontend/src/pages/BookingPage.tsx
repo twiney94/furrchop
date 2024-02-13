@@ -18,13 +18,14 @@ const BookingPage = ({ mode }: { mode: string }) => {
   const { getShop, selectedShop, setSelectedShop, selectedService } =
     useBookings();
 
-  if (mode === "landing") {
     useEffect(() => {
       const getShopInfos = async () => {
         if (!selectedShop) setSelectedShop(await getShop(shopId));
       };
       getShopInfos();
-    }, [shopId]);
+    }, []);
+  if (mode === "landing") {
+
     if (!selectedShop) return <div>Loading...</div>;
 
     return (

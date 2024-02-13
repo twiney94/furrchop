@@ -6,10 +6,12 @@ import { useBookings } from "../../../hooks/useBookings";
 
 export const ServiceCard = ({ service, mode }: { service: Service, mode?: "confirmation" }) => {
   const navigate = useNavigate();
-  const { setSelectedService } = useBookings();
+  const { selectedService, setSelectedService } = useBookings();
 
   const setServiceAndNavigate = (service: Service, cancel?: string) => () => {
+    console.log("setting service", service);
     setSelectedService(service);
+    console.log(selectedService)
     if (cancel) {
       navigate(`/book/`);
       return;
