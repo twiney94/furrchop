@@ -74,6 +74,14 @@ const router = createBrowserRouter(
               </ProtectedRoute>
             }
           />
+          <Route
+            path="booking/:serviceId"
+            element={
+              <ProtectedRoute>
+                <BookingPage  />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route
           path="login"

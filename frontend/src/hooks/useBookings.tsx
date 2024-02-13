@@ -9,13 +9,12 @@ interface Booking {
   // Define other booking properties
 }
 
-interface Service {
-  id: string;
-  shop: string;
-  name: string;
+export interface Service {
   description: string;
-  price: number;
   duration: number;
+  id: string;
+  name: string;
+  price: number;
 }
 
 interface BookingsContextType {
@@ -26,6 +25,7 @@ interface BookingsContextType {
   createBooking: (bookingDetails: any) => Promise<void>;
   updateBooking: (id: string, bookingDetails: any) => Promise<void>;
   getServices: (shopId: string) => Promise<void>;
+  getShop: (shopId: string) => Promise<void>;
 }
 
 const defaultContextValue: BookingsContextType = {
@@ -36,6 +36,7 @@ const defaultContextValue: BookingsContextType = {
   createBooking: async () => {},
   updateBooking: async () => {},
   getServices: async () => {},
+  getShop: async () => {},
 };
 
 const BookingsContext = createContext<BookingsContextType>(defaultContextValue);
@@ -115,13 +116,24 @@ export const BookingsProvider = ({
     setLoading(true);
     console.log("Getting services");
     try {
-      const response: AxiosResponse<any, any> = await httpCall("GET", `services?shop.id=${shopId}`, {});
+      const response: AxiosResponse<any, any> = await httpCall(
+        "GET",
+        `services?shop.id=${shopId}`,
+        {}
+      );
       console.log(response);
       // Accessing the hydra:member property which contains the array of services
-      if (response && response.data?.['hydra:member'] && Array.isArray(response.data?.['hydra:member'])) {
-        return response.data?.['hydra:member'];
+      if (
+        response &&
+        response.data?.["hydra:member"] &&
+        Array.isArray(response.data?.["hydra:member"])
+      ) {
+        return response.data?.["hydra:member"];
       } else {
-        console.error("Response from services endpoint does not contain hydra:member as an array:", response);
+        console.error(
+          "Response from services endpoint does not contain hydra:member as an array:",
+          response
+        );
         return [];
       }
     } catch (error) {
@@ -136,8 +148,24 @@ export const BookingsProvider = ({
       setLoading(false);
     }
   };
-  
-  
+
+  const getShop = async (shopId: string) => {
+    setLoading(true);
+    try {
+      const response = await httpCall("GET", `shops/${shopId}`, {});
+      return response.data;
+    } catch (error) {
+      setError("Failed to fetch shop.");
+      toast({
+        title: "Error",
+        description: "Failed to fetch shop.",
+        status: "error",
+      });
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const value = useMemo(
     () => ({
@@ -148,6 +176,7 @@ export const BookingsProvider = ({
       createBooking,
       updateBooking,
       getServices,
+      getShop,
     }),
     [bookings, loading, error]
   );

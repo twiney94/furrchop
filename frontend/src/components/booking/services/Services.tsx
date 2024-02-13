@@ -2,7 +2,7 @@ import { Flex, Heading, Text } from "@chakra-ui/react";
 import ServiceCard from "./ServiceCard";
 import { useBookings } from "../../../hooks/useBookings";
 import { useEffect, useState } from "react";
-import type { Service } from "./ServiceCard";
+import type { Service } from "../../../hooks/useBookings";
 
 export const Services = ({ shopId }: { shopId: string }) => {
   const { getServices, loading } = useBookings();
@@ -35,7 +35,7 @@ export const Services = ({ shopId }: { shopId: string }) => {
     } else {
       console.error("shopId is undefined or empty");
     }
-  }, [shopId]);
+  }, []);
 
   return (
     <Flex direction="column" gap={4}>
