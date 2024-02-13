@@ -21,7 +21,7 @@ export const ServiceCard = ({
         navigate(`/book/${selectedShop.id}`);
         return;
       }
-      navigate(`/booking/${service.id}`);
+      navigate(`/booking/${selectedShop.id}`);
     };
 
   return (

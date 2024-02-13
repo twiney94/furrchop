@@ -16,9 +16,9 @@ import ServiceCard from "../components/booking/services/ServiceCard";
 import { BookingCalendar } from "../components/booking/BookingCalendar";
 
 const BookingPage = ({ mode }: { mode: string }) => {
-  const shopId = window.location.pathname.split("/")[2];
   const { getShop, selectedShop, setSelectedShop, selectedService } =
     useBookings();
+  const shopId = window.location.pathname.split("/")[2];
 
   useEffect(() => {
     const getShopInfos = async () => {

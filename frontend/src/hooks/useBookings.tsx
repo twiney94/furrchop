@@ -3,6 +3,7 @@ import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
+import { ShopSchedule } from "../../types/schedule.d.ts";
 
 interface Booking {
   id: string;
@@ -237,12 +238,6 @@ export const BookingsProvider = ({
   ) => {
     setLoading(true);
     try {
-      const body = {
-        startDate: beginDate,
-        endDate: endDate,
-      };
-
-      console.log(body);
       const response = await httpCall(
         "GET",
         `shops/${shopId}/schedules?startDate=${beginDate}&endDate=${endDate}`,

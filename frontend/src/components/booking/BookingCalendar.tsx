@@ -1,17 +1,16 @@
-import { Button, Heading, Flex, Card } from "@chakra-ui/react";
-import dayHours from "./day_hours.json";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Button, Heading, Flex, Card, Select } from "@chakra-ui/react";
 import { useBookings } from "../../hooks/useBookings";
+import dayHours from "./day_hours.json"; // Make sure to type this import if possible
+import type {
+  BookingCalendarProps,
+  DayHour,
+  Employee,
+  UseBookingsReturn,
+} from "../../types/schedule";
 
-interface Slot {
-  military_format: string;
-  twenty_four_hour_format: string;
-  standard_format: string;
-  time_of_day: string;
-}
-
-const generateDateRange = (startDate: Date, endDate: Date) => {
-  let dates = [];
+const generateDateRange = (startDate: Date, endDate: Date): Date[] => {
+  let dates: Date[] = [];
   let currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
@@ -22,141 +21,195 @@ const generateDateRange = (startDate: Date, endDate: Date) => {
   return dates;
 };
 
-/**
-[
-    {
-        "employee": {
-            "id": 1,
-            "name": "Juanito Rodriguez",
-            "schedules": [
-                {
-                    "id": 1,
-                    "employee": "\/employees\/1",
-                        "dayOfWeek": "Monday",
-                        "startTime": "1970-01-01T09:00:00+00:00",
-                        "endTime": "1970-01-01T17:00:00+00:00"
-                },
-                {
-                    "id": 2,
-                    "employee": "\/employees\/1",
-                    "dayOfWeek": "Tuesday",
-                    "startTime": "1970-01-01T09:00:00+00:00",
-                    "endTime": "1970-01-01T17:00:00+00:00"
-                },
-                {
-                    "id": 3,
-                    "employee": "\/employees\/1",
-                    "dayOfWeek": "Wednesday",
-                    "startTime": "1970-01-01T09:00:00+00:00",
-                    "endTime": "1970-01-01T17:00:00+00:00"
-                },
-                {
-                    "id": 4,
-                    "employee": "\/employees\/1",
-                    "dayOfWeek": "Thursday",
-                    "startTime": "1970-01-01T09:00:00+00:00",
-                    "endTime": "1970-01-01T17:00:00+00:00"
-                },
-                {
-                    "id": 5,
-                    "employee": "\/employees\/1",
-                    "dayOfWeek": "Friday",
-                    "startTime": "1970-01-01T09:00:00+00:00",
-                    "endTime": "1970-01-01T17:00:00+00:00"
-                }
-            ],
-            "leaves": [
-                {
-                    "id": 1,
-                    "beginsAt": "2024-02-16T09:30:07+00:00",
-                    "endsAt": "2024-02-17T16:30:07+00:00",
-                    "employee": "\/employees\/1"
-                }
-            ],
-            "bookings": [
-                {
-                    "id": 1,
-                    "beginDateTime": "2024-02-15T11:00:00+00:00",
-                    "endDateTime": "2024-02-15T11:30:00+00:00",
-                    "service": "\/services\/1",
-                    "comment": null,
-                    "status": "validated",
-                    "user": "\/users\/1eec9958-af2d-63a0-aaa3-378fb6639009",
-                    "shop": "\/shops\/1",
-                    "employee": "\/employees\/1"
-                }
-            ]
-        }
+const calculateCombinedAvailability = (
+  date: Date,
+  dayHours: DayHour[],
+  employees: Employee[]
+): DayHour[] => {
+  let combinedSlots: DayHour[] = [];
+
+  employees.forEach((employee) => {
+    const employeeSlots = calculateAvailability(employee, date, dayHours);
+    combinedSlots = [...combinedSlots, ...employeeSlots];
+  });
+
+  // Deduplicate the slots based on the twenty_four_hour_format
+  const uniqueSlots = combinedSlots.reduce(
+    (acc: DayHour[], current: DayHour) => {
+      const x = acc.find(
+        (item) =>
+          item.twenty_four_hour_format === current.twenty_four_hour_format
+      );
+      if (!x) {
+        return acc.concat([current]);
+      } else {
+        return acc;
+      }
     },
-    {
-        "employee": {
-            "id": 2,
-            "name": "Michelle Gonzales",
-            "schedules": [],
-            "leaves": [],
-            "bookings": []
-        }
-    },
-    {
-        "employee": {
-            "id": 3,
-            "name": "Papito Munito",
-            "schedules": [],
-            "leaves": [],
-            "bookings": []
-        }
+    []
+  );
+
+  return uniqueSlots;
+};
+
+const calculateAvailability = (
+  employee: Employee,
+  date: Date,
+  dayHours: DayHour[]
+): DayHour[] => {
+  const dayOfWeek = date.toLocaleString("en-us", { weekday: "long" });
+  const schedules = employee.schedules.filter(
+    (schedule: { dayOfWeek: string }) => schedule.dayOfWeek === dayOfWeek
+  );
+  const leaves = employee.leaves;
+  const bookings = employee.bookings;
+
+  let availableSlots = dayHours.filter((slot) => {
+    let isWorkingHour = false;
+    schedules.forEach((schedule: { startTime: string; endTime: string }) => {
+      const startTime = schedule.startTime.split("T")[1];
+      const endTime = schedule.endTime.split("T")[1];
+      if (
+        slot.twenty_four_hour_format >= startTime &&
+        slot.twenty_four_hour_format < endTime
+      ) {
+        isWorkingHour = true;
+      }
+    });
+    return isWorkingHour;
+  });
+
+  leaves.forEach(
+    (leave: {
+      beginsAt: string | number | Date;
+      endsAt: string | number | Date;
+    }) => {
+      const leaveStart = new Date(leave.beginsAt).getTime();
+      const leaveEnd = new Date(leave.endsAt).getTime();
+      availableSlots = availableSlots.filter((slot) => {
+        const slotTime = new Date(
+          `${date.toDateString()} ${slot.twenty_four_hour_format}`
+        ).getTime();
+        return slotTime < leaveStart || slotTime >= leaveEnd;
+      });
     }
-]
- */
+  );
 
-// We want to filter timeSlots based on employees availability.
-// A button will display if one of the employee is available on the slot
-// Availability is based on the shopSchedule, more preciseley on schedules, leaves and bookings of each employee
-// We have to calculate the available time slots based on the shopSchedule
+  bookings.forEach(
+    (booking: {
+      beginDateTime: string | number | Date;
+      endDateTime: string | number | Date;
+    }) => {
+      const bookingStart = new Date(booking.beginDateTime).getTime();
+      const bookingEnd = new Date(booking.endDateTime).getTime();
+      availableSlots = availableSlots.filter((slot) => {
+        const slotTime = new Date(
+          `${date.toDateString()} ${slot.twenty_four_hour_format}`
+        ).getTime();
+        return slotTime < bookingStart || slotTime >= bookingEnd;
+      });
+    }
+  );
 
-export const BookingCalendar = ({ shopId }: { shopId: string }) => {
+  return availableSlots;
+};
+
+export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
   const beginDate = new Date();
-  const endDate = new Date(beginDate.getTime() + 6 * 24 * 60 * 60 * 1000); // 6 days added to include the total of 7 days including the start date
+  const endDate = new Date(beginDate.getTime() + 6 * 24 * 60 * 60 * 1000);
   const dateRange = generateDateRange(beginDate, endDate);
-  const { shopSchedule, getSchedule } = useBookings();
+  const { shopSchedule, getSchedule }: UseBookingsReturn = useBookings();
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
 
   useEffect(() => {
-    const getShopSchedule = async () => {
-      await getSchedule(shopId, beginDate.toISOString(), endDate.toISOString());
-    };
-    getShopSchedule();
+    getSchedule(shopId, beginDate.toISOString(), endDate.toISOString());
   }, []);
 
-  const renderTimeSlots = (slots: Slot[]) => {    
-
-    return slots.map((slot, index) => (
-      <Button key={index} size="sm" m={1} fontWeight={400}>
-        {slot.twenty_four_hour_format}
-      </Button>
-    ));
+  const handleEmployeeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = e.target.value;
+    setSelectedEmployeeId(id);
   };
 
   return (
     <Card p={8}>
-      {shopSchedule?.map((employee, index) => {
-        return (
-          <Flex key={index} justifyContent={"center"} gap={4}>
+      <Select
+        placeholder="Select an employee"
+        onChange={handleEmployeeChange}
+        mb={4}
+      >
+        <option value="all">All Employees</option>
+        {shopSchedule?.map((employee) => (
+          <option key={employee.employee.id} value={employee.employee.id}>
             {employee.employee.name}
-          </Flex>
-        );
-      })    }
-      <Flex justifyContent={"center"} gap={4}>
-        {dateRange.map((date, index) => (
-          <Flex direction={"column"} key={index}>
-            <Heading size="sm" mb={2} fontWeight={400}>
-              {date.toDateString()}
-            </Heading>
-            <Flex flexWrap="wrap" direction={"column"} gap={2}>
-              {renderTimeSlots(dayHours)}
-            </Flex>
-          </Flex>
+          </option>
         ))}
-      </Flex>
+      </Select>
+
+      {selectedEmployeeId === "all" ? (
+        <Flex direction={"column"}>
+          <Heading size="sm" mb={2}>
+            All Employees
+          </Heading>
+          <Flex direction="row" mb={4} gap={8} justify={"center"}>
+            {dateRange.map((date, dateIndex) => (
+              <Flex direction="column" key={dateIndex}>
+                <Heading size="sm" mb={2} fontWeight={400}>
+                  {date.toDateString()}
+                </Heading>
+                <Flex flexWrap="wrap" direction="column">
+                  {calculateCombinedAvailability(
+                    date,
+                    dayHours,
+                    shopSchedule.map((employee) => employee.employee)
+                  ).map((slot, slotIndex) => (
+                    <Button key={slotIndex} size="sm" m={1}>
+                      {slot.twenty_four_hour_format}
+                    </Button>
+                  ))}
+                </Flex>
+              </Flex>
+            ))}
+          </Flex>
+        </Flex>
+      ) : (
+        shopSchedule
+          ?.filter(
+            (employee) => String(employee.employee.id) === selectedEmployeeId
+          )
+          .map((employee, index) => (
+            <Flex direction={"column"}>
+              <Heading size="sm" mb={2}>
+                {employee.employee.name}
+              </Heading>
+              <Flex
+                key={index}
+                direction="row"
+                mb={4}
+                justify={"center"}
+                gap={8}
+              >
+                {dateRange.map((date, dateIndex) => (
+                  <Flex direction="column" key={dateIndex}>
+                    <Heading size="sm" mb={2} fontWeight={400}>
+                      {date.toDateString()}
+                    </Heading>
+                    <Flex flexWrap="wrap" direction="column">
+                      {calculateAvailability(
+                        employee.employee,
+                        date,
+                        dayHours
+                      ).map((slot, slotIndex) => (
+                        <Button key={slotIndex} size="sm" m={1}>
+                          {slot.twenty_four_hour_format}
+                        </Button>
+                      ))}
+                    </Flex>
+                  </Flex>
+                ))}
+              </Flex>
+            </Flex>
+          ))
+      )}
     </Card>
   );
 };
