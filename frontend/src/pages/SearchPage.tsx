@@ -208,7 +208,7 @@ const SearchPage = () => {
             className="flex flex-col justify-start"
           >
             {results.map((result) => (
-              <div onClick={() => navigate("/book/" + result.id)}>
+              <div onClick={() => handleChopperClick(result)}>
                 <Chopper
                   key={result.id}
                   infos={result}

@@ -5,6 +5,7 @@ import {
   Card,
   Text,
   Icon,
+  Flex,
   GridItem,
 } from "@chakra-ui/react";
 import { MdLocationOn } from "react-icons/md";
@@ -12,20 +13,21 @@ import Services from "../components/booking/services/Services";
 import { Service, useBookings } from "../hooks/useBookings";
 import { useEffect } from "react";
 import ServiceCard from "../components/booking/services/ServiceCard";
+import { BookingCalendar } from "../components/booking/BookingCalendar";
 
 const BookingPage = ({ mode }: { mode: string }) => {
   const shopId = window.location.pathname.split("/")[2];
   const { getShop, selectedShop, setSelectedShop, selectedService } =
     useBookings();
 
-    useEffect(() => {
-      const getShopInfos = async () => {
-        if (!selectedShop) setSelectedShop(await getShop(shopId));
-      };
-      getShopInfos();
-    }, []);
-  if (mode === "landing") {
+  useEffect(() => {
+    const getShopInfos = async () => {
+      if (!selectedShop) setSelectedShop(await getShop(shopId));
+    };
+    getShopInfos();
+  }, []);
 
+  if (mode === "landing") {
     if (!selectedShop) return <div>Loading...</div>;
 
     return (
@@ -73,7 +75,6 @@ const BookingPage = ({ mode }: { mode: string }) => {
       </Box>
     );
   } else {
-    console.log(selectedService);
     if (!selectedService) return <div>Loading...</div>;
 
     return (
@@ -93,10 +94,19 @@ const BookingPage = ({ mode }: { mode: string }) => {
             <Icon as={MdLocationOn} />
             {selectedShop.address}
           </Text>
-          <ServiceCard
-            service={selectedService as Service}
-            mode="confirmation"
-          />
+          <Flex gap={4} mb={8} direction={"column"}>
+            <Heading as="h1" size="md" color={"brand.300"} fontWeight={500}>
+              1. Selected service
+            </Heading>
+            <ServiceCard
+              service={selectedService as Service}
+              mode="confirmation"
+            />
+            <Heading as="h1" size="md" color={"brand.300"} fontWeight={500}>
+              2. Pick a date
+            </Heading>
+            <BookingCalendar shopId={shopId} />
+          </Flex>
         </Card>
       </Box>
     );

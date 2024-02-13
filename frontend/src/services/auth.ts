@@ -30,6 +30,7 @@ export const register = async (userDetails: {
   try {
     console.log(userDetails);
     const response = await httpCall("POST", "register", userDetails);
+    // Take each employee schedule
     return response.data;
   } catch (error) {
     throw error;

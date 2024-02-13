@@ -3,21 +3,26 @@ import type { Service } from "../../../hooks/useBookings";
 import { useNavigate } from "react-router-dom";
 import { useBookings } from "../../../hooks/useBookings";
 
-
-export const ServiceCard = ({ service, mode }: { service: Service, mode?: "confirmation" }) => {
+export const ServiceCard = ({
+  service,
+  mode,
+}: {
+  service: Service;
+  mode?: "confirmation";
+}) => {
   const navigate = useNavigate();
-  const { selectedService, setSelectedService } = useBookings();
+  const { selectedShop, setSelectedService } = useBookings();
 
-  const setServiceAndNavigate = (service: Service, cancel?: string) => () => {
-    console.log("setting service", service);
-    setSelectedService(service);
-    console.log(selectedService)
-    if (cancel) {
-      navigate(`/book/`);
-      return;
-    }
-    navigate(`/booking/${service.id}`);
-  }
+  const setServiceAndNavigate =
+    (service: Service, cancel?: boolean) => async () => {
+      setSelectedService(service);
+      if (cancel) {
+        setSelectedService(null);
+        navigate(`/book/${selectedShop.id}`);
+        return;
+      }
+      navigate(`/booking/${service.id}`);
+    };
 
   return (
     <Card
@@ -35,12 +40,22 @@ export const ServiceCard = ({ service, mode }: { service: Service, mode?: "confi
           {service.duration} minutes - {service.price / 100} €
         </Text>
         {mode === undefined && (
-          <Button colorScheme="brand" variant="solid" size="sm" onClick={setServiceAndNavigate(service)}>
+          <Button
+            colorScheme="brand"
+            variant="solid"
+            size="sm"
+            onClick={setServiceAndNavigate(service)}
+          >
             Book
           </Button>
         )}
         {mode === "confirmation" && (
-          <Link colorScheme="brand" variant="solid" size="sm" onClick={setServiceAndNavigate(service)}>
+          <Link
+            colorScheme="brand"
+            variant="solid"
+            size="sm"
+            onClick={setServiceAndNavigate(service, true)}
+          >
             Delete
           </Link>
         )}

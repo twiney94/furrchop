@@ -9,6 +9,47 @@ interface Booking {
   // Define other booking properties
 }
 
+/**
+ * [
+    {
+        "employee": {
+            "id": 1,
+            "name": "Juanito Rodriguez",
+            "schedules": [],
+            "leaves": [],
+            "bookings": []
+        }
+    },
+    {
+        "employee": {
+            "id": 2,
+            "name": "Michelle Gonzales",
+            "schedules": [],
+            "leaves": [],
+            "bookings": []
+        }
+    },
+    {
+        "employee": {
+            "id": 3,
+            "name": "Papito Munito",
+            "schedules": [],
+            "leaves": [],
+            "bookings": []
+        }
+    }
+]
+ */
+interface Schedule {
+  employee: {
+    id: number;
+    name: string;
+    schedules: any[];
+    leaves: any[];
+    bookings: any[];
+  }[];
+}
+
 export interface Service {
   description: string;
   duration: number;
@@ -17,20 +58,26 @@ export interface Service {
   price: number;
 }
 
-
 interface BookingsContextType {
   bookings: Booking[] | null;
   loading: boolean;
   error: string | null;
   selectedService: Service | null;
   selectedShop: any;
+  shopSchedule: any;
   fetchBookings: () => Promise<void>;
   createBooking: (bookingDetails: any) => Promise<void>;
   updateBooking: (id: string, bookingDetails: any) => Promise<void>;
   getServices: (shopId: string) => Promise<Service[]>;
   getShop: (shopId: string) => Promise<void>;
-  setSelectedService: (service: Service) => void;
-  setSelectedShop: (shop: any) => void; 
+  getSchedule: (
+    shopId: string,
+    beginDate: string,
+    endDate: string
+  ) => Promise<void>;
+  setSelectedService: (service: Service | null) => void;
+  setSelectedShop: (shop: any) => void;
+  setShopSchedule: (schedule: any) => void;
 }
 
 const defaultContextValue: BookingsContextType = {
@@ -39,13 +86,16 @@ const defaultContextValue: BookingsContextType = {
   error: null,
   selectedService: null,
   selectedShop: null,
+  shopSchedule: null,
   fetchBookings: async () => {},
   createBooking: async () => {},
   updateBooking: async () => {},
   getServices: async () => [],
   getShop: async () => {},
+  getSchedule: async () => {},
   setSelectedService: () => {},
-  setSelectedShop: () => {}
+  setSelectedShop: () => {},
+  setShopSchedule: () => {},
 };
 
 const BookingsContext = createContext<BookingsContextType>(defaultContextValue);
@@ -62,8 +112,7 @@ export const BookingsProvider = ({
   const navigate = useNavigate();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedShop, setSelectedShop] = useState<any | null>(null);
-
-  
+  const [shopSchedule, setShopSchedule] = useState<any | null>(null);
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -135,7 +184,7 @@ export const BookingsProvider = ({
         `services?shop.id=${shopId}`,
         {}
       );
-      (response);
+      response;
       // Accessing the hydra:member property which contains the array of services
       if (
         response &&
@@ -181,6 +230,38 @@ export const BookingsProvider = ({
     }
   };
 
+  const getSchedule = async (
+    shopId: string,
+    beginDate: string,
+    endDate: string
+  ) => {
+    setLoading(true);
+    try {
+      const body = {
+        startDate: beginDate,
+        endDate: endDate,
+      };
+
+      console.log(body);
+      const response = await httpCall(
+        "GET",
+        `shops/${shopId}/schedules?startDate=${beginDate}&endDate=${endDate}`,
+        {}
+      );
+      setShopSchedule(response.data);
+      return response.data;
+    } catch (error) {
+      setError("Failed to fetch schedule.");
+      toast({
+        title: "Error",
+        description: "Failed to fetch schedule.",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = useMemo(
     () => ({
       bookings,
@@ -188,15 +269,18 @@ export const BookingsProvider = ({
       error,
       selectedService,
       selectedShop,
+      shopSchedule,
       fetchBookings,
       createBooking,
       updateBooking,
       getServices,
       getShop,
       setSelectedService,
-      setSelectedShop
+      setSelectedShop,
+      setShopSchedule,
+      getSchedule,
     }),
-    [bookings, loading, error]
+    [bookings, loading, error, selectedService, selectedShop, shopSchedule]
   );
 
   return (
