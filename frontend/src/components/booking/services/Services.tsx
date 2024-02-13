@@ -9,10 +9,15 @@ export const Services = ({ shopId }: { shopId: string }) => {
   const [services, setServices] = useState<Service[]>([]);
 
   useEffect(() => {
+    console.log('Effect running with shopId:', shopId); // Diagnostic: Confirm effect runs and shopId is correct
     const fetchServices = async () => {
+      if (!getServices) {
+        console.error("getServices function is not available");
+        return;
+      }
+
       try {
         const fetchedServices = await getServices(shopId);
-        // Ensure fetchedServices is an array before setting it to state
         if (Array.isArray(fetchedServices)) {
           setServices(fetchedServices);
         } else {
@@ -25,8 +30,12 @@ export const Services = ({ shopId }: { shopId: string }) => {
       }
     };
 
-    fetchServices();
-  }, [shopId, getServices]);
+    if (shopId) { // Ensure shopId is not empty or undefined
+      fetchServices();
+    } else {
+      console.error("shopId is undefined or empty");
+    }
+  }, [shopId]);
 
   return (
     <Flex direction="column" gap={4}>

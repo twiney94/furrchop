@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
+import { AxiosResponse } from "axios";
 
 // Define types for clarity and TypeScript support
 interface Booking {
@@ -111,22 +112,32 @@ export const BookingsProvider = ({
   };
 
   const getServices = async (shopId: string) => {
-    console.log("getting services");
     setLoading(true);
+    console.log("Getting services");
     try {
-      const response = await httpCall("GET", `services?shop.id=${shopId}`, {});
-      return response.data;
+      const response: AxiosResponse<any, any> = await httpCall("GET", `services?shop.id=${shopId}`, {});
+      console.log(response);
+      // Accessing the hydra:member property which contains the array of services
+      if (response && response.data?.['hydra:member'] && Array.isArray(response.data?.['hydra:member'])) {
+        return response.data?.['hydra:member'];
+      } else {
+        console.error("Response from services endpoint does not contain hydra:member as an array:", response);
+        return [];
+      }
     } catch (error) {
-      setError("Failed to fetch services.");
+      console.error("Failed to fetch services.", error);
       toast({
         title: "Error",
         description: "Failed to fetch services.",
         status: "error",
       });
+      return [];
     } finally {
       setLoading(false);
     }
   };
+  
+  
 
   const value = useMemo(
     () => ({

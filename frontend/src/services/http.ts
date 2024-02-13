@@ -18,8 +18,10 @@ export const httpCall = (
     headers["Content-Type"] = "application/ld+json";
   }
 
-  // Add authorization header if a token exists
-  const token = localStorage.getItem("token");
+  // Token is inside user: { token: "..." }
+  const token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user")!).token
+    : null;
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }

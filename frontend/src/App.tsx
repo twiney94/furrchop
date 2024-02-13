@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
 import { UnloggedRoute, ProtectedRoute } from "./components/ProtectedRoute";
 import { ProfilePage } from "./pages/ProfilePage";
+import { BookingsProvider } from "./hooks/useBookings";
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -48,6 +49,12 @@ const AuthProviderLayout = () => (
   </AuthProvider>
 );
 
+const BookingProviderLayout = () => (
+  <BookingsProvider>
+    <Outlet />
+  </BookingsProvider>
+);
+
 // Routes structure
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -58,14 +65,16 @@ const router = createBrowserRouter(
       </Route>
       <Route element={<MainLayout />}>
         <Route path="search" element={<SearchPage />} />
-        <Route
-          path="book/:shopId"
-          element={
-            <ProtectedRoute>
-              <BookingPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route element={<BookingProviderLayout />}>
+          <Route
+            path="book/:shopId"
+            element={
+              <ProtectedRoute>
+                <BookingPage />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
         <Route
           path="login"
           element={
