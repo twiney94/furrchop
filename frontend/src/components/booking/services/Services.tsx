@@ -9,7 +9,6 @@ export const Services = ({ shopId }: { shopId: string }) => {
   const [services, setServices] = useState<Service[]>([]);
 
   useEffect(() => {
-    console.log('Effect running with shopId:', shopId); // Diagnostic: Confirm effect runs and shopId is correct
     const fetchServices = async () => {
       if (!getServices) {
         console.error("getServices function is not available");
@@ -30,7 +29,8 @@ export const Services = ({ shopId }: { shopId: string }) => {
       }
     };
 
-    if (shopId) { // Ensure shopId is not empty or undefined
+    if (shopId) {
+      // Ensure shopId is not empty or undefined
       fetchServices();
     } else {
       console.error("shopId is undefined or empty");
@@ -39,9 +39,6 @@ export const Services = ({ shopId }: { shopId: string }) => {
 
   return (
     <Flex direction="column" gap={4}>
-      <Heading as="h1" size="md" fontWeight={500}>
-        Shop's Services
-      </Heading>
       {loading ? (
         <Text>Loading...</Text>
       ) : services.length > 0 ? (

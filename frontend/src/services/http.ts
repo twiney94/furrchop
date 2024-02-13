@@ -19,10 +19,20 @@ export const httpCall = (
   }
 
   // Token is inside user: { token: "..." }
-  const token = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user")!).token
-    : null;
-  if (token) {
+  const userItem = localStorage.getItem("user");
+  let token = null;
+
+  if (userItem) {
+    try {
+      const user = JSON.parse(userItem);
+      token = user.token;
+    } catch (error) {
+      console.error("Error parsing user data from localStorage:", error);
+    }
+  }
+
+  
+  if (token !== null) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 

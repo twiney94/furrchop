@@ -2,8 +2,8 @@ import { createContext, useContext, useMemo, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
+import { useNavigate } from "react-router-dom";
 
-// Define types for clarity and TypeScript support
 interface Booking {
   id: string;
   // Define other booking properties
@@ -17,26 +17,35 @@ export interface Service {
   price: number;
 }
 
+
 interface BookingsContextType {
   bookings: Booking[] | null;
   loading: boolean;
   error: string | null;
+  selectedService: Service | null;
+  selectedShop: any;
   fetchBookings: () => Promise<void>;
   createBooking: (bookingDetails: any) => Promise<void>;
   updateBooking: (id: string, bookingDetails: any) => Promise<void>;
-  getServices: (shopId: string) => Promise<void>;
+  getServices: (shopId: string) => Promise<Service[]>;
   getShop: (shopId: string) => Promise<void>;
+  setSelectedService: (service: Service) => void;
+  setSelectedShop: (shop: any) => void; 
 }
 
 const defaultContextValue: BookingsContextType = {
   bookings: null,
   loading: false,
   error: null,
+  selectedService: null,
+  selectedShop: null,
   fetchBookings: async () => {},
   createBooking: async () => {},
   updateBooking: async () => {},
-  getServices: async () => {},
+  getServices: async () => [],
   getShop: async () => {},
+  setSelectedService: () => {},
+  setSelectedShop: () => {}
 };
 
 const BookingsContext = createContext<BookingsContextType>(defaultContextValue);
@@ -50,6 +59,9 @@ export const BookingsProvider = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
+  const navigate = useNavigate();
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedShop, setSelectedShop] = useState<any | null>(null);
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -114,14 +126,14 @@ export const BookingsProvider = ({
 
   const getServices = async (shopId: string) => {
     setLoading(true);
-    console.log("Getting services");
+    ("Getting services");
     try {
       const response: AxiosResponse<any, any> = await httpCall(
         "GET",
         `services?shop.id=${shopId}`,
         {}
       );
-      console.log(response);
+      (response);
       // Accessing the hydra:member property which contains the array of services
       if (
         response &&
@@ -156,27 +168,31 @@ export const BookingsProvider = ({
       return response.data;
     } catch (error) {
       setError("Failed to fetch shop.");
+      navigate("/"); // Redirect to home page
       toast({
         title: "Error",
         description: "Failed to fetch shop.",
         status: "error",
       });
-      return null;
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const value = useMemo(
     () => ({
       bookings,
       loading,
       error,
+      selectedService,
+      selectedShop,
       fetchBookings,
       createBooking,
       updateBooking,
       getServices,
       getShop,
+      setSelectedService,
+      setSelectedShop
     }),
     [bookings, loading, error]
   );

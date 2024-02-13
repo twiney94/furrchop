@@ -70,7 +70,7 @@ const router = createBrowserRouter(
             path="book/:shopId"
             element={
               <ProtectedRoute>
-                <BookingPage />
+                <BookingPage mode="landing" />
               </ProtectedRoute>
             }
           />
@@ -78,7 +78,7 @@ const router = createBrowserRouter(
             path="booking/:serviceId"
             element={
               <ProtectedRoute>
-                <BookingPage  />
+                <BookingPage mode="confirmation" />
               </ProtectedRoute>
             }
           />
