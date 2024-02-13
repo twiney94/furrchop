@@ -48,7 +48,8 @@ use Symfony\Component\Uid\Uuid;
             security: "is_granted('ROLE_ADMIN') or object == user",
         )
     ],
-    normalizationContext: ['groups' => 'user:read']
+    normalizationContext: ['groups' => 'user:read'],
+    denormalizationContext: ['groups' => 'user:write']
 )]
 #[ApiResource(
     operations: [
@@ -113,22 +114,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Uuid $id;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $lastName = null;
 
     #[ORM\Column(name: 'email', type: 'string', length: 255, unique: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $phoneNumber = null;
 
     #[ORM\Column]

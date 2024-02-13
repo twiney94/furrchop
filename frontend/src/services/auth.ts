@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 // auth.ts
 import { httpCall } from "./http";
 

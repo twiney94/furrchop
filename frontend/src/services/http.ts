@@ -19,7 +19,17 @@ export const httpCall = (
   }
 
   // Add authorization header if a token exists
-  const token = localStorage.getItem("token");
+ const userItem = localStorage.getItem("user");
+  let token = null;
+
+  if (userItem) {
+    try {
+      const user = JSON.parse(userItem);
+      token = user.token;
+    } catch (error) {
+      console.error("Error parsing user data from localStorage:", error);
+    }
+  }
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
