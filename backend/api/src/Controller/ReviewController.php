@@ -61,4 +61,25 @@ class ReviewController extends AbstractController
 
         return $this->json(['message' => 'Review created successfully.'], Response::HTTP_CREATED);
     }
+
+    public function getUnreviewedBookings(Security $security, EntityManagerInterface $entityManager): Response
+    {
+        $user = $security->getUser();
+
+        $bookings = $entityManager->getRepository(Booking::class)->findBy([
+            'user' => $user,
+            'status' => 'validated'
+        ]);
+
+        $unreviewedBookings = [];
+
+        foreach ($bookings as $booking) {
+            $reviewExist = $entityManager->getRepository(Review::class)->findOneBy(['booking' => $booking]);
+            if (!$reviewExist) {
+                $unreviewedBookings[] = $booking;
+            }
+        }
+
+        return $this->json($unreviewedBookings);
+    }
 }

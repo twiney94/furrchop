@@ -5,8 +5,10 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\ReviewRepository;
 use App\Controller\ReviewController;
+use App\Controller\UnreviewedController;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -103,6 +105,14 @@ use Doctrine\ORM\Mapping as ORM;
                     ],
                 ],
             ],
+        ),
+         new GetCollection(
+            uriTemplate: '/unreviewed-bookings',
+            controller: UnreviewedController::class,
+            openapiContext: [
+                'summary' => 'Get unreviewed bookings',
+                'description' => 'Retrieve all bookings that have not been reviewed yet.'
+            ]
         )
     ]
 )
@@ -136,15 +146,14 @@ class Review
         return $this->id;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId(?User $userId): static
+    public function setUser(?User $user): self
     {
-        $this->userId = $userId;
-
+        $this->user = $user;
         return $this;
     }
 
@@ -193,10 +202,5 @@ class Review
         $this->createdAt = $createdAt;
 
         return $this;
-    }
-
-    public function setUser(?User $getUser): void
-    {
-        $this->user = $getUser;
     }
 }

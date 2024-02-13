@@ -1,6 +1,7 @@
 import { Box, Card, Heading, Link } from "@chakra-ui/react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import AccordionLink from "../common/AccordionGroupLink";
 
 export const Actions = () => {
   const location = useLocation();
@@ -13,6 +14,26 @@ export const Actions = () => {
         My account
       </Heading>
       <Box textAlign={"left"} className="flex flex-col gap-2">
+      <AccordionLink title="My reviews">
+  
+        <Link
+          as={RouterLink}
+          to="/wait-reviews"
+          color={isActive("/") ? "brand.500" : "gray.300"}
+        >
+          Waiting Reviews
+        </Link>
+        <Link
+          as={RouterLink}
+          to="/already-reviews"
+          color={isActive("/profile") ? "brand.500" : "gray.300"}
+        >
+          Already Reviews
+        </Link>
+      
+        </AccordionLink> 
+
+       
         <Link
           as={RouterLink}
           to="/profile"

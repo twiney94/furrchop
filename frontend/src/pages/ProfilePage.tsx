@@ -4,6 +4,8 @@ import { PastBookings } from "../components/profile/PastBookings";
 import { UserInfo } from "../components/profile/UserInfo";
 
 import "./profilepage.module.css";
+import AlreadyReview from "../components/profile/AlreadyReview";
+import WaitReview from "../components/profile/WaitReview";
 
 export const ProfilePage = ({ mode }: { mode: string }) => {
   const renderContent = () => {
@@ -12,6 +14,10 @@ export const ProfilePage = ({ mode }: { mode: string }) => {
         return <PastBookings />;
       case "me":
         return <UserInfo />;
+      case "wait-reviews":
+        return <WaitReview />;
+      case "already-reviews":
+        return <AlreadyReview />;
       default:
         return null;
     }

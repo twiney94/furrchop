@@ -20,6 +20,10 @@ import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
 import { UnloggedRoute, ProtectedRoute } from "./components/ProtectedRoute";
 import { ProfilePage } from "./pages/ProfilePage";
+import WaitReview from "./components/profile/WaitReview";
+import AlreadyReview from "./components/profile/AlreadyReview";
+import WaitReviewPage from "./components/profile/WaitReview";
+import AlreadyReviewPage from "./components/profile/AlreadyReview";
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -73,6 +77,22 @@ const router = createBrowserRouter(
               <AuthPage mode="login" />
             </UnloggedRoute>
           }
+        />
+       <Route
+      path="wait-reviews"
+      element={
+        <ProtectedRoute>
+          <ProfilePage mode="wait-reviews" />
+          </ProtectedRoute>
+      }
+        />
+          <Route
+      path="already-reviews"
+      element={
+        <ProtectedRoute>
+          <ProfilePage mode="already-reviews" />
+        </ProtectedRoute>
+      }
         />
         <Route
           path="register"
