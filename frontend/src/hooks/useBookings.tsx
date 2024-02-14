@@ -9,38 +9,6 @@ interface Booking {
   // Define other booking properties
 }
 
-/**
- * [
-    {
-        "employee": {
-            "id": 1,
-            "name": "Juanito Rodriguez",
-            "schedules": [],
-            "leaves": [],
-            "bookings": []
-        }
-    },
-    {
-        "employee": {
-            "id": 2,
-            "name": "Michelle Gonzales",
-            "schedules": [],
-            "leaves": [],
-            "bookings": []
-        }
-    },
-    {
-        "employee": {
-            "id": 3,
-            "name": "Papito Munito",
-            "schedules": [],
-            "leaves": [],
-            "bookings": []
-        }
-    }
-]
- */
-
 
 export interface Service {
   description: string;
@@ -57,7 +25,7 @@ interface BookingsContextType {
   selectedService: Service | null;
   selectedShop: any;
   shopSchedule: any;
-  selectedDate: Date | null;
+  selectedDate: { date: Date | null; formatted: string; };
   fetchBookings: () => Promise<void>;
   createBooking: (bookingDetails: any) => Promise<void>;
   updateBooking: (id: string, bookingDetails: any) => Promise<void>;
@@ -71,7 +39,7 @@ interface BookingsContextType {
   setSelectedService: (service: Service | null) => void;
   setSelectedShop: (shop: any) => void;
   setShopSchedule: (schedule: any) => void;
-  setSelectedDate: (date: Date | null) => void;
+  setSelectedDate: (selectedDate: { date: Date | null; formatted: string }) => void;
   reset: () => void;
 }
 
@@ -82,7 +50,7 @@ const defaultContextValue: BookingsContextType = {
   selectedService: null,
   selectedShop: null,
   shopSchedule: null,
-  selectedDate: null,
+  selectedDate: { date: null, formatted: '' },
   fetchBookings: async () => {},
   createBooking: async () => {},
   updateBooking: async () => {},
@@ -111,7 +79,7 @@ export const BookingsProvider = ({
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedShop, setSelectedShop] = useState<any | null>(null);
   const [shopSchedule, setShopSchedule] = useState<any | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState({ date: null, formatted: '' });
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -260,7 +228,7 @@ export const BookingsProvider = ({
     setError(null);
     setSelectedService(null);
     setShopSchedule(null);
-    setSelectedDate(null);
+    setSelectedDate({ date: null, formatted: '' });
   };
 
   const value = useMemo(

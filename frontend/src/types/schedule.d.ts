@@ -88,9 +88,9 @@ interface BookingCalendarProps {
 // Assuming useBookings hook provides a specific return type
 interface UseBookingsReturn {
   shopSchedule: Employee[];
-  selectedDate: Date | null;
+  selectedDate: { date: Date | null; formatted: string; };
   getSchedule: (shopId: string, startDate: string, endDate: string) => void;
-  setSelectedDate: (date: Date) => void;
+  setSelectedDate: (selectedDate: { date: Date | null; formatted: string }) => void;
 }
 
 export type {
