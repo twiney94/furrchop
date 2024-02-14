@@ -37,7 +37,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const handlePreviousWeek = () => {
-    if (weekOffset > -3) {
+    if (new Date(currentBeginDate).getTime() > new Date(beginDate).getTime()) {
       setCurrentBeginDate((prevDate) => {
         const newDate = new Date(prevDate);
         newDate.setDate(newDate.getDate() - 7);
@@ -48,14 +48,21 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
   };
 
   const handleNextWeek = () => {
-    if (weekOffset < 3) {
-      setCurrentBeginDate((prevDate) => {
-        const newDate = new Date(prevDate);
-        newDate.setDate(newDate.getDate() + 7);
-        return newDate;
-      });
-      setWeekOffset((prevOffset) => prevOffset + 1);
-    }
+    setCurrentBeginDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setDate(newDate.getDate() + 7);
+      return newDate;
+    });
+    setWeekOffset((prevOffset) => prevOffset + 1);
+  };
+
+  const resetToCurrentWeek = () => {
+    const today = new Date();
+    const currentWeekStart = new Date(
+      today.setDate(today.getDate() - today.getDay())
+    );
+    setCurrentBeginDate(currentWeekStart);
+    setWeekOffset(0);
   };
 
   useEffect(() => {
@@ -144,9 +151,10 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
           mb={8}
           gap={64}
         >
-          {weekOffset > -3 && (
+          {new Date(currentBeginDate).getTime() >
+            new Date(beginDate).getTime() && (
             <IconButton
-              aria-label="Previous"
+              aria-label=" Previous"
               icon={<ChevronLeftIcon />}
               onClick={handlePreviousWeek}
             />

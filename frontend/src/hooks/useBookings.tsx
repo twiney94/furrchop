@@ -103,7 +103,6 @@ export const BookingsProvider = ({
   };
 
   const createBooking = async () => {
-    console.log(selectedService, selectedDate, selectedShop);
     if (
       !selectedService ||
       !selectedDate.date ||
@@ -118,8 +117,9 @@ export const BookingsProvider = ({
       return;
     }
     const bookingStart = new Date(selectedDate.date);
-  const bookingEnd = new Date(bookingStart.getTime() + selectedService.duration * 60000);
-  console.log(bookingStart)
+    const bookingEnd = new Date(
+      bookingStart.getTime() + selectedService.duration * 60000
+    );
 
     const bookingDetails = {
       shop: `/shops/${selectedShop.id}`,
@@ -138,6 +138,7 @@ export const BookingsProvider = ({
         description: "Your booking was successfully created.",
         status: "success",
       });
+      navigate("/profile");
     } catch (error) {
       setError("Failed to create booking.");
       toast({
@@ -240,7 +241,6 @@ export const BookingsProvider = ({
         {}
       );
       setShopSchedule(response.data);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       setError("Failed to fetch schedule.");
