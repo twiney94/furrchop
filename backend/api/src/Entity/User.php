@@ -134,7 +134,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $phoneNumber = null;
 
     #[ORM\Column]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private array $roles = ['ROLE_USER'];
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]

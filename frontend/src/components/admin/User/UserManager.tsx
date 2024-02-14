@@ -18,12 +18,13 @@ import {
   Button,
   useDisclosure,
   Flex,
+  Badge,
 } from '@chakra-ui/react';
 import { useUsers } from '../../../hooks/useUsers';
 import { DeleteIcon, ViewIcon, EditIcon, AddIcon } from '@chakra-ui/icons';
 import CreateUser from './CreatUser';
 import DeleteDialog from '../sharedComponents/DeleteDialog';
-import UpdateModal from './UpdateModal';
+import UpdateUserModal from './UpdateUserModal';
 
 const UserManager = () => {
   const { users, fetchUsers, deleteUser, updateUser } = useUsers();
@@ -58,12 +59,10 @@ const UserManager = () => {
     }
   };
 
-  const handleUpdateUser = async () => {
-    if (selectedUser) {
-      await updateUser(truncateId(selectedUser['@id']), selectedUser);
-      editDisclosure.onClose();
-      fetchUsers();
-    }
+  const handleUpdateUser = async (updatedUser) => {
+    await updateUser(truncateId(updatedUser['@id']), updatedUser);
+    editDisclosure.onClose();
+    fetchUsers();
   };
 
   const handleChange = (e) => {
@@ -94,6 +93,7 @@ const UserManager = () => {
             <Th>Firstname</Th>
             <Th>Lastname</Th>
             <Th>Email</Th>
+            <Th>Role</Th>
             <Th>Actions</Th>
           </Tr>
         </Thead>
@@ -103,6 +103,13 @@ const UserManager = () => {
               <Td>{user.firstName}</Td>
               <Td>{user.lastName}</Td>
               <Td>{user.email}</Td>
+              <Td>
+                {user.roles.map((role) => (
+                  <Badge m={1} variant="subtle" key={role} colorScheme="green">
+                    {role}
+                  </Badge>
+                ))}
+              </Td>
               <Td>
                 <IconButton aria-label="Show user" icon={<ViewIcon />} mr={2} />
                 <IconButton
@@ -123,7 +130,7 @@ const UserManager = () => {
         </Tbody>
       </Table>
       {/* Edit User Modal */}
-      <UpdateModal
+      <UpdateUserModal
         isOpen={editDisclosure.isOpen}
         onClose={editDisclosure.onClose}
         user={selectedUser}
