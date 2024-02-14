@@ -6,7 +6,6 @@ import {
   Card,
   Select,
   IconButton,
-  Avatar,
 } from "@chakra-ui/react";
 import { useBookings } from "../../hooks/useBookings";
 import dayHours from "./day_hours.json"; // Make sure to type this import if possible
