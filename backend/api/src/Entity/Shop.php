@@ -209,6 +209,16 @@ class Shop
         $this->openHours = $openHours;
     }
 
+    public function getOpenDays(): ?array
+    {
+        return $this->openDays;
+    }
+
+    public function setOpenDays(?array $openDays): void
+    {
+        $this->openDays = $openDays;
+    }
+
     /**
      * @return Collection<int, Employee>
      */

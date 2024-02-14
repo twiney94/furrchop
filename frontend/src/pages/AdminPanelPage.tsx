@@ -10,9 +10,7 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import UserManager from '../components/admin/User/UserManager';
-
-// Import ShopList from your components
-// import ShopList from '../components/admin/ShopList';
+import ShopManager from '../components/admin/Shop/ShopManager';
 
 const AdminPanelPage = () => {
   return (
@@ -34,7 +32,9 @@ const AdminPanelPage = () => {
             <TabPanel>
               <UserManager />
             </TabPanel>
-            <TabPanel>{/* <ShopList /> */}</TabPanel>
+            <TabPanel>
+              <ShopManager />
+            </TabPanel>
           </TabPanels>
         </Tabs>
       </Flex>

@@ -21,7 +21,8 @@ import AuthPage from './pages/AuthPage';
 import { UnloggedRoute, ProtectedRoute } from './components/ProtectedRoute';
 import { ProfilePage } from './pages/ProfilePage';
 import AdminPanelPage from './pages/AdminPanelPage';
-import { UsersProvider } from './hooks/UseUsers';
+import { UsersProvider } from './hooks/useUsers';
+import { ShopsProvider } from './hooks/useShops';
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -51,8 +52,11 @@ const AuthProviderLayout = () => (
 );
 
 const AdmminProviderLayout = () => (
+  //add ShopProvider
   <UsersProvider>
-    <Outlet />
+    <ShopsProvider>
+      <Outlet />
+    </ShopsProvider>
   </UsersProvider>
 );
 

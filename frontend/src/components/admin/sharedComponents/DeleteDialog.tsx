@@ -10,11 +10,13 @@ import {
 } from '@chakra-ui/react';
 
 const DeleteDialog = ({
+  entity,
   isOpen,
   onClose,
   cancelRef,
   onConfirm,
 }: {
+  entity: string;
   isOpen: boolean;
   onClose: () => void;
   cancelRef: React.RefObject<HTMLButtonElement>;
@@ -22,6 +24,8 @@ const DeleteDialog = ({
 }) => {
   return (
     <AlertDialog
+      // add a custom prop to the dialog name entity
+      // and pass it to the header
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
       onClose={onClose}
@@ -29,7 +33,7 @@ const DeleteDialog = ({
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Delete User
+            Delete {entity}
           </AlertDialogHeader>
           <AlertDialogBody>
             Are you sure? You can't undo this action afterwards.

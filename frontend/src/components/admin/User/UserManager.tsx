@@ -22,7 +22,7 @@ import {
 import { useUsers } from '../../../hooks/useUsers';
 import { DeleteIcon, ViewIcon, EditIcon, AddIcon } from '@chakra-ui/icons';
 import CreateUser from './CreatUser';
-import DeleteDialog from './DeleteDialog';
+import DeleteDialog from '../sharedComponents/DeleteDialog';
 import UpdateModal from './UpdateModal';
 
 const UserManager = () => {
@@ -132,6 +132,7 @@ const UserManager = () => {
       />
       {/* Delete Confirmation Dialog */}
       <DeleteDialog
+        entity="users"
         isOpen={deleteAlertDisclosure.isOpen}
         onClose={deleteAlertDisclosure.onClose}
         cancelRef={cancelRef}
