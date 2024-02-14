@@ -81,6 +81,7 @@ interface BookingsContextType {
   setSelectedShop: (shop: any) => void;
   setShopSchedule: (schedule: any) => void;
   setSelectedDate: (date: Date | null) => void;
+  reset: () => void;
 }
 
 const defaultContextValue: BookingsContextType = {
@@ -101,6 +102,7 @@ const defaultContextValue: BookingsContextType = {
   setSelectedShop: () => {},
   setShopSchedule: () => {},
   setSelectedDate: () => {},
+  reset: () => {},
 };
 
 const BookingsContext = createContext<BookingsContextType>(defaultContextValue);
@@ -262,6 +264,14 @@ export const BookingsProvider = ({
     }
   };
 
+  const reset = () => {
+    setLoading(false);
+    setError(null);
+    setSelectedService(null);
+    setShopSchedule(null);
+    setSelectedDate(null);
+  };
+
   const value = useMemo(
     () => ({
       bookings,
@@ -281,8 +291,17 @@ export const BookingsProvider = ({
       setShopSchedule,
       getSchedule,
       setSelectedDate,
+      reset
     }),
-    [bookings, loading, error, selectedService, selectedShop, shopSchedule, selectedDate]
+    [
+      bookings,
+      loading,
+      error,
+      selectedService,
+      selectedShop,
+      shopSchedule,
+      selectedDate,
+    ]
   );
 
   return (
