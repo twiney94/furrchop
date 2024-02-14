@@ -3,12 +3,12 @@ import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
+import type { SelectedDate } from "../types/schedule";
 
 interface Booking {
   id: string;
   // Define other booking properties
 }
-
 
 export interface Service {
   description: string;
@@ -25,9 +25,9 @@ interface BookingsContextType {
   selectedService: Service | null;
   selectedShop: any;
   shopSchedule: any;
-  selectedDate: { date: Date | null; formatted: string; };
+  selectedDate: SelectedDate;
   fetchBookings: () => Promise<void>;
-  createBooking: (bookingDetails: any) => Promise<void>;
+  createBooking: () => Promise<void>;
   updateBooking: (id: string, bookingDetails: any) => Promise<void>;
   getServices: (shopId: string) => Promise<Service[]>;
   getShop: (shopId: string) => Promise<void>;
@@ -39,7 +39,7 @@ interface BookingsContextType {
   setSelectedService: (service: Service | null) => void;
   setSelectedShop: (shop: any) => void;
   setShopSchedule: (schedule: any) => void;
-  setSelectedDate: (selectedDate: { date: Date | null; formatted: string }) => void;
+  setSelectedDate: (selectedDate: SelectedDate) => void;
   reset: () => void;
 }
 
@@ -50,7 +50,7 @@ const defaultContextValue: BookingsContextType = {
   selectedService: null,
   selectedShop: null,
   shopSchedule: null,
-  selectedDate: { date: null, formatted: '' },
+  selectedDate: { date: null, formatted: "", employee: { id: "" } },
   fetchBookings: async () => {},
   createBooking: async () => {},
   updateBooking: async () => {},
@@ -79,7 +79,11 @@ export const BookingsProvider = ({
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedShop, setSelectedShop] = useState<any | null>(null);
   const [shopSchedule, setShopSchedule] = useState<any | null>(null);
-  const [selectedDate, setSelectedDate] = useState({ date: null, formatted: '' });
+  const [selectedDate, setSelectedDate] = useState<SelectedDate>({
+    date: null,
+    formatted: "",
+    employee: { id: "" },
+  });
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -98,21 +102,47 @@ export const BookingsProvider = ({
     }
   };
 
-  const createBooking = async (bookingDetails: any) => {
+  const createBooking = async () => {
+    console.log(selectedService, selectedDate, selectedShop);
+    if (
+      !selectedService ||
+      !selectedDate.date ||
+      !selectedShop ||
+      !selectedDate.employee
+    ) {
+      toast({
+        title: "Missing Information",
+        description: "Please select a service, date, and shop.",
+        status: "error",
+      });
+      return;
+    }
+    const bookingStart = new Date(selectedDate.date);
+  const bookingEnd = new Date(bookingStart.getTime() + selectedService.duration * 60000);
+  console.log(bookingStart)
+
+    const bookingDetails = {
+      shop: `/shops/${selectedShop.id}`,
+      employee: `/employees/${selectedDate.employee.id}`, // Assuming employee ID is stored in selectedDate
+      service: `/services/${selectedService.id}`,
+      beginDateTime: bookingStart.toISOString(),
+      endDateTime: bookingEnd.toISOString(),
+    };
+
     setLoading(true);
     try {
-      await httpCall("POST", "bookings", bookingDetails);
+      const response = await httpCall("POST", "bookings", bookingDetails);
+      setBookings([...(bookings || []), response.data]); // Update local state
       toast({
-        title: "Success",
-        description: "Booking created successfully.",
+        title: "Booking Created",
+        description: "Your booking was successfully created.",
         status: "success",
       });
-      fetchBookings(); // Refresh the list
     } catch (error) {
       setError("Failed to create booking.");
       toast({
         title: "Error",
-        description: "Failed to create booking.",
+        description: "Failed to create booking. Please try again.",
         status: "error",
       });
     } finally {
@@ -210,6 +240,7 @@ export const BookingsProvider = ({
         {}
       );
       setShopSchedule(response.data);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       setError("Failed to fetch schedule.");
@@ -228,7 +259,7 @@ export const BookingsProvider = ({
     setError(null);
     setSelectedService(null);
     setShopSchedule(null);
-    setSelectedDate({ date: null, formatted: '' });
+    setSelectedDate({ date: null, formatted: "" });
   };
 
   const value = useMemo(
@@ -250,7 +281,7 @@ export const BookingsProvider = ({
       setShopSchedule,
       getSchedule,
       setSelectedDate,
-      reset
+      reset,
     }),
     [
       bookings,

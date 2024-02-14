@@ -27,7 +27,6 @@ const calculateCombinedAvailability = (
     combinedSlots = [...combinedSlots, ...employeeSlots];
   });
 
-  // Deduplicate the slots based on the twenty_four_hour_format
   const uniqueSlots = combinedSlots.reduce(
     (acc: DayHour[], current: DayHour) => {
       const x = acc.find(

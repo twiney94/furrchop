@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Controller\BookingController;
+use App\Controller\CreateBookingController;
 use App\DataProvider\BookingProvider;
 use App\Enum\Booking\StatusEnum;
 use ApiPlatform\Metadata\ApiResource;
@@ -91,7 +92,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(
             security: "is_granted('ROLE_ADMIN') or object == user",
         ),
-        new Post()
+        new Post(controller: CreateBookingController::class)
     ],
 )]
 #[ApiFilter(SearchFilter::class, properties: ['status' => 'iexact', 'animal' => 'iexact'])]

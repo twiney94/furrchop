@@ -29,6 +29,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
     getSchedule,
     selectedDate,
     setSelectedDate,
+    createBooking,
   }: UseBookingsReturn = useBookings();
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("all");
   const [currentBeginDate, setCurrentBeginDate] = useState<Date>(beginDate);
@@ -37,7 +38,6 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
 
   const handlePreviousWeek = () => {
     if (weekOffset > -3) {
-      // Limit to 3 weeks back
       setCurrentBeginDate((prevDate) => {
         const newDate = new Date(prevDate);
         newDate.setDate(newDate.getDate() - 7);
@@ -49,7 +49,6 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
 
   const handleNextWeek = () => {
     if (weekOffset < 3) {
-      // Limit to 3 weeks ahead
       setCurrentBeginDate((prevDate) => {
         const newDate = new Date(prevDate);
         newDate.setDate(newDate.getDate() + 7);
@@ -61,7 +60,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
 
   useEffect(() => {
     const fetchSchedule = async () => {
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
       const endDate = new Date(currentBeginDate);
       endDate.setDate(currentBeginDate.getDate() + 6);
       const newDateRange = generateDateRange(currentBeginDate, endDate);
@@ -72,7 +71,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
         currentBeginDate.toISOString(),
         endDate.toISOString()
       );
-      setIsLoading(false); // End loading after fetching
+      setIsLoading(false);
     };
 
     fetchSchedule();
@@ -81,6 +80,55 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
   const handleEmployeeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value;
     setSelectedEmployeeId(id);
+  };
+
+  const handleTimeSlotClick = (date: Date, twentyFourHourFormat: string) => {
+    let incrementedDate = new Date(date);
+
+    incrementedDate.setDate(incrementedDate.getDate() + 1);
+
+    const selectedDateTime = new Date(
+      `${incrementedDate.toISOString().split("T")[0]}T${twentyFourHourFormat}`
+    );
+
+    const formatted = `${selectedDateTime.toDateString()} - at ${twentyFourHourFormat}`;
+
+    if (selectedEmployeeId === "all") {
+      const specificSlotAvailableEmployees = shopSchedule.filter(
+        ({ employee }) => {
+          const employeeAvailability = calculateAvailability(
+            employee,
+            date,
+            dayHours
+          );
+          return employeeAvailability.some(
+            (slot) => slot.twenty_four_hour_format === twentyFourHourFormat
+          );
+        }
+      );
+
+      if (specificSlotAvailableEmployees.length > 0) {
+        const randomIndex = Math.floor(
+          Math.random() * specificSlotAvailableEmployees.length
+        );
+        const randomEmployee =
+          specificSlotAvailableEmployees[randomIndex].employee;
+
+        setSelectedDate({
+          date: selectedDateTime,
+          formatted,
+          employee: { id: randomEmployee.id.toString() },
+        });
+      } else {
+        console.error("No available employees for the selected time slot.");
+      }
+    } else {
+      setSelectedDate({
+        date: selectedDateTime,
+        formatted,
+        employee: { id: selectedEmployeeId },
+      });
+    }
   };
 
   if (!shopSchedule) {
@@ -141,15 +189,10 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
                         size="sm"
                         m={1}
                         onClick={() => {
-                          const selectedDateTime = new Date(
-                            `${date.toISOString().split("T")[0]}T${
-                              slot.twenty_four_hour_format
-                            }`
+                          handleTimeSlotClick(
+                            date,
+                            slot.twenty_four_hour_format
                           );
-                          setSelectedDate({
-                            date: selectedDateTime,
-                            formatted: selectedDateTime.toISOString(),
-                          });
                         }}
                       >
                         {slot.twenty_four_hour_format}
@@ -190,15 +233,10 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
                             size="sm"
                             m={1}
                             onClick={() => {
-                              const selectedDateTime = new Date(
-                                `${date.toISOString().split("T")[0]}T${
-                                  slot.twenty_four_hour_format
-                                }`
+                              handleTimeSlotClick(
+                                date,
+                                slot.twenty_four_hour_format
                               );
-                              setSelectedDate({
-                                date: selectedDateTime,
-                                formatted: selectedDateTime.toISOString(),
-                              });
                             }}
                           >
                             {slot.twenty_four_hour_format}
@@ -252,7 +290,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
           variant="solid"
           size="lg"
           onClick={() => {
-            // Confirm booking
+            createBooking();
           }}
         >
           Confirm
