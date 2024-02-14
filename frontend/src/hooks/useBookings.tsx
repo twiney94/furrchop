@@ -3,10 +3,18 @@ import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
+import chopper from "../components/search/Chopper.tsx";
+import ChopperType from "../types/chopper";
 
-interface Booking {
-  id: string;
-  // Define other booking properties
+export interface Booking {
+  id: number;
+  beginDateTime: string; // ou Date si vous convertissez les chaînes de date en objets Date
+  endDateTime: string; // ou Date
+  service: Service;
+  comment: string;
+  status: string;
+  shop: ChopperType;
+  employee: Employee;
 }
 
 /**
