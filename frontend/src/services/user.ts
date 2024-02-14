@@ -5,12 +5,12 @@ import { httpCall } from "./http";
 export const fetchUsers = async () => {
   const response = await httpCall("GET", "users", {});
   if (response.data) {
-    return response.data as HydraPaginateResp<any>; // Provide the missing type argument
+    return response.data as HydraPaginateResp<any>; 
   }
 }
 
 export const createUser = async (userDetails: any) => {
-  return await httpCall("POST", "users", userDetails);
+  return await httpCall("POST", "register", userDetails);
 };
 
 export const updateUser = async (id: string, userDetails: any) => {
