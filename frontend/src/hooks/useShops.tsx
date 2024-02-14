@@ -34,7 +34,6 @@ export const ShopsProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     try {
       const response = await shopService.fetchShops();
-      console.log('response', response);
 
       setShops(response!['hydra:member']);
     } catch (error) {

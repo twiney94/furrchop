@@ -69,7 +69,7 @@ const UpdateShop = ({
           <FormControl mt={4}>
             <FormLabel>Shop Location</FormLabel>
             <Input
-              name="location"
+              name="address"
               value={shop?.address || ''}
               onChange={handleChange}
             />
