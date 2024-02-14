@@ -1,9 +1,8 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
-import { ShopSchedule } from "../../types/schedule.d.ts";
 
 interface Booking {
   id: string;
@@ -41,15 +40,7 @@ interface Booking {
     }
 ]
  */
-interface Schedule {
-  employee: {
-    id: number;
-    name: string;
-    schedules: any[];
-    leaves: any[];
-    bookings: any[];
-  }[];
-}
+
 
 export interface Service {
   description: string;
