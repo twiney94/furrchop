@@ -14,11 +14,13 @@ import { Service, useBookings } from "../hooks/useBookings";
 import { useEffect } from "react";
 import ServiceCard from "../components/booking/services/ServiceCard";
 import { BookingCalendar } from "../components/booking/BookingCalendar";
+import { useNavigate } from "react-router-dom";
 
 const BookingPage = ({ mode }: { mode: string }) => {
   const { getShop, selectedShop, setSelectedShop, selectedService } =
     useBookings();
   const shopId = window.location.pathname.split("/")[2];
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getShopInfos = async () => {
@@ -75,7 +77,10 @@ const BookingPage = ({ mode }: { mode: string }) => {
       </Box>
     );
   } else {
-    if (!selectedService) return <div>Loading...</div>;
+    if (!selectedService) {
+      navigate(`/book/${shopId}`);
+      return;
+    }
 
     return (
       <Box display={"flex"} justifyContent={"center"}>

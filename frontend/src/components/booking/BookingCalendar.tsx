@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Button, Heading, Flex, Card, Select } from "@chakra-ui/react";
+import {
+  Button,
+  Heading,
+  Flex,
+  Card,
+  Select,
+  IconButton,
+  Avatar,
+} from "@chakra-ui/react";
 import { useBookings } from "../../hooks/useBookings";
 import dayHours from "./day_hours.json"; // Make sure to type this import if possible
 import type {
@@ -8,6 +16,7 @@ import type {
   Employee,
   UseBookingsReturn,
 } from "../../types/schedule";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 const generateDateRange = (startDate: Date, endDate: Date): Date[] => {
   let dates: Date[] = [];
@@ -118,98 +127,229 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
   const beginDate = new Date();
   const endDate = new Date(beginDate.getTime() + 6 * 24 * 60 * 60 * 1000);
   const dateRange = generateDateRange(beginDate, endDate);
-  const { shopSchedule, getSchedule }: UseBookingsReturn = useBookings();
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
+  const {
+    shopSchedule,
+    getSchedule,
+    selectedDate,
+    setSelectedDate,
+  }: UseBookingsReturn = useBookings();
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("all");
+  const [currentBeginDate, setCurrentBeginDate] = useState<Date>(beginDate);
+  const [weekOffset, setWeekOffset] = useState<number>(0);
+
+  const handlePreviousWeek = () => {
+    if (weekOffset > -3) {
+      // Limit to 3 weeks back
+      setCurrentBeginDate((prevDate) => {
+        const newDate = new Date(prevDate);
+        newDate.setDate(newDate.getDate() - 7);
+        return newDate;
+      });
+      setWeekOffset((prevOffset) => prevOffset - 1);
+    }
+  };
+
+  const handleNextWeek = () => {
+    if (weekOffset < 3) {
+      // Limit to 3 weeks ahead
+      setCurrentBeginDate((prevDate) => {
+        const newDate = new Date(prevDate);
+        newDate.setDate(newDate.getDate() + 7);
+        return newDate;
+      });
+      setWeekOffset((prevOffset) => prevOffset + 1);
+    }
+  };
 
   useEffect(() => {
-    getSchedule(shopId, beginDate.toISOString(), endDate.toISOString());
-  }, []);
+    const endDate = new Date(currentBeginDate);
+    endDate.setDate(currentBeginDate.getDate() + 6);
+
+    if (
+      endDate.getTime() - currentBeginDate.getTime() >
+      7 * 24 * 60 * 60 * 1000
+    ) {
+      endDate.setDate(currentBeginDate.getDate() + 6);
+    }
+
+    getSchedule(shopId, currentBeginDate.toISOString(), endDate.toISOString());
+  }, [currentBeginDate]);
 
   const handleEmployeeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value;
     setSelectedEmployeeId(id);
   };
 
-  return (
-    <Card p={8}>
-      <Select
-        placeholder="Select an employee"
-        onChange={handleEmployeeChange}
-        mb={4}
-      >
-        <option value="all">All Employees</option>
-        {shopSchedule?.map((employee) => (
-          <option key={employee.employee.id} value={employee.employee.id}>
-            {employee.employee.name}
-          </option>
-        ))}
-      </Select>
+  if (!shopSchedule) {
+    // Or return a loading spinner, etc.
+    return <Card p={8}>Loading...</Card>;
+  }
+  if (!selectedDate) {
+    return (
+      <Card p={8}>
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          mb={8}
+          gap={64}
+        >
+          {weekOffset > -3 && (
+            <IconButton
+              aria-label="Previous"
+              icon={<ChevronLeftIcon />}
+              onClick={handlePreviousWeek}
+            />
+          )}
+          <Select value={selectedEmployeeId} onChange={handleEmployeeChange}>
+            <option className="p-4" value="all">
+              All Employees
+            </option>
+            {shopSchedule?.map((employee) => (
+              <option key={employee.employee.id} value={employee.employee.id}>
+                {employee.employee.name}
+              </option>
+            ))}
+          </Select>
+          {weekOffset < 3 && (
+            <IconButton
+              aria-label="Next"
+              icon={<ChevronRightIcon />}
+              onClick={handleNextWeek}
+            />
+          )}
+        </Flex>
 
-      {selectedEmployeeId === "all" ? (
-        <Flex direction={"column"}>
-          <Heading size="sm" mb={2}>
-            All Employees
-          </Heading>
-          <Flex direction="row" mb={4} gap={8} justify={"center"}>
-            {dateRange.map((date, dateIndex) => (
-              <Flex direction="column" key={dateIndex}>
-                <Heading size="sm" mb={2} fontWeight={400}>
-                  {date.toDateString()}
-                </Heading>
-                <Flex flexWrap="wrap" direction="column">
-                  {calculateCombinedAvailability(
-                    date,
-                    dayHours,
-                    shopSchedule.map((employee) => employee.employee)
-                  ).map((slot, slotIndex) => (
-                    <Button key={slotIndex} size="sm" m={1}>
-                      {slot.twenty_four_hour_format}
-                    </Button>
+        {selectedEmployeeId === "all" ? (
+          <Flex direction={"column"}>
+            <Flex direction="row" mb={4} gap={8} justify={"center"}>
+              {dateRange.map((date, dateIndex) => (
+                <Flex direction="column" key={dateIndex}>
+                  <Heading size="sm" mb={2} fontWeight={400}>
+                    {date.toDateString()}
+                  </Heading>
+                  <Flex flexWrap="wrap" direction="column">
+                    {calculateCombinedAvailability(
+                      date,
+                      dayHours,
+                      shopSchedule.map((employee) => employee.employee)
+                    ).map((slot, slotIndex) => (
+                      <Button
+                        key={slotIndex}
+                        size="sm"
+                        m={1}
+                        onClick={() => {
+                          const selectedDateTime = new Date(
+                            `${date.toISOString().split("T")[0]}T${
+                              slot.twenty_four_hour_format
+                            }`
+                          );
+                          setSelectedDate(selectedDateTime);
+                        }}
+                      >
+                        {slot.twenty_four_hour_format}
+                      </Button>
+                    ))}
+                  </Flex>
+                </Flex>
+              ))}
+            </Flex>
+          </Flex>
+        ) : (
+          shopSchedule
+            ?.filter(
+              (employee) => String(employee.employee.id) === selectedEmployeeId
+            )
+            .map((employee, index) => (
+              <Flex direction={"column"} key={index}>
+                <Flex
+                  key={index}
+                  direction="row"
+                  mb={4}
+                  justify={"center"}
+                  gap={8}
+                >
+                  {dateRange.map((date, dateIndex) => (
+                    <Flex direction="column" key={dateIndex}>
+                      <Heading size="sm" mb={2} fontWeight={400}>
+                        {date.toDateString()}
+                      </Heading>
+                      <Flex flexWrap="wrap" direction="column">
+                        {calculateAvailability(
+                          employee.employee,
+                          date,
+                          dayHours
+                        ).map((slot, slotIndex) => (
+                          <Button
+                            key={slotIndex}
+                            size="sm"
+                            m={1}
+                            onClick={() => {
+                              const selectedDateTime = new Date(
+                                `${date.toISOString().split("T")[0]}T${
+                                  slot.twenty_four_hour_format
+                                }`
+                              );
+                              setSelectedDate(selectedDateTime);
+                            }}
+                          >
+                            {slot.twenty_four_hour_format}
+                          </Button>
+                        ))}
+                      </Flex>
+                    </Flex>
                   ))}
                 </Flex>
               </Flex>
-            ))}
+            ))
+        )}
+      </Card>
+    );
+  } else if (selectedDate) {
+    return (
+      <Card p={8}>
+        <Flex direction={"column"}>
+          <Heading as="h1" size="md" fontWeight={500}>
+            {selectedDate.toDateString()}
+          </Heading>
+          <Flex direction={"column"} mt={4}>
+            {shopSchedule
+              ?.filter(
+                (employee) =>
+                  String(employee.employee.id) === selectedEmployeeId
+              )
+              .map((employee, index) => (
+                <Flex direction={"column"} key={index}>
+                  <Heading size="sm" mb={2} fontWeight={400}>
+                    {employee.employee.name}
+                  </Heading>
+                  <Flex flexWrap="wrap" direction="column">
+                    {calculateAvailability(
+                      employee.employee,
+                      selectedDate,
+                      dayHours
+                    ).map((slot, slotIndex) => (
+                      <Button
+                        key={slotIndex}
+                        size="sm"
+                        m={1}
+                        onClick={() => {
+                          const selectedDateTime = new Date(
+                            `${selectedDate.toISOString().split("T")[0]}T${
+                              slot.twenty_four_hour_format
+                            }`
+                          );
+                          setSelectedDate(selectedDateTime);
+                        }}
+                      >
+                        {slot.twenty_four_hour_format}
+                      </Button>
+                    ))}
+                  </Flex>
+                </Flex>
+              ))}
           </Flex>
         </Flex>
-      ) : (
-        shopSchedule
-          ?.filter(
-            (employee) => String(employee.employee.id) === selectedEmployeeId
-          )
-          .map((employee, index) => (
-            <Flex direction={"column"}>
-              <Heading size="sm" mb={2}>
-                {employee.employee.name}
-              </Heading>
-              <Flex
-                key={index}
-                direction="row"
-                mb={4}
-                justify={"center"}
-                gap={8}
-              >
-                {dateRange.map((date, dateIndex) => (
-                  <Flex direction="column" key={dateIndex}>
-                    <Heading size="sm" mb={2} fontWeight={400}>
-                      {date.toDateString()}
-                    </Heading>
-                    <Flex flexWrap="wrap" direction="column">
-                      {calculateAvailability(
-                        employee.employee,
-                        date,
-                        dayHours
-                      ).map((slot, slotIndex) => (
-                        <Button key={slotIndex} size="sm" m={1}>
-                          {slot.twenty_four_hour_format}
-                        </Button>
-                      ))}
-                    </Flex>
-                  </Flex>
-                ))}
-              </Flex>
-            </Flex>
-          ))
-      )}
-    </Card>
-  );
+      </Card>
+    );
+  }
 };

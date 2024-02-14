@@ -66,6 +66,7 @@ interface BookingsContextType {
   selectedService: Service | null;
   selectedShop: any;
   shopSchedule: any;
+  selectedDate: Date | null;
   fetchBookings: () => Promise<void>;
   createBooking: (bookingDetails: any) => Promise<void>;
   updateBooking: (id: string, bookingDetails: any) => Promise<void>;
@@ -79,6 +80,7 @@ interface BookingsContextType {
   setSelectedService: (service: Service | null) => void;
   setSelectedShop: (shop: any) => void;
   setShopSchedule: (schedule: any) => void;
+  setSelectedDate: (date: Date | null) => void;
 }
 
 const defaultContextValue: BookingsContextType = {
@@ -88,6 +90,7 @@ const defaultContextValue: BookingsContextType = {
   selectedService: null,
   selectedShop: null,
   shopSchedule: null,
+  selectedDate: null,
   fetchBookings: async () => {},
   createBooking: async () => {},
   updateBooking: async () => {},
@@ -97,6 +100,7 @@ const defaultContextValue: BookingsContextType = {
   setSelectedService: () => {},
   setSelectedShop: () => {},
   setShopSchedule: () => {},
+  setSelectedDate: () => {},
 };
 
 const BookingsContext = createContext<BookingsContextType>(defaultContextValue);
@@ -114,6 +118,7 @@ export const BookingsProvider = ({
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedShop, setSelectedShop] = useState<any | null>(null);
   const [shopSchedule, setShopSchedule] = useState<any | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -265,6 +270,7 @@ export const BookingsProvider = ({
       selectedService,
       selectedShop,
       shopSchedule,
+      selectedDate,
       fetchBookings,
       createBooking,
       updateBooking,
@@ -274,8 +280,9 @@ export const BookingsProvider = ({
       setSelectedShop,
       setShopSchedule,
       getSchedule,
+      setSelectedDate,
     }),
-    [bookings, loading, error, selectedService, selectedShop, shopSchedule]
+    [bookings, loading, error, selectedService, selectedShop, shopSchedule, selectedDate]
   );
 
   return (
