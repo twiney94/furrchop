@@ -51,10 +51,20 @@ jobs:
       - name: Add SSH Key to Known Hosts
         run: ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
+      - name: List files for debug
+        run: ls -alh
+      
       - name: Deploy with Docker
         env:
           SERVER_SSH: ${{ secrets.SERVER_SSH }}
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
         run: |
+          # Debug: Show the current working directory and list files
+          echo "Current directory: $(pwd)"
+          ls -alh
+      
+          # Copy the Docker Compose file to the server
           scp ./compose.yaml ${{ env.SERVER_SSH }}:${{ env.SERVER_PATH }}/compose.yaml
+          # Run docker-compose on the server using the compose file
           ssh ${{ env.SERVER_SSH }} 'cd ${{ env.SERVER_PATH }} && docker-compose -f compose.yaml up -d --build'
+      
