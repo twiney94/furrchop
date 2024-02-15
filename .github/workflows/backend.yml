@@ -56,5 +56,5 @@ jobs:
           SERVER_SSH: ${{ secrets.SERVER_SSH }}
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
         run: |
-          scp -r ./backend ${{ env.SERVER_SSH }}:${{ env.SERVER_PATH }}
-          ssh ${{ env.SERVER_SSH }} 'cd ${{ env.SERVER_PATH }} && docker-compose up -d --build'
+          scp ./compose.yaml ${{ env.SERVER_SSH }}:${{ env.SERVER_PATH }}/compose.yaml
+          ssh ${{ env.SERVER_SSH }} 'cd ${{ env.SERVER_PATH }} && docker-compose -f compose.yaml up -d --build'
