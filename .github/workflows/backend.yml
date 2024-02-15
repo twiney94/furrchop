@@ -26,24 +26,20 @@ jobs:
         run: |
           cd backend/api && bin/phpunit
 
-
   deploy:
     runs-on: ubuntu-latest
-    environment: 
+    environment:
       name: Production
     needs: build
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Debug SSH Key Presence
-        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/./*/g'
-
-      - name: Set up SSH
+      - name: Set up SSH Agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-        
+
       - name: Create .env.local File
         env:
           JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
@@ -52,11 +48,13 @@ jobs:
         run: |
           envsubst < backend/api/.env.local.template > backend/api/.env.local
 
+      - name: Add SSH Key to Known Hosts
+        run: ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
       - name: Deploy with Docker
         env:
           SERVER_SSH: ${{ secrets.SERVER_SSH }}
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
-
         run: |
-          scp -r ./backend/api $SERVER_SSH:$SERVER_PATH
-          ssh $SERVER_SSH 'cd $SERVER_PATH && docker-compose up -d --build'
+          scp -r ./backend/api ${{ env.SERVER_SSH }}:${{ env.SERVER_PATH }}
+          ssh ${{ env.SERVER_SSH }} 'cd ${{ env.SERVER_PATH }} && docker-compose up -d --build'
