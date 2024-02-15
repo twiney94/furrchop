@@ -30,18 +30,6 @@ interface Leave {
   employee: string;
 }
 
-interface Booking {
-  id: number;
-  beginDateTime: string;
-  endDateTime: string;
-  service: string;
-  comment: string;
-  status: string;
-  user: string;
-  shop: string;
-  employee: string;
-}
-
 interface Schedule {
   id: number;
   employee: string; // Assuming it's a URL or ID reference
@@ -60,12 +48,25 @@ interface Booking {
   id: number;
   beginDateTime: string;
   endDateTime: string;
-  shop: string;
+  shop: BookingShopResponse;
   employee: string;
-  service: string;
+  service: BookingServiceResponse;
   status: string;
   user: string;
   comment?: string;
+}
+
+interface BookingShopResponse {
+  id: number;
+  name: string;
+  address: string;
+}
+
+interface BookingServiceResponse {
+  "@id": number;
+  name: string;
+  duration: number;
+  price: number;
 }
 
 interface Employee {

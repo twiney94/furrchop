@@ -16,6 +16,17 @@ interface BookingCardProps {
 }
 
 export const BookingCard: React.FC<BookingCardProps> = ({ booking, index }) => {
+  // Thursday, August 19, 2021
+  const humanReadableDateTime = new Date(booking.beginDateTime).toLocaleDateString(
+    "en-US",
+    {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
+
   return (
     <Card
       key={index}
@@ -32,11 +43,10 @@ export const BookingCard: React.FC<BookingCardProps> = ({ booking, index }) => {
 
       <Stack>
         <CardBody>
-          <Heading size="md">{booking.beginDateTime}</Heading>
+          <Heading size="md" fontWeight={500}>{humanReadableDateTime}</Heading>
 
-          <Text py="2">
-            Caffè latte is a coffee beverage of Italian origin made with
-            espresso and steamed milk.
+          <Text>
+            {booking.shop.name} - {booking.shop.address}
           </Text>
         </CardBody>
 
