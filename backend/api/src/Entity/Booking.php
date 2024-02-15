@@ -106,6 +106,7 @@ class Booking
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['booking:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]

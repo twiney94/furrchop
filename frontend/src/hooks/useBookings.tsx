@@ -21,9 +21,10 @@ interface BookingsContextType {
   selectedShop: any;
   shopSchedule: any;
   selectedDate: SelectedDate;
+  selectedBooking: Booking | null;
   fetchBookings: () => Promise<void>;
   createBooking: () => Promise<void>;
-  updateBooking: (id: string, bookingDetails: any) => Promise<void>;
+  editBooking: () => Promise<void>;
   getServices: (shopId: string) => Promise<Service[]>;
   getShop: (shopId: string) => Promise<void>;
   getSchedule: (
@@ -33,8 +34,15 @@ interface BookingsContextType {
   ) => Promise<void>;
   setSelectedService: (service: Service | null) => void;
   setSelectedShop: (shop: any) => void;
+  setSelectedBooking: (booking: Booking | null) => void;
   setShopSchedule: (schedule: any) => void;
   setSelectedDate: (selectedDate: SelectedDate) => void;
+  cancelBooking: (id: number) => Promise<void>;
+  handleRescheduleBooking: (
+    id: number,
+    serviceIRI: string,
+    shopId: number
+  ) => Promise<void>;
   reset: () => void;
 }
 
@@ -46,16 +54,20 @@ const defaultContextValue: BookingsContextType = {
   selectedShop: null,
   shopSchedule: null,
   selectedDate: { date: null, formatted: "", employee: { id: "" } },
+  selectedBooking: null,
   fetchBookings: async () => {},
   createBooking: async () => {},
-  updateBooking: async () => {},
+  editBooking: async () => {},
   getServices: async () => [],
   getShop: async () => {},
   getSchedule: async () => {},
   setSelectedService: () => {},
+  handleRescheduleBooking: async () => {},
   setSelectedShop: () => {},
   setShopSchedule: () => {},
   setSelectedDate: () => {},
+  setSelectedBooking: () => {},
+  cancelBooking: async () => {},
   reset: () => {},
 };
 
@@ -74,6 +86,7 @@ export const BookingsProvider = ({
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedShop, setSelectedShop] = useState<any | null>(null);
   const [shopSchedule, setShopSchedule] = useState<any | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [selectedDate, setSelectedDate] = useState<SelectedDate>({
     date: null,
     formatted: "",
@@ -108,6 +121,28 @@ export const BookingsProvider = ({
       toast({
         title: "Error",
         description: "Failed to fetch bookings.",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelBooking = async (id: number) => {
+    setLoading(true);
+    try {
+      await httpCall("PATCH", `bookings/${id}/cancel`, {});
+      toast({
+        title: "Booking Cancelled",
+        description: "Your booking was successfully cancelled.",
+        status: "success",
+      });
+      fetchBookings();
+    } catch (error) {
+      setError("Failed to cancel booking.");
+      toast({
+        title: "Error",
+        description: "Failed to cancel booking.",
         status: "error",
       });
     } finally {
@@ -151,6 +186,7 @@ export const BookingsProvider = ({
         description: "Your booking was successfully created.",
         status: "success",
       });
+      fetchBookings();
       navigate("/profile");
     } catch (error) {
       setError("Failed to create booking.");
@@ -164,21 +200,71 @@ export const BookingsProvider = ({
     }
   };
 
-  const updateBooking = async (id: string, bookingDetails: any) => {
-    setLoading(true);
-    try {
-      await httpCall("PUT", `bookings/${id}`, bookingDetails);
-      toast({
-        title: "Success",
-        description: "Booking updated successfully.",
-        status: "success",
-      });
-      fetchBookings(); // Refresh the list
-    } catch (error) {
-      setError("Failed to update booking.");
+  const editBooking = async () => {
+    if (
+      !selectedBooking ||
+      !selectedService ||
+      !selectedDate.date ||
+      !selectedDate.employee
+    ) {
       toast({
         title: "Error",
-        description: "Failed to update booking.",
+        description: "No booking selected.",
+        status: "error",
+      });
+      return;
+    } else {
+      const bookingStart = new Date(selectedDate.date);
+      const bookingEnd = new Date(
+        bookingStart.getTime() + selectedService.duration * 60000
+      );
+
+      if (
+        new Date(selectedBooking.beginDateTime).getTime() <
+          new Date().getTime() ||
+        selectedBooking.status === "canceled"
+      ) {
+        await createBooking();
+        return;
+      } else {
+        await httpCall("PATCH", `bookings/${selectedBooking.id}`, {
+          beginDateTime: bookingStart,
+          endDateTime: bookingEnd,
+          employee: `/employees/${selectedDate.employee.id}`,
+        });
+        toast({
+          title: "Booking Updated",
+          description: "Your booking was successfully updated.",
+          status: "success",
+        });
+        fetchBookings();
+        navigate("/profile");
+        return;
+      }
+    }
+  };
+
+  const handleRescheduleBooking = async (
+    id: number,
+    serviceIRI: string,
+    shopId: number
+  ) => {
+    setLoading(true);
+    try {
+      const booking = await httpCall("GET", `bookings/${id}`, {});
+      const serviceId = serviceIRI.split("/").pop();
+      const service = await httpCall("GET", `services/${serviceId}`, {});
+      const shop = await httpCall("GET", `shops/${shopId}`, {});
+      setSelectedService(service.data);
+      setSelectedShop(shop.data);
+      setSelectedBooking(booking.data);
+      navigate(`/booking/${shop.data.id}`);
+      console.log("Rescheduling booking with ID:", id);
+    } catch (error) {
+      setError("Failed to reschedule booking.");
+      toast({
+        title: "Error",
+        description: "Failed to reschedule booking.",
         status: "error",
       });
     } finally {
@@ -273,6 +359,7 @@ export const BookingsProvider = ({
     setSelectedService(null);
     setShopSchedule(null);
     setSelectedDate({ date: null, formatted: "" });
+    setSelectedBooking(null);
   };
 
   const value = useMemo(
@@ -281,19 +368,23 @@ export const BookingsProvider = ({
       loading,
       error,
       selectedService,
+      selectedBooking,
       selectedShop,
       shopSchedule,
       selectedDate,
       fetchBookings,
       createBooking,
-      updateBooking,
+      editBooking,
       getServices,
       getShop,
       setSelectedService,
+      setSelectedBooking,
       setSelectedShop,
       setShopSchedule,
       getSchedule,
       setSelectedDate,
+      cancelBooking,
+      handleRescheduleBooking,
       reset,
     }),
     [
@@ -302,6 +393,7 @@ export const BookingsProvider = ({
       error,
       selectedService,
       selectedShop,
+      selectedBooking,
       shopSchedule,
       selectedDate,
     ]

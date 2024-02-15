@@ -51,7 +51,7 @@ interface Booking {
   shop: BookingShopResponse;
   employee: string;
   service: BookingServiceResponse;
-  status: string;
+  status: "validated" | "canceled";
   user: string;
   comment?: string;
 }
@@ -97,6 +97,8 @@ interface UseBookingsReturn {
   createBooking: () => void;
   getSchedule: (shopId: string, startDate: string, endDate: string) => void;
   setSelectedDate: (selectedDate: SelectedDate) => void;
+  selectedBooking: Booking | null;
+  editBooking: () => void;
 }
 
 interface SelectedDate {

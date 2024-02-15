@@ -8,22 +8,40 @@ export const PastBookings = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const bookingsPerPage = 3; // Adjust the number of bookings per page as needed
-  const { fetchBookings, bookings } = useBookings();
+  const { fetchBookings, bookings, cancelBooking, handleRescheduleBooking } = useBookings();
 
   useEffect(() => {
     fetchBookings();
   }, []);
 
+  const handleCancelBooking = (bookingId: number) => {
+    cancelBooking(bookingId);
+  };
+
+  const reschedule = (bookingId: number, serviceId: string, shopId: number) => {
+    console.log(`Rescheduling booking with ID: ${bookingId}, service ID: ${serviceId}, and shop ID: ${shopId}`);
+    handleRescheduleBooking(bookingId, serviceId, shopId);
+  };
+
+
+  const sortedBookings: Booking[] =
+    bookings?.sort((a, b) => {
+      return (
+        new Date(b.beginDateTime).getTime() -
+        new Date(a.beginDateTime).getTime()
+      );
+    }) ?? [];
+
   const currentBookings: Booking[] =
-    bookings && bookings.length > 0
-      ? bookings.slice(
+    sortedBookings && sortedBookings.length > 0
+      ? sortedBookings.slice(
           (currentPage - 1) * bookingsPerPage,
           currentPage * bookingsPerPage
         )
       : [];
 
-  const totalPages = bookings
-    ? Math.ceil(bookings.length / bookingsPerPage)
+  const totalPages = sortedBookings
+    ? Math.ceil(sortedBookings.length / bookingsPerPage)
     : 0;
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -33,11 +51,16 @@ export const PastBookings = () => {
   return (
     <Card p={8} h={"100%"} maxH={"100%"}>
       <Heading as="h1" size="lg" textAlign="left" mb={8} fontWeight={500}>
-        My Past Bookings
+        My Bookings
       </Heading>
       <Stack spacing={4}>
         {currentBookings.map((booking: Booking, index) => (
-          <BookingCard key={index} booking={booking} index={index} />
+          <BookingCard
+            key={index}
+            booking={booking}
+            onCancel={() => handleCancelBooking(booking.id)}
+            onReschedule={reschedule}
+          />
         ))}
       </Stack>
       <Box display="flex" justifyContent="center" mt={4}>
@@ -45,7 +68,7 @@ export const PastBookings = () => {
           <Button
             key={index}
             mx={1}
-            colorScheme="teal"
+            colorScheme="brand"
             onClick={() => paginate(index + 1)}
             isActive={currentPage === index + 1}
           >

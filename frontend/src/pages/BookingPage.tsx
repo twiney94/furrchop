@@ -17,7 +17,7 @@ import { BookingCalendar } from "../components/booking/BookingCalendar";
 import { useNavigate } from "react-router-dom";
 
 const BookingPage = ({ mode }: { mode: string }) => {
-  const { getShop, selectedShop, setSelectedShop, selectedService } =
+  const { getShop, selectedShop, setSelectedShop, selectedService, selectedBooking } =
     useBookings();
   const shopId = window.location.pathname.split("/")[2];
   const navigate = useNavigate();
@@ -108,7 +108,7 @@ const BookingPage = ({ mode }: { mode: string }) => {
               mode="confirmation"
             />
             <Heading as="h1" size="md" color={"brand.300"} fontWeight={500}>
-              2. Pick a date
+              {selectedBooking ? "2. Pick a new date to modify your booking" : "2. Pick a date"}
             </Heading>
             <BookingCalendar shopId={shopId} />
           </Flex>

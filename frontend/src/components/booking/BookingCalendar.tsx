@@ -30,6 +30,8 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
     selectedDate,
     setSelectedDate,
     createBooking,
+    selectedBooking,
+    editBooking,
   }: UseBookingsReturn = useBookings();
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("all");
   const [currentBeginDate, setCurrentBeginDate] = useState<Date>(beginDate);
@@ -272,6 +274,9 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
             alignItems={"center"}
           >
             <Flex gap={2}>
+              <Text color={"brand.300"}>
+                {selectedBooking ? "Reschedule" : "Book"} for
+              </Text>
               <Text color={"black"}>{selectedDate.date.toDateString()}</Text>-
               <Text color={"brand.300"}>
                 {selectedDate.date
@@ -297,10 +302,14 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
           variant="solid"
           size="lg"
           onClick={() => {
-            createBooking();
+            if (selectedBooking) {
+              editBooking();
+            } else {
+              createBooking();
+            }
           }}
         >
-          Confirm
+          {selectedBooking ? "Confirm new date" : "Confirm"}
         </Button>
       </>
     );
