@@ -3,6 +3,7 @@ import ServiceCard from "./ServiceCard";
 import { useBookings } from "../../../hooks/useBookings";
 import { useEffect, useState } from "react";
 import type { Service } from "../../../hooks/useBookings";
+import CustomerReview from "./customerReview/customerReview";
 
 export const Services = ({ shopId }: { shopId: string }) => {
   const { getServices, loading } = useBookings();
@@ -37,13 +38,16 @@ export const Services = ({ shopId }: { shopId: string }) => {
     }
   }, []);
 
-  return (
+   return (
     <Flex direction="column" gap={4}>
       {loading ? (
         <Text>Loading...</Text>
       ) : services.length > 0 ? (
         services.map((service) => (
-          <ServiceCard key={service.id} service={service} />
+          <Flex key={service.id} direction="column" gap={2}>
+            <ServiceCard service={service} />
+            <CustomerReview serviceId={service.id} />
+          </Flex>
         ))
       ) : (
         <Text>No services available</Text>

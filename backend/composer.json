@@ -1,0 +1,12 @@
+{
+    "name": "sassan-khalafi/backend",
+    "authors": [
+        {
+            "name": "Sassan Khl"
+        }
+    ],
+    "require": {
+        "symfony/runtime": "*",
+        "symfony/dotenv": "*"
+    }
+}
