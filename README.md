@@ -11,18 +11,6 @@ FurrChop is a pet grooming website designed to simplify the process of finding l
 - **Reviews and Ratings:** Read reviews and ratings from other pet owners to make informed decisions.
 - **Business Listings:** Comprehensive listings of local pet grooming businesses with detailed information.
 
-## Getting Started
-
-To get started with FurrChop, follow these simple steps:
-
-1. Clone the repository to your local machine:
-   ```bash
-   git clone https://github.com/your-username/FurrChop.git```
-2. Navigate to the project directory
-   ```bash
-   cd furrchop```
-3. To write......
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
