@@ -82,6 +82,14 @@ const router = createBrowserRouter(
               </ProtectedRoute>
             }
           />
+          <Route
+          path="profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage mode="past-bookings" />
+            </ProtectedRoute>
+          }
+        />
         </Route>
         <Route
           path="login"
@@ -106,14 +114,6 @@ const router = createBrowserRouter(
             <UnloggedRoute>
               <AuthPage mode="activate" />
             </UnloggedRoute>
-          }
-        />
-        <Route
-          path="profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage mode="past-bookings" />
-            </ProtectedRoute>
           }
         />
         <Route

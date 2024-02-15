@@ -139,7 +139,6 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
   };
 
   if (!shopSchedule) {
-    // Or return a loading spinner, etc.
     return <Card p={8}>Loading...</Card>;
   }
   if (!isLoading && !selectedDate.date) {

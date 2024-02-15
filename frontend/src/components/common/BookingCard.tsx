@@ -1,8 +1,24 @@
-import { Card, CardBody, CardFooter, Heading, Stack, Text, Image, Button } from "@chakra-ui/react";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Heading,
+  Stack,
+  Text,
+  Image,
+  Button,
+} from "@chakra-ui/react";
+import { Booking } from "../../types/schedule";
 
-export const BookingCard = () => {
+interface BookingCardProps {
+  booking: Booking;
+  index: number;
+}
+
+export const BookingCard: React.FC<BookingCardProps> = ({ booking, index }) => {
   return (
     <Card
+      key={index}
       direction={{ base: "column", sm: "row" }}
       overflow="hidden"
       variant="outline"
@@ -16,7 +32,7 @@ export const BookingCard = () => {
 
       <Stack>
         <CardBody>
-          <Heading size="md">The perfect latte</Heading>
+          <Heading size="md">{booking.beginDateTime}</Heading>
 
           <Text py="2">
             Caffè latte is a coffee beverage of Italian origin made with
@@ -24,9 +40,12 @@ export const BookingCard = () => {
           </Text>
         </CardBody>
 
-        <CardFooter>
-          <Button variant="solid" colorScheme="blue">
-            Buy Latte
+        <CardFooter display={"flex"} justify={"space-between"}>
+          <Button variant="outline" colorScheme="brand">
+            Reschedule
+          </Button>
+          <Button variant="solid" colorScheme="red">
+            Cancel
           </Button>
         </CardFooter>
       </Stack>

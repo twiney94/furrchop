@@ -56,12 +56,16 @@ interface Leave {
   endsAt: string; // ISO string
   employee: string; // Assuming it's a URL or ID reference
 }
-
 interface Booking {
   id: number;
-  beginDateTime: string; // ISO string
-  endDateTime: string; // ISO string
-  // Other fields...
+  beginDateTime: string;
+  endDateTime: string;
+  shop: string;
+  employee: string;
+  service: string;
+  status: string;
+  user: string;
+  comment?: string;
 }
 
 interface Employee {

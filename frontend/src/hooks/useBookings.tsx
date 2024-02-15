@@ -3,12 +3,7 @@ import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
-import type { SelectedDate } from "../types/schedule";
-
-interface Booking {
-  id: string;
-  // Define other booking properties
-}
+import type { SelectedDate, Booking } from "../types/schedule";
 
 export interface Service {
   description: string;
@@ -89,7 +84,25 @@ export const BookingsProvider = ({
     setLoading(true);
     try {
       const response = await httpCall("GET", "bookings", {});
-      setBookings(response.data);
+      if (response.data["hydra:member"]) {
+        const bookings: Booking[] = response.data["hydra:member"].map(
+          (bookingData: any): Booking => {
+            return {
+              id: bookingData.id,
+              beginDateTime: bookingData.beginDateTime,
+              endDateTime: bookingData.endDateTime,
+              shop: bookingData.shop,
+              employee: bookingData.employee,
+              service: bookingData.service,
+              status: bookingData.status,
+              user: bookingData.user,
+              comment: bookingData.comment ? bookingData.comment : "",
+            };
+          }
+        );
+
+        setBookings(bookings);
+      } else setBookings(response.data);
     } catch (error) {
       setError("Failed to fetch bookings.");
       toast({

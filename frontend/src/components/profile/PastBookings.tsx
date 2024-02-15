@@ -1,38 +1,43 @@
 import { Card, Heading, Stack, Button, Box } from "@chakra-ui/react";
-import { SetStateAction, useState } from "react";
+import { useEffect, useState } from "react";
 import { BookingCard } from "../common/BookingCard";
+import { useBookings } from "../../hooks/useBookings";
+import type { Booking } from "../../types/schedule";
 
 export const PastBookings = () => {
-  const bookings = new Array(30).fill(null).map((_, index) => ({
-    id: index,
-    title: `Booking ${index + 1}`,
-    description: "This is a placeholder description for the booking.",
-  }));
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const [currentPage, setCurrentPage] = useState(1);
   const bookingsPerPage = 3; // Adjust the number of bookings per page as needed
+  const { fetchBookings, bookings } = useBookings();
 
-  // Calculate the current bookings to display
-  const indexOfLastBooking = currentPage * bookingsPerPage;
-  const indexOfFirstBooking = indexOfLastBooking - bookingsPerPage;
-  const currentBookings = bookings.slice(
-    indexOfFirstBooking,
-    indexOfLastBooking
-  );
+  useEffect(() => {
+    fetchBookings();
+  }, []);
 
-  // Change page
-  const paginate = (pageNumber: SetStateAction<number>) => setCurrentPage(pageNumber);
+  const currentBookings: Booking[] =
+    bookings && bookings.length > 0
+      ? bookings.slice(
+          (currentPage - 1) * bookingsPerPage,
+          currentPage * bookingsPerPage
+        )
+      : [];
 
-  // Total pages
-  const totalPages = Math.ceil(bookings.length / bookingsPerPage);
+  const totalPages = bookings
+    ? Math.ceil(bookings.length / bookingsPerPage)
+    : 0;
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  console.log(bookings);
+
   return (
     <Card p={8} h={"100%"} maxH={"100%"}>
       <Heading as="h1" size="lg" textAlign="left" mb={8} fontWeight={500}>
-        My past bookings
+        My Past Bookings
       </Heading>
       <Stack spacing={4}>
-        {currentBookings.map((_booking, index) => (
-          <BookingCard key={index} /> // Render BookingCard for each booking
+        {currentBookings.map((booking: Booking, index) => (
+          <BookingCard key={index} booking={booking} index={index} />
         ))}
       </Stack>
       <Box display="flex" justifyContent="center" mt={4}>
