@@ -45,6 +45,21 @@ jobs:
           JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
           MAILER_DSN: ${{ secrets.MAILER_DSN }}
           WEBSITE_URI: ${{ secrets.WEBSITE_URI }}
+          CADDY_MERCURE_JWT_SECRET: ${{secrets.CADDY_MERCURE_JWT_SECRET}}
+          TRUSTED_PROXIES: ${{secrets.TRUSTED_PROXIES}}
+          TRUSTED_HOSTS: ${{secrets.TRUSTED_HOSTS}}
+          DATABASE_URL: ${{secrets.DATABASE_URL}}
+          CADDY_MERCURE_URL: ${{secrets.CADDY_MERCURE_URL}}
+          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+          POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+          POSTGRES_VERSION: ${{secrets.POSTGRES_VERSION}}
+          POSTGRES_CHARSET: ${{secrets.POSTGRES_CHARSET}}
+          MERCURE_PUBLISHER_JWT_KEY: ${{secrets.MERCURE_PUBLISHER_JWT_KEY}}
+          MERCURE_SUBSCRIBER_JWT_KEY: ${{secrets.MERCURE_SUBSCRIBER_JWT_KEY}}
+          MERCURE_URL: ${{secrets.MERCURE_URL}}
+          MERCURE_PUBLIC_URL: ${{secrets.MERCURE_PUBLIC_URL}}
+          SERVER_NAME: ${{secrets.SERVER_NAME}}
         run: |
           envsubst < backend/api/.env.local.template > backend/api/.env.local
 
