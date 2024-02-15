@@ -44,7 +44,7 @@ class RegistrationController extends AbstractController
         $this->mailService->sendEmail(
             $user->getEmail(),
             'Welcome to FurrChop',
-            '<p>Your registration is successful, activate your account by clicking on this link: <a href="' . $websiteURI . '/activate/' . $userId . '">Activate</a></p>'
+            '<p>Your registration is successful, activate your account by clicking on this link: <a href="https://furrchop.me/activate/' . $userId . '">Activate</a></p>'
         );
 
 
