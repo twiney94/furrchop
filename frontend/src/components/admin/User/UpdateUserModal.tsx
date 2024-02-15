@@ -41,7 +41,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   });
 
   useEffect(() => {
-    if (user) {
+    if (user && user.roles) {
       const rolesUpdate = allRoles.reduce(
         (acc, role) => ({
           ...acc,
@@ -50,6 +50,8 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
         {}
       );
       setRoles(rolesUpdate);
+    } else {
+      roles;
     }
   }, [user]);
 

@@ -38,7 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         )
     ],
 
-    normalizationContext: ['groups' => ['employee:read']],
+    // normalizationContext: ['groups' => ['employee:read']],
 )]
 #[ApiResource(
     operations: [
@@ -65,7 +65,7 @@ class Shop
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['shop:read'])]
+    #[Groups(['shop:read', 'employee:read'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
@@ -77,7 +77,7 @@ class Shop
     private ?array $openDays = [];
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:read'])]
+    #[Groups(['shop:read', 'employee:read'])]
     private ?string $address = null;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Service::class)]

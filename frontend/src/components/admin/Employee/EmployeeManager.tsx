@@ -9,22 +9,20 @@ import {
   Th,
   Td,
   IconButton,
+  useDisclosure,
+  Flex,
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
-  ModalBody,
   ModalCloseButton,
-  Button,
-  useDisclosure,
-  Flex,
-  Badge,
+  ModalBody,
+  ModalHeader,
 } from '@chakra-ui/react';
 import { useEmployees } from '../../../hooks/useEmployees';
 import { DeleteIcon, ViewIcon, EditIcon, AddIcon } from '@chakra-ui/icons';
-// import CreateEmployee from './CreateEmployee';
 import DeleteDialog from '../sharedComponents/DeleteDialog';
 import UpdateEmployeeModal from './UpdateEmployeeModal';
+import CreateEmployee from './CreateEmpployee';
 
 const EmployeeManager = () => {
   const { employees, fetchEmployees, deleteEmployee, updateEmployee } =
@@ -111,7 +109,6 @@ const EmployeeManager = () => {
                   aria-label="View Employee"
                   icon={<ViewIcon />}
                   mr={2}
-                  onClick={() => handleEditEmployee(employee)}
                 />
                 <IconButton
                   aria-label="Edit Employee"
@@ -133,26 +130,26 @@ const EmployeeManager = () => {
           ))}
         </Tbody>
       </Table>
-      <Modal isOpen={editDisclosure.isOpen} onClose={editDisclosure.onClose}>
+      <UpdateEmployeeModal
+        isOpen={editDisclosure.isOpen}
+        onClose={editDisclosure.onClose}
+        employee={selectedEmployee}
+        handleChange={handleChange}
+        onUpdate={handleUpdateEmployee}
+      />
+      <Modal
+        isOpen={createDisclosure.isOpen}
+        onClose={createDisclosure.onClose}
+      >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Edit Employee</ModalHeader>
+          <ModalHeader>Create New User</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <UpdateEmployeeModal
-              isOpen={editDisclosure.isOpen}
-              onClose={editDisclosure.onClose}
-              employee={selectedEmployee}
-              handleChange={handleChange}
-              onUpdate={handleUpdateEmployee}
-            />
+            <CreateEmployee onClose={createDisclosure.onClose} />
           </ModalBody>
         </ModalContent>
       </Modal>
-      {/* <CreateEmployee
-        isOpen={createDisclosure.isOpen}
-        onClose={createDisclosure.onClose}
-      /> */}
       <DeleteDialog
         entity="Employee"
         isOpen={deleteAlertDisclosure.isOpen}
