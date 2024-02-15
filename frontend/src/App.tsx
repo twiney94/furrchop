@@ -23,6 +23,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import AdminPanelPage from './pages/AdminPanelPage';
 import { UsersProvider } from './hooks/useUsers';
 import { ShopsProvider } from './hooks/useShops';
+import { EmployeesProvider } from './hooks/useEmployees';
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -55,7 +56,9 @@ const AdmminProviderLayout = () => (
   //add ShopProvider
   <UsersProvider>
     <ShopsProvider>
-      <Outlet />
+      <EmployeesProvider>
+        <Outlet />
+      </EmployeesProvider>
     </ShopsProvider>
   </UsersProvider>
 );

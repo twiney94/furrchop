@@ -36,7 +36,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             security: "is_granted('ROLE_OWNER')",
         )
-    ]
+    ],
+
+    normalizationContext: ['groups' => ['employee:read']],
 )]
 #[ApiResource(
     operations: [
@@ -59,30 +61,35 @@ class Shop
     private ?User $user = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['shop:read'])]
+    #[Groups(['shop:read', 'employee:read'])] // Add 'employee:read' group or use an existing one
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['shop:read'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:schedules'])]
+    #[Groups(['shop:schedules', 'employee:read'])]
     private ?array $openHours = [];
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:schedules'])]
+    #[Groups(['shop:schedules', 'employee:read'])]
     private ?array $openDays = [];
 
     #[ORM\Column(length: 255)]
+    #[Groups(['shop:read'])]
     private ?string $address = null;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Service::class)]
+    #[Groups(['shop:read'])]
     private Collection $services;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Booking::class)]
+    #[Groups(['shop:read'])]
     private Collection $bookings;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Employee::class, orphanRemoval: true)]
+    #[Groups(['shop:read'])]
     private Collection $employees;
 
 

@@ -116,6 +116,7 @@ const UserManager = () => {
                   aria-label="Edit user"
                   icon={<EditIcon />}
                   mr={2}
+                  colorScheme="green"
                   onClick={() => handleEditUser(user)}
                 />
                 <IconButton

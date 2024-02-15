@@ -1,4 +1,3 @@
-// hooks/useUsers.tsx
 import { createContext, useContext, useMemo, useState } from 'react';
 import { useToast } from '@chakra-ui/react';
 import * as userService from '../services/user';

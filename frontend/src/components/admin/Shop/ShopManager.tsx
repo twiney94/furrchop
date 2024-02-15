@@ -51,8 +51,6 @@ const ShopManager = () => {
 
   const handleUpdateShop = async () => {
     if (selectedShop) {
-      console.log(selectedShop);
-
       await updateShop(truncateId(selectedShop['@id']), selectedShop);
       editDisclosure.onClose();
       fetchShops();
@@ -98,6 +96,7 @@ const ShopManager = () => {
                 <IconButton
                   aria-label="Edit shop"
                   icon={<EditIcon />}
+                  colorScheme="green"
                   mr={2}
                   onClick={() => handleEditShop(shop)}
                 />

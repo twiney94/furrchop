@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 #[ApiResource(
@@ -31,7 +32,9 @@ use ApiPlatform\Metadata\Delete;
         new Post(
             securityPostDenormalize: "is_granted('ROLE_ADMIN') or (object.getShop().getUser() == user and is_granted('ROLE_OWNER'))"
         )
-    ]
+    ],
+    normalizationContext: ['groups' => ['employee:read']],
+
 )]
 class Employee
 {
@@ -42,6 +45,7 @@ class Employee
 
     #[ORM\ManyToOne(inversedBy: 'employees')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['employee:read'])]
     private ?Shop $shop = null;
 
     #[ORM\OneToMany(mappedBy: 'employee', targetEntity: Booking::class)]
@@ -54,7 +58,7 @@ class Employee
     private Collection $schedules;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:schedules'])]
+    #[Groups(['shop:schedules', 'employee:read'])]
     private ?string $name = null;
 
     public function __construct()

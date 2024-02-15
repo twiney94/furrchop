@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import UserManager from '../components/admin/User/UserManager';
 import ShopManager from '../components/admin/Shop/ShopManager';
+import EmployeeManager from '../components/admin/Employee/EmployeeManager';
 
 const AdminPanelPage = () => {
   return (
@@ -27,6 +28,7 @@ const AdminPanelPage = () => {
           <TabList mb="1em">
             <Tab>Users</Tab>
             <Tab>Shops</Tab>
+            <Tab>Employees</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -34,6 +36,9 @@ const AdminPanelPage = () => {
             </TabPanel>
             <TabPanel>
               <ShopManager />
+            </TabPanel>
+            <TabPanel>
+              <EmployeeManager />
             </TabPanel>
           </TabPanels>
         </Tabs>
