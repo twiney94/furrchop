@@ -1,0 +1,14 @@
+/* Make Scrollbar hidden */
+
+::-webkit-scrollbar {
+    display: none;
+  }
+
+  .marker {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/194/194279.png');
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+  }

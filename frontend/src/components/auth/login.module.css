@@ -1,0 +1,14 @@
+.splitter {
+    display: flex;
+    align-items: center;
+  }
+
+  .splitter-item {
+    flex: 1;
+    height: 2px;
+    background-color: black;
+  }
+
+  .splitter-text {
+    margin: 0 10px;
+  }
