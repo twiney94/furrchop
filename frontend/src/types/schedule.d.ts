@@ -63,7 +63,7 @@ interface BookingShopResponse {
 }
 
 interface BookingServiceResponse {
-  "@id": number;
+  "@id": string;
   name: string;
   duration: number;
   price: number;

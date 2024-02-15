@@ -57,16 +57,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
     });
     setWeekOffset((prevOffset) => prevOffset + 1);
   };
-
-  const resetToCurrentWeek = () => {
-    const today = new Date();
-    const currentWeekStart = new Date(
-      today.setDate(today.getDate() - today.getDay())
-    );
-    setCurrentBeginDate(currentWeekStart);
-    setWeekOffset(0);
-  };
-
+  
   useEffect(() => {
     const fetchSchedule = async () => {
       setIsLoading(true);
