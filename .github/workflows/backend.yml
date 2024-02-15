@@ -87,4 +87,4 @@ jobs:
           # Copy the Docker Compose file to the server
           scp -r ./backend ${{ env.SERVER_SSH }}:${{ env.SERVER_PATH }}
           # Run docker-compose on the server using the compose file
-          ssh ${{ env.SERVER_SSH }} 'cd ${{ env.SERVER_PATH }}/backend && docker-compose -f compose.yaml -f compose.prod.yaml up -d --build'
+          ssh ${{ env.SERVER_SSH }} 'cd ${{ env.SERVER_PATH }}/backend && docker-compose -f compose.yaml -f compose.prod.yaml build && docker-compose up -d database && docker-compose up -d'
