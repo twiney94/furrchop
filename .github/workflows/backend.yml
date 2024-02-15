@@ -72,7 +72,6 @@ jobs:
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
         run: |   
           # Copy the Docker Compose file to the server
-          scp ./backend/compose.prod.yaml ${{ env.SERVER_SSH }}:${{ env.SERVER_PATH }}/compose.yaml
+          scp -r ./backend/api ${{ env.SERVER_SSH }}:${{ env.SERVER_PATH }}
           # Run docker-compose on the server using the compose file
           ssh ${{ env.SERVER_SSH }} 'cd ${{ env.SERVER_PATH }} && docker-compose -f compose.yaml up -d --build'
-      
