@@ -1,38 +1,66 @@
 import { Card, Heading, Stack, Button, Box } from "@chakra-ui/react";
-import { SetStateAction, useState } from "react";
+import { useEffect, useState } from "react";
 import { BookingCard } from "../common/BookingCard";
+import { useBookings } from "../../hooks/useBookings";
+import type { Booking } from "../../types/schedule";
 
 export const PastBookings = () => {
-  const bookings = new Array(30).fill(null).map((_, index) => ({
-    id: index,
-    title: `Booking ${index + 1}`,
-    description: "This is a placeholder description for the booking.",
-  }));
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const [currentPage, setCurrentPage] = useState(1);
   const bookingsPerPage = 3; // Adjust the number of bookings per page as needed
+  const { fetchBookings, bookings, cancelBooking, handleRescheduleBooking } = useBookings();
 
-  // Calculate the current bookings to display
-  const indexOfLastBooking = currentPage * bookingsPerPage;
-  const indexOfFirstBooking = indexOfLastBooking - bookingsPerPage;
-  const currentBookings = bookings.slice(
-    indexOfFirstBooking,
-    indexOfLastBooking
-  );
+  useEffect(() => {
+    fetchBookings();
+  }, []);
 
-  // Change page
-  const paginate = (pageNumber: SetStateAction<number>) => setCurrentPage(pageNumber);
+  const handleCancelBooking = (bookingId: number) => {
+    cancelBooking(bookingId);
+  };
 
-  // Total pages
-  const totalPages = Math.ceil(bookings.length / bookingsPerPage);
+  const reschedule = (bookingId: number, serviceId: string, shopId: number) => {
+    console.log(`Rescheduling booking with ID: ${bookingId}, service ID: ${serviceId}, and shop ID: ${shopId}`);
+    handleRescheduleBooking(bookingId, serviceId, shopId);
+  };
+
+
+  const sortedBookings: Booking[] =
+    bookings?.sort((a, b) => {
+      return (
+        new Date(b.beginDateTime).getTime() -
+        new Date(a.beginDateTime).getTime()
+      );
+    }) ?? [];
+
+  const currentBookings: Booking[] =
+    sortedBookings && sortedBookings.length > 0
+      ? sortedBookings.slice(
+          (currentPage - 1) * bookingsPerPage,
+          currentPage * bookingsPerPage
+        )
+      : [];
+
+  const totalPages = sortedBookings
+    ? Math.ceil(sortedBookings.length / bookingsPerPage)
+    : 0;
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  console.log(bookings);
+
   return (
     <Card p={8} h={"100%"} maxH={"100%"}>
       <Heading as="h1" size="lg" textAlign="left" mb={8} fontWeight={500}>
-        My past bookings
+        My Bookings
       </Heading>
       <Stack spacing={4}>
-        {currentBookings.map((_booking, index) => (
-          <BookingCard key={index} /> // Render BookingCard for each booking
+        {currentBookings.map((booking: Booking, index) => (
+          <BookingCard
+            key={index}
+            booking={booking}
+            onCancel={() => handleCancelBooking(booking.id)}
+            onReschedule={reschedule}
+          />
         ))}
       </Stack>
       <Box display="flex" justifyContent="center" mt={4}>
@@ -40,7 +68,7 @@ export const PastBookings = () => {
           <Button
             key={index}
             mx={1}
-            colorScheme="teal"
+            colorScheme="brand"
             onClick={() => paginate(index + 1)}
             isActive={currentPage === index + 1}
           >
