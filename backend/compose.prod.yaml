@@ -2,7 +2,7 @@ version: "3.4"
 
 services:
   php:
-    image: furrchop-api:latest
+    image: twiney/furrchop-api:latest
     depends_on:
       - database
     restart: unless-stopped
