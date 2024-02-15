@@ -39,6 +39,9 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Debug SSH Key Presence
+        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" | sed 's/./*/g'
+        
       - name: Create .env.local File
         env:
           JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
