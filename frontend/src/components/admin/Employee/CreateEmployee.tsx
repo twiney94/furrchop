@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Flex,
   FormControl,
@@ -32,8 +31,6 @@ const CreateEmployee = ({ onClose }) => {
       validationSchema={CreateEmployeeSchema}
       onSubmit={async (values, actions) => {
         try {
-          console.log('values', values);
-
           await createEmployee(values);
           toast({
             title: 'Employee created successfully',

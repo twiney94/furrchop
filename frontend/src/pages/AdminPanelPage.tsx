@@ -12,6 +12,7 @@ import {
 import UserManager from '../components/admin/User/UserManager';
 import ShopManager from '../components/admin/Shop/ShopManager';
 import EmployeeManager from '../components/admin/Employee/EmployeeManager';
+import ServiceManager from '../components/admin/Service/ServiceManager';
 
 const AdminPanelPage = () => {
   return (
@@ -29,6 +30,7 @@ const AdminPanelPage = () => {
             <Tab>Users</Tab>
             <Tab>Shops</Tab>
             <Tab>Employees</Tab>
+            <Tab>Services</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -39,6 +41,9 @@ const AdminPanelPage = () => {
             </TabPanel>
             <TabPanel>
               <EmployeeManager />
+            </TabPanel>
+            <TabPanel>
+              <ServiceManager />
             </TabPanel>
           </TabPanels>
         </Tabs>

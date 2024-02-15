@@ -61,23 +61,23 @@ class Shop
     private ?User $user = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['shop:read', 'employee:read'])] // Add 'employee:read' group or use an existing one
+    #[Groups(['shop:read', 'employee:read', 'service:read'])] // Add 'employee:read' group or use an existing one
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['shop:read', 'employee:read'])]
+    #[Groups(['shop:read'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:schedules', 'employee:read'])]
+    #[Groups(['shop:schedules'])]
     private ?array $openHours = [];
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:schedules', 'employee:read'])]
+    #[Groups(['shop:schedules'])]
     private ?array $openDays = [];
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:read', 'employee:read'])]
+    #[Groups(['shop:read'])]
     private ?string $address = null;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Service::class)]

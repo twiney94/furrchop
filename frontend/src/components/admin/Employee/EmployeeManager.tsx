@@ -22,7 +22,7 @@ import { useEmployees } from '../../../hooks/useEmployees';
 import { DeleteIcon, ViewIcon, EditIcon, AddIcon } from '@chakra-ui/icons';
 import DeleteDialog from '../sharedComponents/DeleteDialog';
 import UpdateEmployeeModal from './UpdateEmployeeModal';
-import CreateEmployee from './CreateEmpployee';
+import CreateEmployee from './CreateEmployee';
 
 const EmployeeManager = () => {
   const { employees, fetchEmployees, deleteEmployee, updateEmployee } =
@@ -143,7 +143,7 @@ const EmployeeManager = () => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create New User</ModalHeader>
+          <ModalHeader>Create New Employee</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <CreateEmployee onClose={createDisclosure.onClose} />
