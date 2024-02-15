@@ -40,7 +40,8 @@ export const register = async (userDetails: {
 export const activateAccount = async (): Promise<any> => {
   const urlParams = window.location.pathname;
   const token = urlParams.split("/")[2];
-  const decodedToken = atob(token);
+  const tokenParams = token.split("&")[0];
+  const decodedToken = atob(tokenParams);
   try {
     const response = await httpCall("POST", "activate", {
       uuid: decodedToken,
