@@ -3,11 +3,11 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Outlet,
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { Provider } from "react-redux";
-import store from "./stores/app";
+import { AuthProvider } from "./hooks/useAuth";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -16,7 +16,10 @@ import SearchPage from "./pages/SearchPage";
 import MainLayout from "./layouts/MainLayout";
 import BookingPage from "./pages/BookingPage";
 import NotFound from "./pages/NotFound";
-import Enroll from "./pages/EnrollPage";
+import AuthPage from "./pages/AuthPage";
+import { UnloggedRoute, ProtectedRoute } from "./components/ProtectedRoute";
+import { ProfilePage } from "./pages/ProfilePage";
+import { BookingsProvider } from "./hooks/useBookings";
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -39,19 +42,86 @@ const theme = extendTheme({
   },
 });
 
+const AuthProviderLayout = () => (
+  <AuthProvider>
+    <Outlet />
+  </AuthProvider>
+);
+
+const BookingProviderLayout = () => (
+  <BookingsProvider>
+    <Outlet />
+  </BookingsProvider>
+);
+
 // Routes structure
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/">
+    <Route path="/" element={<AuthProviderLayout />}>
       <Route element={<BaseLayout />}>
         <Route index element={<HomePage />} />
       </Route>
       <Route element={<MainLayout />}>
         <Route path="search" element={<SearchPage />} />
-        <Route path="book" element={<BookingPage />} />
-        <Route path="404" element={<NotFound />} />
-        <Route path="enroll" element={<Enroll />} />
-
+        <Route element={<BookingProviderLayout />}>
+          <Route
+            path="book/:shopId"
+            element={
+              <ProtectedRoute>
+                <BookingPage mode="landing" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="booking/:serviceId"
+            element={
+              <ProtectedRoute>
+                <BookingPage mode="confirmation" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+          path="profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage mode="past-bookings" />
+            </ProtectedRoute>
+          }
+        />
+        </Route>
+        <Route
+          path="login"
+          element={
+            <UnloggedRoute>
+              <AuthPage mode="login" />
+            </UnloggedRoute>
+          }
+        />
+        <Route
+          path="register"
+          element={
+            <UnloggedRoute>
+              <AuthPage mode="register" />
+            </UnloggedRoute>
+          }
+        />
+        <Route path="forgot-password" />
+        <Route
+          path="activate/:token"
+          element={
+            <UnloggedRoute>
+              <AuthPage mode="activate" />
+            </UnloggedRoute>
+          }
+        />
+        <Route
+          path="me"
+          element={
+            <ProtectedRoute>
+              <ProfilePage mode="me" />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Route>
@@ -62,9 +132,7 @@ function App() {
   return (
     <>
       <ChakraProvider theme={theme}>
-        <Provider store={store}>
-          <RouterProvider router={router} />
-        </Provider>
+        <RouterProvider router={router} />
       </ChakraProvider>
     </>
   );

@@ -57,7 +57,6 @@ export default function RootLayout() {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (locationInputRef.current)
           locationInputRef.current.value = data?.features[0]?.place_name;
         loadingLocation.current = false;
