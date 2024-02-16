@@ -94,6 +94,7 @@ const UserManager = () => {
             <Th>Lastname</Th>
             <Th>Email</Th>
             <Th>Role</Th>
+            <Th>Verified</Th>
             <Th>Actions</Th>
           </Tr>
         </Thead>
@@ -109,6 +110,17 @@ const UserManager = () => {
                     {role}
                   </Badge>
                 ))}
+              </Td>
+              <Td>
+                {user.isVerified ? (
+                  <Badge variant="solid" colorScheme="green">
+                    Verified
+                  </Badge>
+                ) : (
+                  <Badge variant="solid" colorScheme="red">
+                    Not Verified
+                  </Badge>
+                )}
               </Td>
               <Td>
                 <IconButton aria-label="Show user" icon={<ViewIcon />} mr={2} />

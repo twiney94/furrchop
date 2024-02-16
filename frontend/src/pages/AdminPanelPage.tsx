@@ -13,6 +13,7 @@ import UserManager from '../components/admin/User/UserManager';
 import ShopManager from '../components/admin/Shop/ShopManager';
 import EmployeeManager from '../components/admin/Employee/EmployeeManager';
 import ServiceManager from '../components/admin/Service/ServiceManager';
+import BookingKPIViewer from '../components/admin/kpis/BookingKPIViewer';
 
 const AdminPanelPage = () => {
   return (
@@ -31,6 +32,7 @@ const AdminPanelPage = () => {
             <Tab>Shops</Tab>
             <Tab>Employees</Tab>
             <Tab>Services</Tab>
+            <Tab>KPIs</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -44,6 +46,9 @@ const AdminPanelPage = () => {
             </TabPanel>
             <TabPanel>
               <ServiceManager />
+            </TabPanel>
+            <TabPanel>
+              <BookingKPIViewer />
             </TabPanel>
           </TabPanels>
         </Tabs>

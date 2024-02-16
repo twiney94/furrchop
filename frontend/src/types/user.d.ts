@@ -4,6 +4,7 @@ export interface User {
   lastName: string;
   email: string;
   roles: string[];
+  isVerified: boolean;
   createdAt: string;
   updatedAt: string;
 }

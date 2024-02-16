@@ -40,6 +40,8 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
     ROLE_OWNER: false,
   });
 
+  const [isVerified, setIsVerified] = useState(false);
+
   useEffect(() => {
     if (user && user.roles) {
       const rolesUpdate = allRoles.reduce(
@@ -55,6 +57,10 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
     }
   }, [user]);
 
+  const handleIsVerifiedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsVerified(e.target.checked);
+    handleChange({ target: { name: 'isVerified', value: e.target.checked } });
+  };
   const handleRoleChange = (role: string) => {
     setRoles((prevRoles) => ({
       ...prevRoles,
@@ -65,7 +71,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   const handleUpdateClick = () => {
     if (user) {
       const updatedRoles = Object.keys(roles).filter((role) => roles[role]);
-      const updatedUser = { ...user, roles: updatedRoles };
+      const updatedUser = { ...user, roles: updatedRoles, isVerified };
       onUpdate(updatedUser);
     }
   };
@@ -104,6 +110,17 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
               value={user.email || ''}
               onChange={handleChange}
             />
+          </FormControl>
+          <FormControl mt={4}>
+            <FormLabel>Verified</FormLabel>
+            <Switch
+              id="isVerified"
+              isChecked={user.isVerified}
+              onChange={handleIsVerifiedChange}
+              colorScheme="green"
+            >
+              Verified
+            </Switch>
           </FormControl>
           <FormControl mt={4}>
             <FormLabel>Roles</FormLabel>

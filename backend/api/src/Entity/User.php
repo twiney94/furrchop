@@ -138,7 +138,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = ['ROLE_USER'];
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    #[Groups(['user:read', 'user:activate'])]
+    #[Groups(['user:read', 'user:activate', 'user:write'])]
     private ?bool $isVerified = false;
 
     #[ORM\Column(type: 'boolean', nullable: true)]

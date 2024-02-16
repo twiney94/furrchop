@@ -95,12 +95,21 @@ class Shop
     #[Groups(['shop:read'])]
     private Collection $employees;
 
+    #[ORM\Column(type: 'datetime_immutable')]
+    #[Groups(['shop:read'])]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[Groups(['shop:read'])]
+    private ?\DateTimeImmutable $updatedAt = null;
+
 
     public function __construct()
     {
         $this->services = new ArrayCollection();
         $this->bookings = new ArrayCollection();
         $this->employees = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -256,6 +265,30 @@ class Shop
                 $employee->setShop(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
