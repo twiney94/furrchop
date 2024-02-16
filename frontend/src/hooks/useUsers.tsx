@@ -35,7 +35,8 @@ export const UsersProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     try {
       const response = await userService.fetchUsers();
-      setUsers(response!['hydra:member']);
+      // console.log(response);us
+      setUsers(response);
     } catch (error) {
       console.error('Failed to fetch users:', error);
       setError('Failed to fetch users.');
@@ -48,6 +49,7 @@ export const UsersProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
     }
   };
+
   const createUser = async (userDetails: any) => {
     setLoading(true);
     try {

@@ -28,7 +28,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAdmin: boolean;
-  userFullData: unknown;
+  userFullData: any;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (userDetails: {
@@ -118,21 +118,21 @@ export const AuthProvider = ({ children }: Children) => {
     const jwt = user?.token;
     if (!jwt) return null;
 
-    const payload = jwt.split(".")[1];
+    const payload = jwt.split('.')[1];
     const decodedPayload = atob(payload);
     const parsedPayload = JSON.parse(decodedPayload);
     return parsedPayload.username;
-  }
+  };
 
   const userRole = () => {
     const jwt = user?.token;
     if (!jwt) return null;
 
-    const payload = jwt.split(".")[1];
+    const payload = jwt.split('.')[1];
     const decodedPayload = atob(payload);
     const parsedPayload = JSON.parse(decodedPayload);
     return parsedPayload.roles;
-  }
+  };
 
   const register = async (userDetails: {
     email: string;
@@ -212,9 +212,7 @@ export const AuthProvider = ({ children }: Children) => {
     [user, userFullData, isAdmin, loading]
   );
 
-  return (
-    <AuthContext.Provider value={value as any}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = (): AuthContextType => {

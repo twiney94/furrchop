@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   Box,
   Heading,
@@ -26,14 +26,13 @@ import CreateUser from './CreatUser';
 import DeleteDialog from '../sharedComponents/DeleteDialog';
 import UpdateUserModal from './UpdateUserModal';
 import { useAuth } from '../../../hooks/useAuth';
-import { User } from '../../../types/user';
-import React from 'react';
 
 const UserManager = () => {
   const { users, fetchUsers, deleteUser, updateUser } = useUsers();
   const editDisclosure = useDisclosure();
   const createDisclosure = useDisclosure();
   const deleteAlertDisclosure = useDisclosure();
+  const cancelRef = useRef();
   const [selectedUser, setSelectedUser] = useState(null);
   const { userFullData } = useAuth();
 
@@ -42,23 +41,26 @@ const UserManager = () => {
   }, []);
 
   const truncateId = (userId: string) => {
-    return userId.split('/').pop();
+    return userId.split('/')?.pop();
   };
 
-  const handleEditUser = (user: User) => {
+  const handleEditUser = (user) => {
+    console.log([user.email, userFullData.username]);
+
     if (user.email !== userFullData?.username) {
       setSelectedUser(user);
       editDisclosure.onOpen();
     }
   };
 
-  const handleDeleteUserConfirmation = (userId: string, user: User) => {
+  const handleDeleteUserConfirmation = (userId, user) => {
     if (user.email !== userFullData?.username) {
-      setSelectedUser(truncateId(userId) || null);
+      console.log('asas', userId);
+
+      setSelectedUser(truncateId(userId));
       deleteAlertDisclosure.onOpen();
     }
   };
-
   const handleDeleteUser = async () => {
     if (selectedUser) {
       await deleteUser(selectedUser);
@@ -68,7 +70,7 @@ const UserManager = () => {
   };
 
   const handleUpdateUser = async (updatedUser) => {
-    await updateUser(truncateId(updatedUser['@id']), updatedUser);
+    await updateUser(truncateId(updatedUser['id']), updatedUser);
     editDisclosure.onClose();
     fetchUsers();
   };
@@ -143,9 +145,7 @@ const UserManager = () => {
                   aria-label="Delete user"
                   icon={<DeleteIcon />}
                   colorScheme="red"
-                  onClick={() =>
-                    handleDeleteUserConfirmation(user['@id'], user)
-                  }
+                  onClick={() => handleDeleteUserConfirmation(user['id'], user)}
                 />
               </Td>
             </Tr>
@@ -165,7 +165,7 @@ const UserManager = () => {
         entity="users"
         isOpen={deleteAlertDisclosure.isOpen}
         onClose={deleteAlertDisclosure.onClose}
-        cancelRef={React.useRef<HTMLButtonElement>(null)}
+        cancelRef={cancelRef}
         onConfirm={handleDeleteUser}
       />
       {/* Create User Modal */}
