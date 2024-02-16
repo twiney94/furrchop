@@ -38,7 +38,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         )
     ],
 
-    // normalizationContext: ['groups' => ['employee:read']],
+    //     normalizationContext: ['groups' => ['employee:read']]
+    //    , normalizationContext: ['groups' => ['shop:read']]
 )]
 #[ApiResource(
     operations: [
@@ -55,13 +56,15 @@ class Shop
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['shop:read', 'booking:read'])]
     private ?int $id = null;
 
+    #[Groups(['shop:read'])]
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'shops')]
     private ?User $user = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['shop:read', 'employee:read', 'service:read'])] // Add 'employee:read' group or use an existing one
+    #[Groups(['shop:read', 'employee:read', 'service:read', 'booking:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -69,15 +72,15 @@ class Shop
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:schedules'])]
+    #[Groups(['shop:schedules', 'shop:read'])]
     private ?array $openHours = [];
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:schedules'])]
+    #[Groups(['shop:schedules', 'shop:read'])]
     private ?array $openDays = [];
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:read'])]
+    #[Groups(['shop:read', 'booking:read'])]
     private ?string $address = null;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Service::class)]

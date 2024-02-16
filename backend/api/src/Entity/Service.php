@@ -16,6 +16,7 @@ use App\Repository\ServiceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -41,6 +42,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 )]
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
+#[ApiFilter(SearchFilter::class, properties: ['shop.id' => 'exact'])]
 class Service
 {
     #[ORM\Id]
@@ -52,6 +54,7 @@ class Service
     #[ORM\ManyToOne(targetEntity: Shop::class, inversedBy: 'services')]
     private ?Shop $shop;
 
+    #[Groups(['booking:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['service:read'])]
     private ?string $name = null;
@@ -60,10 +63,12 @@ class Service
     #[Groups(['service:read'])]
     private ?string $description = null;
 
+    #[Groups(['booking:read'])]
     #[ORM\Column]
     #[Groups(['service:read'])]
     private ?float $price = null;
 
+    #[Groups(['booking:read'])]
     #[ORM\Column]
     #[Groups(['service:read'])]
     private ?int $duration = null;

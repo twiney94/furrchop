@@ -10,10 +10,12 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { MdLocationOn, MdOutlineStarBorder } from "react-icons/md";
-
+import { useNavigate } from "react-router-dom";
 import type ChopperType from "../../types/chopper";
 
 const ChopperCard = ({ infos, id }: { infos: ChopperType; id: string }) => {
+  const navigate = useNavigate();
+
   return (
     <Card
       id={id}
@@ -85,7 +87,7 @@ const ChopperCard = ({ infos, id }: { infos: ChopperType; id: string }) => {
         </CardBody>
 
         <CardFooter py={0}>
-          <Button variant="solid" colorScheme="purple">
+          <Button variant="solid" colorScheme="purple" onClick={() => navigate("/book/" + infos.id)}>
             Book
           </Button>
         </CardFooter>

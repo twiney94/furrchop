@@ -170,7 +170,6 @@ const SearchPage = () => {
   const mapRef = useRef<MapRef>();
 
   const handleChopperClick = (chopper: ChopperType) => {
-    console.log("Chopper clicked", chopper.id);
     if (mapRef) {
       mapRef.current?.flyTo({
         center: [chopper.location.lng, chopper.location.lat],
@@ -206,13 +205,13 @@ const SearchPage = () => {
             className="flex flex-col justify-start"
           >
             {results.map((result) => (
-              <Box onClick={() => handleChopperClick(result)}>
+              <div onClick={() => handleChopperClick(result)}>
                 <Chopper
                   key={result.id}
                   infos={result}
                   id={`chopper-${result.id}`}
                 />
-              </Box>
+              </div>
             ))}
             {results.map((result) => (
               <Chopper

@@ -41,7 +41,6 @@ const Register = () => {
       }}
       validationSchema={RegistrationSchema}
       onSubmit={async (values) => {
-        console.log("registering from component")
         await register(values);
       }}
     >

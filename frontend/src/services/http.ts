@@ -14,12 +14,14 @@ export const httpCall = (
   }
 
   // Set content type to 'application/ld+json' if not already set
-  if (!headers["Content-Type"]) {
+  if (!headers["Content-Type"] && method !== "PATCH") {
     headers["Content-Type"] = "application/ld+json";
+  } else if (method === "PATCH" || method === "PUT") {
+    headers["Content-Type"] = "application/merge-patch+json";
   }
 
-  // Add authorization header if a token exists
- const userItem = localStorage.getItem("user");
+  // Token is inside user: { token: "..." }
+  const userItem = localStorage.getItem("user");
   let token = null;
 
   if (userItem) {
@@ -30,7 +32,8 @@ export const httpCall = (
       console.error("Error parsing user data from localStorage:", error);
     }
   }
-  if (token) {
+
+  if (token !== null) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
@@ -44,4 +47,4 @@ export const httpCall = (
   return axios(options);
 };
 
-type Method = "GET" | "POST" | "PUT" | "DELETE";
+type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";

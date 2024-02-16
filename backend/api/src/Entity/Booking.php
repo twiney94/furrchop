@@ -14,12 +14,14 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Controller\BookingController;
+use App\Controller\CreateBookingController;
 use App\DataProvider\BookingProvider;
 use App\Enum\Booking\StatusEnum;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\BookingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
@@ -91,8 +93,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(
             security: "is_granted('ROLE_ADMIN') or object == user",
         ),
-        new Post()
+        new Post(controller: CreateBookingController::class)
     ],
+    normalizationContext: ['groups' => 'booking:read'],
 )]
 #[ApiFilter(SearchFilter::class, properties: ['status' => 'iexact', 'animal' => 'iexact'])]
 #[ApiFilter(DateFilter::class, properties: ['dateTime'])]
@@ -103,30 +106,39 @@ class Booking
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['booking:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
+    #[Groups(['booking:read'])]
     private ?\DateTimeInterface $beginDateTime = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
+    #[Groups(['booking:read'])]
     private ?\DateTimeInterface $endDateTime = null;
 
     #[ORM\ManyToOne(targetEntity: Service::class, inversedBy: 'bookings')]
+    #[Groups(['booking:read'])]
     private Service $service;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['booking:read'])]
     private ?string $comment = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['booking:read'])]
+
     private ?string $status = StatusEnum::VALIDATED;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'bookings')]
     private ?User $user = null;
 
+    #[Groups(['booking:read', "shop:read"])]
     #[ORM\ManyToOne(targetEntity: Shop::class, inversedBy: 'bookings')]
     #[Assert\NotNull]
     private ?Shop $shop = null;
 
+    #[Groups(['booking:read'])]
     #[ORM\ManyToOne(inversedBy: 'bookings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Employee $employee = null;

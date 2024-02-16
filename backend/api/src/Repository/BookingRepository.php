@@ -21,6 +21,20 @@ class BookingRepository extends ServiceEntityRepository
         parent::__construct($registry, Booking::class);
     }
 
+    public function findByEmployeeAndTimeRange($employeeId, \DateTimeInterface $beginDateTime, \DateTimeInterface $endDateTime)
+    {
+        $qb = $this->createQueryBuilder('b');
+
+        return $qb->where('b.employee = :employeeId')
+            ->andWhere('b.beginDateTime < :endDateTime')
+            ->andWhere('b.endDateTime > :beginDateTime')
+            ->setParameter('employeeId', $employeeId)
+            ->setParameter('beginDateTime', $beginDateTime)
+            ->setParameter('endDateTime', $endDateTime)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Booking[] Returns an array of Booking objects
 //     */

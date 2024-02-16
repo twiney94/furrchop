@@ -17,6 +17,7 @@ export const authenticate = async (
     });
     return response.data;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };
@@ -27,8 +28,8 @@ export const register = async (userDetails: {
   [key: string]: any;
 }): Promise<any> => {
   try {
-    console.log(userDetails);
     const response = await httpCall("POST", "register", userDetails);
+    // Take each employee schedule
     return response.data;
   } catch (error) {
     throw error;

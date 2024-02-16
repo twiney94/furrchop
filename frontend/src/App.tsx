@@ -26,6 +26,7 @@ import { ShopsProvider } from './hooks/useShops';
 import { EmployeesProvider } from './hooks/useEmployees';
 import { ServicesProvider } from './hooks/useServices';
 import { SchedulesProvider } from './hooks/useSchedules';
+import { BookingsProvider } from "./hooks/useBookings";
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -67,6 +68,10 @@ const AdmminProviderLayout = () => (
     </ShopsProvider>
   </UsersProvider>
 );
+const BookingProviderLayout = () => (
+  <BookingsProvider>
+    <Outlet />
+  </BookingsProvider>
 
 // Routes structure
 const router = createBrowserRouter(
@@ -78,14 +83,32 @@ const router = createBrowserRouter(
       </Route>
       <Route element={<MainLayout />}>
         <Route path="search" element={<SearchPage />} />
-        <Route
-          path="book"
+        <Route element={<BookingProviderLayout />}>
+          <Route
+            path="book/:shopId"
+            element={
+              <ProtectedRoute>
+                <BookingPage mode="landing" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="booking/:serviceId"
+            element={
+              <ProtectedRoute>
+                <BookingPage mode="confirmation" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+          path="profile"
           element={
             <ProtectedRoute>
-              <BookingPage />
+              <ProfilePage mode="past-bookings" />
             </ProtectedRoute>
           }
         />
+        </Route>
         <Route
           path="login"
           element={
@@ -109,14 +132,6 @@ const router = createBrowserRouter(
             <UnloggedRoute>
               <AuthPage mode="activate" />
             </UnloggedRoute>
-          }
-        />
-        <Route
-          path="profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage mode="past-bookings" />
-            </ProtectedRoute>
           }
         />
         <Route

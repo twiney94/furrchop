@@ -90,7 +90,6 @@ export const AuthProvider = ({ children }: Children) => {
   }) => {
     setLoading(true);
     try {
-      console.log('registering from useAuth');
       await serviceRegister(userDetails);
       showToast({
         title: 'Registration Successful',
@@ -114,7 +113,6 @@ export const AuthProvider = ({ children }: Children) => {
 
   const activateAccount = async () => {
     setLoading(true);
-    console.log('activating account');
     try {
       await serviceActivateAccount();
       showToast({
