@@ -14,7 +14,7 @@ const AlreadyReview = () => {
 
   useEffect(()  => {    
     getReviewBookings()
-  }, [getReviewBookings]);
+  }, []);
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 3; // Adjust the number of bookings per page as needed
   const indexOfLastReview = currentPage * reviewsPerPage;

@@ -22,7 +22,7 @@ const WaitReview = () => {
 
   useEffect(()  => {    
     getUnreviewBookings()
-  }, [getUnreviewBookings]);
+  }, []);
 
 
 
