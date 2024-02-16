@@ -9,6 +9,10 @@ export const fetchUsers = async () => {
   }
 }
 
+export const fetchUser = async (id: string) => {
+  return await httpCall("GET", `users/${id}`, {});
+}
+
 export const createUser = async (userDetails: any) => {
   return await httpCall("POST", "register", userDetails);
 };
