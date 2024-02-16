@@ -14,7 +14,7 @@ export interface Service {
   price: number;
 }
 
-interface BookingsContextType {
+export interface BookingsContextType {
   bookings: Booking[] | null;
   loading: boolean;
   error: string | null;
