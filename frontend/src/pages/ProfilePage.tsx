@@ -5,6 +5,8 @@ import { UserInfo } from "../components/profile/UserInfo";
 
 import "./profilepage.module.css";
 
+
+
 export const ProfilePage = ({ mode }: { mode: string }) => {
   const renderContent = () => {
     switch (mode) {
