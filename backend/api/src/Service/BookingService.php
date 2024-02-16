@@ -70,6 +70,13 @@ class BookingService
             $booking->getEndDateTime()
         );
 
+        foreach ($overlappingBookings as $overlappingBooking) {
+            if ($overlappingBooking->getStatus() === 'canceled') {
+                $key = array_search($overlappingBooking, $overlappingBookings);
+                unset($overlappingBookings[$key]);
+            }
+        }
+
         return count($overlappingBookings) > 0;
     }
 

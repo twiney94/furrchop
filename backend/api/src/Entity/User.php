@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Controller\ActivationController;
+use App\Controller\CustomUserController;
 use App\Controller\RegistrationController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,6 +23,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
+use ApiPlatform\Core\Annotation\ApiFilter;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "`user`")]
@@ -36,8 +38,10 @@ use Symfony\Component\Uid\Uuid;
             security: "is_granted('ROLE_ADMIN') or object == user",
         ),
         new GetCollection(
-            security: "is_granted('ROLE_ADMIN')",
+            controller: CustomUserController::class,
+            name: 'get_user_collection',
         ),
+
         new Patch(
             security: "is_granted('ROLE_ADMIN') or object == user",
         ),
@@ -304,17 +308,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->roles[] = 'ROLE_USER';
         }
 
-        return $this;
-    }
-
-    public function getShop(): ?Shop
-    {
-        return $this->shop;
-    }
-
-    public function setShop(?Shop $shop): static
-    {
-        $this->shop = $shop;
         return $this;
     }
 

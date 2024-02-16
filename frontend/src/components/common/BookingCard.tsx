@@ -33,6 +33,8 @@ export const BookingCard: React.FC<BookingCardProps> = ({
     day: "numeric",
   });
 
+  const isPastBooking = new Date() > new Date(booking.beginDateTime);
+
   const europeanHours = new Date(booking.beginDateTime).toLocaleTimeString(
     "en-US",
     {
@@ -68,6 +70,21 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           </Button>
         </CardFooter>
       );
+    } else if (isPastBooking) {
+      return (
+        <CardFooter display={"flex"} justifyContent={"center"}>
+          <Button
+            variant="outline"
+            colorScheme="brand"
+            onClick={handleRescheduleBooking}
+          >
+            Reschedule
+          </Button>
+          <Text display={"flex"} alignItems={"center"}>
+            This booking has already happened.
+          </Text>
+        </CardFooter>
+      );
     } else {
       return (
         <CardFooter display={"flex"} justify={"space-between"}>
@@ -85,51 +102,61 @@ export const BookingCard: React.FC<BookingCardProps> = ({
       );
     }
   };
+  if (booking) {
+    return (
+      <>
+        <Card
+          direction={{ base: "column", sm: "row" }}
+          overflow="hidden"
+          variant="outline"
+          background={booking.status === "validated" ? "white" : "gray.100"}
+        >
+          <Image
+            objectFit="cover"
+            maxW={{ base: "100%", sm: "200px" }}
+            src="https://live.staticflickr.com/754/21616753858_086bd43ee2_z.jpg"
+            alt="Cute Dog"
+          />
 
-  return (
-    <>
-      <Card
-        direction={{ base: "column", sm: "row" }}
-        overflow="hidden"
-        variant="outline"
-        background={booking.status === "validated" ? "white" : "gray.100"}
-      >
-        <Image
-          objectFit="cover"
-          maxW={{ base: "100%", sm: "200px" }}
-          src="https://live.staticflickr.com/754/21616753858_086bd43ee2_z.jpg"
-          alt="Cute Dog"
+          <Stack className="w-full">
+            <CardBody
+              display={"flex"}
+              flexDirection={"column"}
+              alignItems={"baseline"}
+            >
+              <Heading size="md" fontWeight={500}>
+                {humanReadableDateTime} - {europeanHours}
+              </Heading>
+
+              <Text>
+                {booking.shop.name} - {booking.shop.address}
+              </Text>
+
+              <Text>
+                {booking.service?.name || "Default Service Name"} -{" "}
+                {booking.service?.price / 100 || 0}€
+              </Text>
+            </CardBody>
+
+            {cardFooter()}
+          </Stack>
+        </Card>
+        <ConfirmationDialog
+          isOpen={isOpen}
+          onClose={onClose}
+          onConfirm={handleCancelBooking}
+          title="Cancel your booking"
+          message={`Are you sure you want to delete your booking with ${booking.shop.name} on ${humanReadableDateTime} at ${europeanHours}? This action cannot be undone.`}
         />
-
-        <Stack className="w-full">
-          <CardBody
-            display={"flex"}
-            flexDirection={"column"}
-            alignItems={"baseline"}
-          >
-            <Heading size="md" fontWeight={500}>
-              {humanReadableDateTime} - {europeanHours}
-            </Heading>
-
-            <Text>
-              {booking.shop.name} - {booking.shop.address} - {booking.status}
-            </Text>
-
-            <Text>
-              {booking.service.name} - {booking.service.price / 100}€
-            </Text>
-          </CardBody>
-
-          {cardFooter()}
-        </Stack>
+      </>
+    );
+  } else {
+    return (
+      <Card>
+        <CardBody>
+          <Text>Loading...</Text>
+        </CardBody>
       </Card>
-      <ConfirmationDialog
-        isOpen={isOpen}
-        onClose={onClose}
-        onConfirm={handleCancelBooking}
-        title="Cancel your booking"
-        message={`Are you sure you want to delete your booking with ${booking.shop.name} on ${humanReadableDateTime} at ${europeanHours}? This action cannot be undone.`}
-      />
-    </>
-  );
+    );
+  }
 };

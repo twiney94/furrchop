@@ -4,6 +4,7 @@ import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import type { SelectedDate, Booking } from "../types/schedule";
+import { useAuth } from "./useAuth";
 
 export interface Service {
   description: string;
@@ -38,6 +39,7 @@ interface BookingsContextType {
   setShopSchedule: (schedule: any) => void;
   setSelectedDate: (selectedDate: SelectedDate) => void;
   cancelBooking: (id: number) => Promise<void>;
+  getOwnerShops: () => Promise<any[] | undefined>;
   handleRescheduleBooking: (
     id: number,
     serviceIRI: string,
@@ -68,6 +70,7 @@ const defaultContextValue: BookingsContextType = {
   setSelectedDate: () => {},
   setSelectedBooking: () => {},
   cancelBooking: async () => {},
+  getOwnerShops: async () => [],
   reset: () => {},
 };
 
@@ -83,6 +86,7 @@ export const BookingsProvider = ({
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
   const navigate = useNavigate();
+  const { userRole, userId } = useAuth();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedShop, setSelectedShop] = useState<any | null>(null);
   const [shopSchedule, setShopSchedule] = useState<any | null>(null);
@@ -225,6 +229,7 @@ export const BookingsProvider = ({
         selectedBooking.status === "canceled"
       ) {
         await createBooking();
+        fetchBookings();
         return;
       } else {
         await httpCall("PATCH", `bookings/${selectedBooking.id}`, {
@@ -259,7 +264,6 @@ export const BookingsProvider = ({
       setSelectedShop(shop.data);
       setSelectedBooking(booking.data);
       navigate(`/booking/${shop.data.id}`);
-      console.log("Rescheduling booking with ID:", id);
     } catch (error) {
       setError("Failed to reschedule booking.");
       toast({
@@ -327,6 +331,39 @@ export const BookingsProvider = ({
     }
   };
 
+  const getOwnerShops = async () => {
+    setLoading(true);
+    try {
+      const localUserId = userId?.() ?? null;
+      const localUserRole = userRole?.() ?? null;
+      const ownerRole = "ROLE_OWNER";
+      console.log(localUserRole, localUserId, ownerRole);
+      if ((localUserRole as unknown as string[])?.includes(ownerRole)) {
+        const shopsFromBackend = await httpCall("GET", `users`, {});
+        console.log(shopsFromBackend.data[0].shops);
+        const stores = [];
+        // for each shop in the user's shops, get the shop details
+        for (const shop of shopsFromBackend.data[0].shops) {
+          // remove the first /
+          const URLstringified = shop.slice(1);
+          const shopDetails = await httpCall("GET", URLstringified, {});
+          stores.push(shopDetails.data);
+        }
+        console.log(stores);
+        return stores;
+      }
+    } catch (error) {
+      setError("Failed to fetch shops.");
+      toast({
+        title: "Error",
+        description: "Failed to fetch shops.",
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getSchedule = async (
     shopId: string,
     beginDate: string,
@@ -385,6 +422,7 @@ export const BookingsProvider = ({
       setSelectedDate,
       cancelBooking,
       handleRescheduleBooking,
+      getOwnerShops,
       reset,
     }),
     [
