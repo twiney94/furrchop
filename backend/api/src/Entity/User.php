@@ -23,7 +23,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
-use ApiPlatform\Core\Annotation\ApiFilter;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "`user`")]
@@ -38,7 +37,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
             security: "is_granted('ROLE_ADMIN') or object == user",
         ),
         new GetCollection(
-            controller: CustomUserController::class,
+            // controller: CustomUserController::class,
             name: 'get_user_collection',
         ),
 
@@ -52,7 +51,8 @@ use ApiPlatform\Core\Annotation\ApiFilter;
             security: "is_granted('ROLE_ADMIN') or object == user",
         )
     ],
-    normalizationContext: ['groups' => 'user:read']
+    normalizationContext: ['groups' => 'user:read'],
+    denormalizationContext: ['groups' => 'user:write']
 )]
 #[ApiResource(
     operations: [
@@ -117,30 +117,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Uuid $id;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $lastName = null;
 
     #[ORM\Column(name: 'email', type: 'string', length: 255, unique: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:write'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $phoneNumber = null;
 
     #[ORM\Column]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private array $roles = ['ROLE_USER'];
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    #[Groups(['user:read', 'user:activate'])]
+    #[Groups(['user:read', 'user:activate', 'user:write'])]
     private ?bool $isVerified = false;
 
     #[ORM\Column(type: 'boolean', nullable: true)]

@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 // auth.ts
 import { httpCall } from "./http";
 
@@ -24,8 +25,8 @@ export const authenticate = async (
 export const register = async (userDetails: {
   email: string;
   password: string;
-  [key: string]: any;
-}): Promise<any> => {
+  [key: string]: unknown;
+}): Promise<unknown> => {
   try {
     const response = await httpCall("POST", "register", userDetails);
     // Take each employee schedule
@@ -35,7 +36,7 @@ export const register = async (userDetails: {
   }
 };
 
-export const activateAccount = async (): Promise<any> => {
+export const activateAccount = async (): Promise<unknown> => {
   const urlParams = window.location.pathname;
   const token = urlParams.split("/")[2];
   const decodedToken = atob(token);

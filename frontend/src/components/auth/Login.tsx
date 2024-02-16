@@ -9,12 +9,12 @@ import {
   Text,
   Box,
   FormErrorMessage,
-} from "@chakra-ui/react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+} from '@chakra-ui/react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
-import "./login.module.css";
+import './login.module.css';
 
 const Login = () => {
   const [show, setShow] = useState(false);
@@ -22,12 +22,12 @@ const Login = () => {
   const navigate = useNavigate();
   const { login, loading } = useAuth();
 
-  const [emailInput, setEmailInput] = useState("");
+  const [emailInput, setEmailInput] = useState('');
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmailInput(e.target.value);
   };
 
-  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState('');
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPasswordInput(e.target.value);
   };
@@ -36,7 +36,7 @@ const Login = () => {
 
   // Check only if user has input, errors are if email does not have @ or .
   const checkEmailError = () => {
-    if (!emailInput.includes("@") || !emailInput.includes(".")) {
+    if (!emailInput.includes('@') || !emailInput.includes('.')) {
       setIsEmailError(true);
     } else {
       setIsEmailError(false);
@@ -45,7 +45,7 @@ const Login = () => {
 
   const buttonDisable = (): boolean => {
     // If email error, email empty and/or password empty
-    if (isEmailError || emailInput === "" || passwordInput === "") {
+    if (isEmailError || emailInput === '' || passwordInput === '') {
       return true;
     } else {
       return false;
@@ -58,8 +58,8 @@ const Login = () => {
 
   return (
     <Flex
-      flexDirection={"column"}
-      justifyContent={"center"}
+      flexDirection={'column'}
+      justifyContent={'center'}
       // padding responsive
       px={{ base: 8, md: 16, lg: 24, xl: 64 }}
       className="shadow-2xl"
@@ -97,7 +97,7 @@ const Login = () => {
             value={passwordInput}
             onChange={handlePasswordChange}
             pr="4.5rem"
-            type={show ? "text" : "password"}
+            type={show ? 'text' : 'password'}
             placeholder="Enter password"
             id="password"
           />
@@ -108,14 +108,14 @@ const Login = () => {
               size="sm"
               onClick={handleClick}
             >
-              {show ? "Hide" : "Show"}
+              {show ? 'Hide' : 'Show'}
             </Button>
           </InputRightElement>
         </InputGroup>
       </FormControl>
 
       <Button
-        width={"100%"}
+        width={'100%'}
         colorScheme="brand"
         variant="solid"
         size="lg"
@@ -149,12 +149,12 @@ const Login = () => {
         New here?
       </Text>
       <Button
-        width={"100%"}
+        width={'100%'}
         colorScheme="purple"
         variant="outline"
         size="lg"
         fontWeight={500}
-        onClick={() => navigate("/register")}
+        onClick={() => navigate('/register')}
       >
         Create my account
       </Button>

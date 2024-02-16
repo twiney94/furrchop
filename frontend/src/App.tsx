@@ -1,34 +1,45 @@
-import "./App.css";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import './App.css';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Outlet,
   Route,
   RouterProvider,
-} from "react-router-dom";
-import { AuthProvider } from "./hooks/useAuth";
-import {  MultiSelectTheme } from 'chakra-multiselect'
+} from 'react-router-dom';
+import { AuthProvider } from './hooks/useAuth';
+import { MultiSelectTheme } from 'chakra-multiselect';
 
 // Pages
-import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
-import BaseLayout from "./layouts/BaseLayout";
-import SearchPage from "./pages/SearchPage";
-import MainLayout from "./layouts/MainLayout";
-import BookingPage from "./pages/BookingPage";
-import NotFound from "./pages/NotFound";
-import AuthPage from "./pages/AuthPage";
-import { UnloggedRoute, ProtectedRoute } from "./components/ProtectedRoute";
-import { ProfilePage } from "./pages/ProfilePage";
-import { BookingsProvider } from "./hooks/useBookings";
-import { ReviewProvider } from "./hooks/useReviewCard";
-import OwnerDashboard from "./pages/OwnerDashboard";
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import BaseLayout from './layouts/BaseLayout';
+import SearchPage from './pages/SearchPage';
+import MainLayout from './layouts/MainLayout';
+import BookingPage from './pages/BookingPage';
+import NotFound from './pages/NotFound';
+import AuthPage from './pages/AuthPage';
+import {
+  UnloggedRoute,
+  ProtectedRoute,
+  AdminRoute,
+} from './components/ProtectedRoute';
+import { ProfilePage } from './pages/ProfilePage';
+import AdminPanelPage from './pages/AdminPanelPage';
+import { UsersProvider } from './hooks/useUsers';
+import { ShopsProvider } from './hooks/useShops';
+import { EmployeesProvider } from './hooks/useEmployees';
+import { ServicesProvider } from './hooks/useServices';
+import { SchedulesProvider } from './hooks/useSchedules';
+import { BookingsProvider } from './hooks/useBookings';
+import { KPIProvider } from './hooks/useKpi';
+import OwnerDashboard from './pages/OwnerDashboard';
+import { ReviewProvider } from './hooks/useReviewCard';
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
   components: {
-    MultiSelect: MultiSelectTheme
+    MultiSelect: MultiSelectTheme,
   },
   fonts: {
     heading: `'canada-type-gibson', sans-serif`,
@@ -36,15 +47,15 @@ const theme = extendTheme({
   },
   colors: {
     brand: {
-      100: "#e4cbfd",
-      200: "#d8b2fc",
-      300: "#cc99fb",
-      400: "#c080fa",
-      500: "#beadfa",
-      600: "#b58df9",
-      700: "#ac6df8",
-      800: "#a34df7",
-      900: "#a68cf7",
+      100: '#e4cbfd',
+      200: '#d8b2fc',
+      300: '#cc99fb',
+      400: '#c080fa',
+      500: '#beadfa',
+      600: '#b58df9',
+      700: '#ac6df8',
+      800: '#a34df7',
+      900: '#a68cf7',
     },
   },
 });
@@ -55,6 +66,21 @@ const AuthProviderLayout = () => (
   </AuthProvider>
 );
 
+const AdmminProviderLayout = () => (
+  <UsersProvider>
+    <ShopsProvider>
+      <ServicesProvider>
+        <EmployeesProvider>
+          <SchedulesProvider>
+            <KPIProvider>
+              <Outlet />
+            </KPIProvider>
+          </SchedulesProvider>
+        </EmployeesProvider>
+      </ServicesProvider>
+    </ShopsProvider>
+  </UsersProvider>
+);
 const BookingProviderLayout = () => (
   <BookingsProvider>
     <Outlet />
@@ -78,7 +104,14 @@ const router = createBrowserRouter(
       <Route element={<MainLayout />}>
         <Route path="search" element={<SearchPage />} />
         <Route element={<BookingProviderLayout />}>
-          <Route path="my-shops" element={<ProtectedRoute><OwnerDashboard /></ProtectedRoute>} />
+          <Route
+            path="my-shops"
+            element={
+              <ProtectedRoute>
+                <OwnerDashboard />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="book/:shopId"
             element={
@@ -97,14 +130,14 @@ const router = createBrowserRouter(
           />
         </Route>
         <Route element={<ReviewProviderLayout />}>
-        <Route
-          path="wait-reviews"
-          element={
-            <ProtectedRoute>
-              <ProfilePage mode="wait-reviews" />
+          <Route
+            path="wait-reviews"
+            element={
+              <ProtectedRoute>
+                <ProfilePage mode="wait-reviews" />
               </ProtectedRoute>
-          }
-        />
+            }
+          />
           <Route
             path="already-reviews"
             element={
@@ -112,7 +145,7 @@ const router = createBrowserRouter(
                 <ProfilePage mode="already-reviews" />
               </ProtectedRoute>
             }
-        />
+          />
           <Route
             path="unreviewed-bookings"
             element={
@@ -130,13 +163,13 @@ const router = createBrowserRouter(
             }
           />
           <Route
-          path="profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage mode="past-bookings" />
-            </ProtectedRoute>
-          }
-        />
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage mode="past-bookings" />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route
           path="login"
@@ -172,6 +205,16 @@ const router = createBrowserRouter(
             </ProtectedRoute>
           }
         />
+        <Route element={<AdmminProviderLayout />}>
+          <Route
+            path="admin-panel"
+            element={
+              <AdminRoute>
+                <AdminPanelPage />
+              </AdminRoute>
+            }
+          />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
     </Route>

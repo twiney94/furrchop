@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\KpiController;
 use App\Controller\ShopScheduleController;
 use App\Repository\ShopRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -24,6 +25,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(),
         new GetCollection(),
+        new GetCollection(
+            uriTemplate: '/shop-kpis',
+            security: "is_granted('ROLE_ADMIN')",
+            controller: KpiController::class . '::fetchShopKpis',
+        ),
         new Patch(
             security: "is_granted('ROLE_ADMIN') or object.getUser() == user",
         ),
@@ -36,8 +42,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             security: "is_granted('ROLE_OWNER')",
         )
-    ]
-//    , normalizationContext: ['groups' => ['shop:read']]
+    ],
+
+    //     normalizationContext: ['groups' => ['employee:read']]
+    //    , normalizationContext: ['groups' => ['shop:read']]
 )]
 #[ApiResource(
     operations: [
@@ -62,7 +70,7 @@ class Shop
     private ?User $user = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['shop:read', 'booking:read', 'user:read'])]
+    #[Groups(['shop:read', 'employee:read', 'service:read', 'booking:read', 'user:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -93,12 +101,21 @@ class Shop
     #[Groups(['shop:read'])]
     private Collection $employees;
 
+    #[ORM\Column(type: 'datetime_immutable')]
+    #[Groups(['shop:read'])]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[Groups(['shop:read'])]
+    private ?\DateTimeImmutable $updatedAt = null;
+
 
     public function __construct()
     {
         $this->services = new ArrayCollection();
         $this->bookings = new ArrayCollection();
         $this->employees = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -217,6 +234,16 @@ class Shop
         $this->openHours = $openHours;
     }
 
+    public function getOpenDays(): ?array
+    {
+        return $this->openDays;
+    }
+
+    public function setOpenDays(?array $openDays): void
+    {
+        $this->openDays = $openDays;
+    }
+
     /**
      * @return Collection<int, Employee>
      */
@@ -244,6 +271,30 @@ class Shop
                 $employee->setShop(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

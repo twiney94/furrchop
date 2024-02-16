@@ -1,10 +1,10 @@
-import { createContext, useContext, useMemo, useState } from "react";
-import { useToast } from "@chakra-ui/react";
-import { httpCall } from "../services/http";
-import { AxiosResponse } from "axios";
-import { useNavigate } from "react-router-dom";
-import type { SelectedDate, Booking} from "../types/schedule";
-import { useAuth } from "./useAuth";
+import { createContext, useContext, useMemo, useState } from 'react';
+import { useToast } from '@chakra-ui/react';
+import { httpCall } from '../services/http';
+import { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
+import type { SelectedDate, Booking } from '../types/schedule';
+import { useAuth } from './useAuth';
 
 export interface Service {
   description: string;
@@ -13,7 +13,6 @@ export interface Service {
   name: string;
   price: number;
 }
-
 
 export interface BookingsContextType {
   bookings: Booking[] | null;
@@ -56,7 +55,7 @@ const defaultContextValue: BookingsContextType = {
   selectedService: null,
   selectedShop: null,
   shopSchedule: null,
-  selectedDate: { date: null, formatted: "", employee: { id: "" } },
+  selectedDate: { date: null, formatted: '', employee: { id: '' } },
   selectedBooking: null,
   fetchBookings: async () => {},
   createBooking: async () => {},
@@ -94,16 +93,17 @@ export const BookingsProvider = ({
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [selectedDate, setSelectedDate] = useState<SelectedDate>({
     date: null,
-    formatted: "",
-    employee: { id: "" },
+    formatted: '',
+    employee: { id: '' },
   });
 
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const response = await httpCall("GET", "bookings", {});
-      if (response.data["hydra:member"]) {
-        const bookings: Booking[] = response.data["hydra:member"].map((bookingData: any): Booking => {
+      const response = await httpCall('GET', 'bookings', {});
+      if (response.data['hydra:member']) {
+        const bookings: Booking[] = response.data['hydra:member'].map(
+          (bookingData: any): Booking => {
             return {
               id: bookingData.id,
               beginDateTime: bookingData.beginDateTime,
@@ -113,7 +113,7 @@ export const BookingsProvider = ({
               service: bookingData.service,
               status: bookingData.status,
               user: bookingData.user,
-              comment: bookingData.comment ? bookingData.comment : "",
+              comment: bookingData.comment ? bookingData.comment : '',
             };
           }
         );
@@ -121,11 +121,11 @@ export const BookingsProvider = ({
         setBookings(bookings);
       } else setBookings(response.data);
     } catch (error) {
-      setError("Failed to fetch bookings.");
+      setError('Failed to fetch bookings.');
       toast({
-        title: "Error",
-        description: "Failed to fetch bookings.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to fetch bookings.',
+        status: 'error',
       });
     } finally {
       setLoading(false);
@@ -135,19 +135,19 @@ export const BookingsProvider = ({
   const cancelBooking = async (id: number) => {
     setLoading(true);
     try {
-      await httpCall("PATCH", `bookings/${id}/cancel`, {});
+      await httpCall('PATCH', `bookings/${id}/cancel`, {});
       toast({
-        title: "Booking Cancelled",
-        description: "Your booking was successfully cancelled.",
-        status: "success",
+        title: 'Booking Cancelled',
+        description: 'Your booking was successfully cancelled.',
+        status: 'success',
       });
       fetchBookings();
     } catch (error) {
-      setError("Failed to cancel booking.");
+      setError('Failed to cancel booking.');
       toast({
-        title: "Error",
-        description: "Failed to cancel booking.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to cancel booking.',
+        status: 'error',
       });
     } finally {
       setLoading(false);
@@ -162,9 +162,9 @@ export const BookingsProvider = ({
       !selectedDate.employee
     ) {
       toast({
-        title: "Missing Information",
-        description: "Please select a service, date, and shop.",
-        status: "error",
+        title: 'Missing Information',
+        description: 'Please select a service, date, and shop.',
+        status: 'error',
       });
       return;
     }
@@ -183,21 +183,21 @@ export const BookingsProvider = ({
 
     setLoading(true);
     try {
-      const response = await httpCall("POST", "bookings", bookingDetails);
+      const response = await httpCall('POST', 'bookings', bookingDetails);
       setBookings([...(bookings || []), response.data]); // Update local state
       toast({
-        title: "Booking Created",
-        description: "Your booking was successfully created.",
-        status: "success",
+        title: 'Booking Created',
+        description: 'Your booking was successfully created.',
+        status: 'success',
       });
       fetchBookings();
-      navigate("/profile");
+      navigate('/profile');
     } catch (error) {
-      setError("Failed to create booking.");
+      setError('Failed to create booking.');
       toast({
-        title: "Error",
-        description: "Failed to create booking. Please try again.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to create booking. Please try again.',
+        status: 'error',
       });
     } finally {
       setLoading(false);
@@ -212,9 +212,9 @@ export const BookingsProvider = ({
       !selectedDate.employee
     ) {
       toast({
-        title: "Error",
-        description: "No booking selected.",
-        status: "error",
+        title: 'Error',
+        description: 'No booking selected.',
+        status: 'error',
       });
       return;
     } else {
@@ -226,24 +226,24 @@ export const BookingsProvider = ({
       if (
         new Date(selectedBooking.beginDateTime).getTime() <
           new Date().getTime() ||
-        selectedBooking.status === "canceled"
+        selectedBooking.status === 'canceled'
       ) {
         await createBooking();
         fetchBookings();
         return;
       } else {
-        await httpCall("PATCH", `bookings/${selectedBooking.id}`, {
+        await httpCall('PATCH', `bookings/${selectedBooking.id}`, {
           beginDateTime: bookingStart,
           endDateTime: bookingEnd,
           employee: `/employees/${selectedDate.employee.id}`,
         });
         toast({
-          title: "Booking Updated",
-          description: "Your booking was successfully updated.",
-          status: "success",
+          title: 'Booking Updated',
+          description: 'Your booking was successfully updated.',
+          status: 'success',
         });
         fetchBookings();
-        navigate("/profile");
+        navigate('/profile');
         return;
       }
     }
@@ -256,20 +256,20 @@ export const BookingsProvider = ({
   ) => {
     setLoading(true);
     try {
-      const booking = await httpCall("GET", `bookings/${id}`, {});
-      const serviceId = serviceIRI.split("/").pop();
-      const service = await httpCall("GET", `services/${serviceId}`, {});
-      const shop = await httpCall("GET", `shops/${shopId}`, {});
+      const booking = await httpCall('GET', `bookings/${id}`, {});
+      const serviceId = serviceIRI.split('/').pop();
+      const service = await httpCall('GET', `services/${serviceId}`, {});
+      const shop = await httpCall('GET', `shops/${shopId}`, {});
       setSelectedService(service.data);
       setSelectedShop(shop.data);
       setSelectedBooking(booking.data);
       navigate(`/booking/${shop.data.id}`);
     } catch (error) {
-      setError("Failed to reschedule booking.");
+      setError('Failed to reschedule booking.');
       toast({
-        title: "Error",
-        description: "Failed to reschedule booking.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to reschedule booking.',
+        status: 'error',
       });
     } finally {
       setLoading(false);
@@ -278,10 +278,10 @@ export const BookingsProvider = ({
 
   const getServices = async (shopId: string) => {
     setLoading(true);
-    ("Getting services");
+    ('Getting services');
     try {
       const response: AxiosResponse<any, any> = await httpCall(
-        "GET",
+        'GET',
         `services?shop.id=${shopId}`,
         {}
       );
@@ -289,23 +289,23 @@ export const BookingsProvider = ({
       // Accessing the hydra:member property which contains the array of services
       if (
         response &&
-        response.data?.["hydra:member"] &&
-        Array.isArray(response.data?.["hydra:member"])
+        response.data?.['hydra:member'] &&
+        Array.isArray(response.data?.['hydra:member'])
       ) {
-        return response.data?.["hydra:member"];
+        return response.data?.['hydra:member'];
       } else {
         console.error(
-          "Response from services endpoint does not contain hydra:member as an array:",
+          'Response from services endpoint does not contain hydra:member as an array:',
           response
         );
         return [];
       }
     } catch (error) {
-      console.error("Failed to fetch services.", error);
+      console.error('Failed to fetch services.', error);
       toast({
-        title: "Error",
-        description: "Failed to fetch services.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to fetch services.',
+        status: 'error',
       });
       return [];
     } finally {
@@ -316,15 +316,15 @@ export const BookingsProvider = ({
   const getShop = async (shopId: string) => {
     setLoading(true);
     try {
-      const response = await httpCall("GET", `shops/${shopId}`, {});
+      const response = await httpCall('GET', `shops/${shopId}`, {});
       return response.data;
     } catch (error) {
-      setError("Failed to fetch shop.");
-      navigate("/"); // Redirect to home page
+      setError('Failed to fetch shop.');
+      navigate('/'); // Redirect to home page
       toast({
-        title: "Error",
-        description: "Failed to fetch shop.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to fetch shop.',
+        status: 'error',
       });
     } finally {
       setLoading(false);
@@ -336,28 +336,28 @@ export const BookingsProvider = ({
     try {
       const localUserId = userId?.() ?? null;
       const localUserRole = userRole?.() ?? null;
-      const ownerRole = "ROLE_OWNER";
+      const ownerRole = 'ROLE_OWNER';
       console.log(localUserRole, localUserId, ownerRole);
       if ((localUserRole as unknown as string[])?.includes(ownerRole)) {
-        const shopsFromBackend = await httpCall("GET", `users`, {});
+        const shopsFromBackend = await httpCall('GET', `users`, {});
         console.log(shopsFromBackend.data[0].shops);
         const stores = [];
         // for each shop in the user's shops, get the shop details
         for (const shop of shopsFromBackend.data[0].shops) {
           // remove the first /
           const URLstringified = shop.slice(1);
-          const shopDetails = await httpCall("GET", URLstringified, {});
+          const shopDetails = await httpCall('GET', URLstringified, {});
           stores.push(shopDetails.data);
         }
         console.log(stores);
         return stores;
       }
     } catch (error) {
-      setError("Failed to fetch shops.");
+      setError('Failed to fetch shops.');
       toast({
-        title: "Error",
-        description: "Failed to fetch shops.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to fetch shops.',
+        status: 'error',
       });
     } finally {
       setLoading(false);
@@ -372,18 +372,18 @@ export const BookingsProvider = ({
     setLoading(true);
     try {
       const response = await httpCall(
-        "GET",
+        'GET',
         `shops/${shopId}/schedules?startDate=${beginDate}&endDate=${endDate}`,
         {}
       );
       setShopSchedule(response.data);
       return response.data;
     } catch (error) {
-      setError("Failed to fetch schedule.");
+      setError('Failed to fetch schedule.');
       toast({
-        title: "Error",
-        description: "Failed to fetch schedule.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to fetch schedule.',
+        status: 'error',
       });
     } finally {
       setLoading(false);
@@ -395,7 +395,7 @@ export const BookingsProvider = ({
     setError(null);
     setSelectedService(null);
     setShopSchedule(null);
-    setSelectedDate({ date: null, formatted: "" });
+    setSelectedDate({ date: null, formatted: '' });
     setSelectedBooking(null);
   };
 

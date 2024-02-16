@@ -11,7 +11,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
-use App\Controller\RegistrationController;
+use App\Controller\ServiceController;
 use App\Repository\ServiceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -32,15 +32,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
             security: "is_granted('SERVICE_EDIT', object)",
         ),
         new Post(
-            securityPostDenormalize: "is_granted('SERVICE_CREATE', object)"
+            securityPostDenormalize: "is_granted('SERVICE_CREATE', object)",
+            controller: ServiceController::class
         )
     ],
-//    normalizationContext: ['groups' =>
-//        [
-//            'service:read',
-//            'service:write',
-//        ]
-//    ],
+    normalizationContext: ['groups' => ['service:read']],
 
 )]
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
@@ -52,22 +48,24 @@ class Service
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['service:read'])]
     #[ORM\ManyToOne(targetEntity: Shop::class, inversedBy: 'services')]
     private ?Shop $shop;
 
-    #[Groups(['booking:read'])]
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['service:read', 'booking:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['service:read'])]
     private ?string $description = null;
 
-    #[Groups(['booking:read'])]
     #[ORM\Column]
+    #[Groups(['service:read', 'booking:read'])]
     private ?float $price = null;
 
-    #[Groups(['booking:read'])]
     #[ORM\Column]
+    #[Groups(['service:read', 'booking:read'])]
     private ?int $duration = null;
 
     #[ORM\OneToMany(mappedBy: 'service', targetEntity: Booking::class)]
