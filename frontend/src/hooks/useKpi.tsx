@@ -3,7 +3,9 @@ import { useToast } from '@chakra-ui/react';
 import { httpCall } from '../services/http';
 
 interface KPIContextType {
-  kpiData: any;
+  kpiData: unknown;
+  shopKpiData: unknown;
+  bookingKpiData: unknown;
   loading: boolean;
   error: string | null;
   fetchUserKPIs: () => Promise<void>;
@@ -14,6 +16,8 @@ interface KPIContextType {
 
 const defaultContextValue: KPIContextType = {
   kpiData: {},
+  shopKpiData: {},
+  bookingKpiData: {},
   loading: false,
   error: null,
   fetchUserKPIs: async () => {},
@@ -26,6 +30,8 @@ const KPIContext = createContext<KPIContextType>(defaultContextValue);
 
 export const KPIProvider = ({ children }: { children: React.ReactNode }) => {
   const [kpiData, setKpiData] = useState<any>({});
+  const [shopKpiData, setShopKpiData] = useState<any>({});
+  const [bookingKpiData, setBookingKpiData] = useState<any>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
@@ -60,7 +66,6 @@ export const KPIProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     try {
       const response = await httpCall('GET', 'booking-kpis', {});
-      console.log('respolol', response.data);
 
       if (response.data) {
         const mockData = {
@@ -74,7 +79,7 @@ export const KPIProvider = ({ children }: { children: React.ReactNode }) => {
           weeklyChange: -2,
           monthlyChange: 10,
         };
-        setKpiData(mockData);
+        setBookingKpiData(mockData);
       }
     } catch (error) {
       console.error('Failed to fetch booking KPIs:', error);
@@ -91,14 +96,17 @@ export const KPIProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchShopsKPIs = async () => {
     setLoading(true);
     try {
-      const response = await httpCall('GET', '/shop-kpis', {});
+      const response = await httpCall('GET', 'shop-kpis', {});
+
       if (response.data) {
         const mockData = {
-          totalShops: response.data.total,
-          new: response.data.new_shop,
-          active: response.data.active_shop,
+          totalShops: response.data.total_shops,
+          newShop: response.data.new_shops,
+          activeShops: response.data.hot_shops,
+          inactiveShops: response.data.cold_shops,
+          activeChange: 2,
         };
-        setKpiData(mockData);
+        setShopKpiData(mockData);
       }
     } catch (error) {
       console.error('Failed to fetch shop KPIs:', error);
@@ -147,6 +155,8 @@ export const KPIProvider = ({ children }: { children: React.ReactNode }) => {
   const value = useMemo(
     () => ({
       kpiData,
+      shopKpiData,
+      bookingKpiData,
       loading,
       error,
       fetchUserKPIs,
@@ -154,7 +164,7 @@ export const KPIProvider = ({ children }: { children: React.ReactNode }) => {
       fetchShopsKPIs,
       fetchEmployeesKPIs,
     }),
-    [kpiData, loading, error]
+    [kpiData, shopKpiData, bookingKpiData, loading, error]
   );
 
   return <KPIContext.Provider value={value}>{children}</KPIContext.Provider>;

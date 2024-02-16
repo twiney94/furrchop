@@ -17,9 +17,16 @@ class KpiController extends AbstractController
     }
 
 
-    public function __invoke(): Response
+    public function fetchBookingKpis(): Response
     {
         $response = $this->kpiservice->bookingKpi();
+
+        return new JsonResponse($response, JsonResponse::HTTP_OK);
+    }
+
+    public function fetchShopKpis(): Response
+    {
+        $response = $this->kpiservice->shopKpi();
 
         return new JsonResponse($response, JsonResponse::HTTP_OK);
     }

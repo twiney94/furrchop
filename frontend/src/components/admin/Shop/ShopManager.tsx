@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   useDisclosure,
   Flex,
@@ -122,7 +122,7 @@ const ShopManager = () => {
         entity="shop"
         isOpen={deleteAlertDisclosure.isOpen}
         onClose={deleteAlertDisclosure.onClose}
-        cancelRef={cancelRef}
+        cancelRef={React.useRef<HTMLButtonElement>(null)}
         onConfirm={handleDeleteShop}
       />
     </Box>

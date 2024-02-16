@@ -14,6 +14,7 @@ import ShopManager from '../components/admin/Shop/ShopManager';
 import EmployeeManager from '../components/admin/Employee/EmployeeManager';
 import ServiceManager from '../components/admin/Service/ServiceManager';
 import BookingKPIViewer from '../components/admin/kpis/BookingKPIViewer';
+import ShopKPIViewer from '../components/admin/kpis/ShopKPIViewr';
 
 const AdminPanelPage = () => {
   return (
@@ -48,7 +49,10 @@ const AdminPanelPage = () => {
               <ServiceManager />
             </TabPanel>
             <TabPanel>
-              <BookingKPIViewer />
+              <Box>
+                <BookingKPIViewer key={1} />
+                <ShopKPIViewer key={2} />
+              </Box>
             </TabPanel>
           </TabPanels>
         </Tabs>

@@ -88,7 +88,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(
             uriTemplate: "/booking-kpis",
             security: "is_granted('ROLE_ADMIN')",
-            controller: KpiController::class,
+            controller: KpiController::class . '::fetchBookingKpis',
         ),
         new Patch(
             security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Booking;
+use App\Entity\Shop;
 use Doctrine\ORM\EntityManagerInterface;
 
 class KpiService
@@ -62,5 +63,54 @@ class KpiService
         $qb->select('count(b.id)')
             ->from(Booking::class, 'b');
         return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function shopKpi(): array
+    {
+        $lastWeek = new \DateTime('-7 days midnight');
+
+        // New shops created in the last week
+        $newShopsQuery = $this->entityManager->createQueryBuilder()
+            ->select('count(s.id)')
+            ->from(Shop::class, 's')
+            ->where('s.createdAt >= :lastWeek')
+            ->setParameter('lastWeek', $lastWeek)
+            ->getQuery();
+        $newShops = $newShopsQuery->getSingleScalarResult();
+
+        // Total number of shops
+        $totalShopsQuery = $this->entityManager->createQueryBuilder()
+            ->select('count(s.id)')
+            ->from(Shop::class, 's')
+            ->getQuery();
+        $totalShops = $totalShopsQuery->getSingleScalarResult();
+
+        // Hot and cold shops based on bookings in the last week
+        $bookingsLastWeekQuery = $this->entityManager->createQueryBuilder()
+            ->select('IDENTITY(b.shop) as shopId, COUNT(b.id) as bookingCount')
+            ->from(Booking::class, 'b')
+            ->where('b.createdAt >= :lastWeek')
+            ->groupBy('b.shop')
+            ->setParameter('lastWeek', $lastWeek)
+            ->getQuery()
+            ->getResult();
+
+        $hotShops = 0;
+        $coldShops = 0;
+
+        foreach ($bookingsLastWeekQuery as $result) {
+            if ($result['bookingCount'] >= 3) {
+                $hotShops++;
+            } elseif ($result['bookingCount'] < 3) {
+                $coldShops++;
+            }
+        }
+
+        return [
+            'new_shops' => $newShops,
+            'total_shops' => $totalShops,
+            'hot_shops' => $hotShops,
+            'cold_shops' => $coldShops,
+        ];
     }
 }

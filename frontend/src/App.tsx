@@ -18,7 +18,11 @@ import MainLayout from './layouts/MainLayout';
 import BookingPage from './pages/BookingPage';
 import NotFound from './pages/NotFound';
 import AuthPage from './pages/AuthPage';
-import { UnloggedRoute, ProtectedRoute } from './components/ProtectedRoute';
+import {
+  UnloggedRoute,
+  ProtectedRoute,
+  AdminRoute,
+} from './components/ProtectedRoute';
 import { ProfilePage } from './pages/ProfilePage';
 import AdminPanelPage from './pages/AdminPanelPage';
 import { UsersProvider } from './hooks/useUsers';
@@ -150,9 +154,9 @@ const router = createBrowserRouter(
           <Route
             path="admin-panel"
             element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminPanelPage />
-              </ProtectedRoute>
+              </AdminRoute>
             }
           />
         </Route>

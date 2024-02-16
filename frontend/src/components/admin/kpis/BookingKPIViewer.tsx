@@ -13,7 +13,7 @@ import {
 import { useKPI } from '../../../hooks/useKpi';
 
 const BookingKPIViewer = () => {
-  const { kpiData, fetchBookingKPIs } = useKPI();
+  const { bookingKpiData, fetchBookingKPIs } = useKPI();
 
   useEffect(() => {
     fetchBookingKPIs();
@@ -25,51 +25,53 @@ const BookingKPIViewer = () => {
       <StatGroup>
         <Stat>
           <StatLabel>Daily Bookings</StatLabel>
-          <StatNumber>{kpiData.todayBookings}</StatNumber>
+          <StatNumber>{bookingKpiData.todayBookings}</StatNumber>
           <StatHelpText>
             <StatArrow
-              type={kpiData.dailyChange >= 0 ? 'increase' : 'decrease'}
+              type={bookingKpiData.dailyChange >= 0 ? 'increase' : 'decrease'}
             />
-            {Math.abs(kpiData.dailyChange)}%
+            {Math.abs(bookingKpiData.dailyChange)}%
           </StatHelpText>
         </Stat>
 
         <Stat>
           <StatLabel>Yesterday Bookings</StatLabel>
-          <StatNumber>{kpiData.yesterdayBookings}</StatNumber>
+          <StatNumber>{bookingKpiData.yesterdayBookings}</StatNumber>
           <StatHelpText>
             <StatArrow
-              type={kpiData.yersterdayChange >= 0 ? 'increase' : 'decrease'}
+              type={
+                bookingKpiData.yersterdayChange >= 0 ? 'increase' : 'decrease'
+              }
             />
-            {Math.abs(kpiData.yersterdayChange)}%
+            {Math.abs(bookingKpiData.yersterdayChange)}%
           </StatHelpText>
         </Stat>
 
         <Stat>
           <StatLabel>Weekly Bookings</StatLabel>
-          <StatNumber>{kpiData.weeklyBookings}</StatNumber>
+          <StatNumber>{bookingKpiData.weeklyBookings}</StatNumber>
           <StatHelpText>
             <StatArrow
-              type={kpiData.weeklyChange >= 0 ? 'increase' : 'decrease'}
+              type={bookingKpiData.weeklyChange >= 0 ? 'increase' : 'decrease'}
             />
-            {Math.abs(kpiData.weeklyChange)}%
+            {Math.abs(bookingKpiData.weeklyChange)}%
           </StatHelpText>
         </Stat>
 
         <Stat>
           <StatLabel>Monthly Bookings</StatLabel>
-          <StatNumber>{kpiData.monthlyBookings}</StatNumber>
+          <StatNumber>{bookingKpiData.monthlyBookings}</StatNumber>
           <StatHelpText>
             <StatArrow
-              type={kpiData.monthlyChange >= 0 ? 'increase' : 'decrease'}
+              type={bookingKpiData.monthlyChange >= 0 ? 'increase' : 'decrease'}
             />
-            {Math.abs(kpiData.monthlyChange)}%
+            {Math.abs(bookingKpiData.monthlyChange)}%
           </StatHelpText>
         </Stat>
 
         <Stat>
           <StatLabel>Total Bookings</StatLabel>
-          <StatNumber>{kpiData.totalBookings}</StatNumber>
+          <StatNumber>{bookingKpiData.totalBookings}</StatNumber>
         </Stat>
       </StatGroup>
     </Box>

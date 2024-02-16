@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from './useLocalStorage';
 import {
@@ -7,6 +7,7 @@ import {
   register as serviceRegister,
 } from '../services/auth';
 import { useToast } from '@chakra-ui/react';
+import { jwtDecode } from 'jwt-decode';
 
 interface Children {
   children: React.ReactNode;
@@ -26,12 +27,14 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
+  isAdmin: boolean;
+  userFullData: unknown;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (userDetails: {
     email: string;
     password: string;
-    [key: string]: any;
+    [key: string]: unknown;
   }) => Promise<void>;
   activateAccount: () => Promise<void>;
   loading: boolean;
@@ -40,6 +43,8 @@ interface AuthContextType {
 
 const defaultContextValue: AuthContextType = {
   user: null,
+  userFullData: null,
+  isAdmin: false,
   login: async () => {},
   logout: () => {},
   register: async () => {},
@@ -52,14 +57,36 @@ const AuthContext = createContext<AuthContextType>(defaultContextValue);
 
 export const AuthProvider = ({ children }: Children) => {
   const [user, setUser] = useLocalStorage('user', null);
+  const [userFullData, setUserFullData] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
+
+  useEffect(() => {
+    if (user && user.token) {
+      try {
+        const decodedToken: { roles?: string[] } = jwtDecode(user.token);
+        const isAdminFlag =
+          decodedToken.roles && decodedToken.roles.includes('ROLE_ADMIN');
+        const userFullData = {
+          ...decodedToken,
+        };
+        setUserFullData(userFullData);
+        setIsAdmin(isAdminFlag);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    } else {
+      setIsAdmin(false);
+    }
+  }, [user]);
 
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
       const userData = await authenticate(email, password);
+
       setUser(userData);
       navigate('/profile');
       showToast({
@@ -147,6 +174,8 @@ export const AuthProvider = ({ children }: Children) => {
   const value = useMemo(
     () => ({
       user,
+      isAdmin,
+      userFullData,
       login,
       logout,
       register,
@@ -154,7 +183,7 @@ export const AuthProvider = ({ children }: Children) => {
       loading,
       showToast,
     }),
-    [user, loading]
+    [user, userFullData, isAdmin, loading]
   );
 
   return (

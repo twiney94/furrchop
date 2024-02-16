@@ -23,6 +23,7 @@
     "axios": "^1.6.7",
     "formik": "^2.4.5",
     "framer-motion": "^10.16.4",
+    "jwt-decode": "^4.0.0",
     "localforage": "^1.10.0",
     "mapbox-gl": "^3.1.2",
     "match-sorter": "^6.3.1",

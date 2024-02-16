@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\KpiController;
 use App\Controller\ShopScheduleController;
 use App\Repository\ShopRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -24,6 +25,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(),
         new GetCollection(),
+        new GetCollection(
+            uriTemplate: '/shop-kpis',
+            security: "is_granted('ROLE_ADMIN')",
+            controller: KpiController::class . '::fetchShopKpis',
+        ),
         new Patch(
             security: "is_granted('ROLE_ADMIN') or object.getUser() == user",
         ),

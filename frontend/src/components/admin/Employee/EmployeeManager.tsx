@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Heading,
@@ -30,14 +30,13 @@ const EmployeeManager = () => {
   const editDisclosure = useDisclosure();
   const createDisclosure = useDisclosure();
   const deleteAlertDisclosure = useDisclosure();
-  const cancelRef = useRef();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
     fetchEmployees();
   }, []);
 
-  const handleEditEmployee = (employee) => {
+  const handleEditEmployee = (employee: React.SetStateAction<null>) => {
     setSelectedEmployee(employee);
     editDisclosure.onOpen();
   };
@@ -45,7 +44,7 @@ const EmployeeManager = () => {
     return employeeId.split('/').pop();
   };
 
-  const handleDeleteEmployeeConfirmation = (employeeId) => {
+  const handleDeleteEmployeeConfirmation = (employeeId: string) => {
     setSelectedEmployee(truncateId(employeeId));
     deleteAlertDisclosure.onOpen();
   };
@@ -154,7 +153,7 @@ const EmployeeManager = () => {
         entity="Employee"
         isOpen={deleteAlertDisclosure.isOpen}
         onClose={deleteAlertDisclosure.onClose}
-        cancelRef={cancelRef}
+        cancelRef={React.useRef<HTMLButtonElement>(null)}
         onConfirm={handleDeleteEmployee}
       />
     </Box>

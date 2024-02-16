@@ -4,8 +4,11 @@ import { useAuth } from '../../hooks/useAuth';
 
 export const Actions = () => {
   const location = useLocation();
+  const { logout, isAdmin } = useAuth();
+
+  // Decode token to get user roles
+
   const isActive = (path: string) => location.pathname === path;
-  const logout = useAuth().logout;
 
   return (
     <Card p={4} className="shadow-xl">
@@ -27,13 +30,17 @@ export const Actions = () => {
         >
           My informations
         </Link>
-        <Link
-          as={RouterLink}
-          to="/admin-panel"
-          color={isActive('/admin-panel') ? 'brand.500' : 'gray.300'}
-        >
-          Admin panel
-        </Link>
+
+        {/* Conditionally render the Admin Panel link */}
+        {isAdmin && (
+          <Link
+            as={RouterLink}
+            to="/admin-panel"
+            color={isActive('/admin-panel') ? 'brand.500' : 'gray.300'}
+          >
+            Admin panel
+          </Link>
+        )}
         <Link onClick={() => logout()} color={'red.300'}>
           Logout
         </Link>
