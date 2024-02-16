@@ -1,11 +1,26 @@
 import { Box, Card, Heading, Link } from "@chakra-ui/react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useEffect, useState } from "react";
 
 export const Actions = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
   const logout = useAuth().logout;
+  const { userRole } = useAuth();
+  const [showShopMenu, setShowShopMenu] = useState(false);
+
+  console.log(userRole?.());
+
+  useEffect(() => {
+    if (!userRole?.()) {
+      window.location.href = "/";
+    } else {
+      if (userRole?.()?.includes("ROLE_OWNER")) {
+        setShowShopMenu(true);
+      }
+    }
+  });
 
   return (
     <Card p={4} className="shadow-xl">
@@ -27,6 +42,13 @@ export const Actions = () => {
         >
           My informations
         </Link>
+        {showShopMenu && (
+          <>
+            <Link as={RouterLink} to="/my-shops" color={"gray.300"}>
+              My shops
+            </Link>
+          </>
+        )}
         <Link onClick={() => logout()} color={"red.300"}>
           Logout
         </Link>

@@ -26,7 +26,6 @@ import { Header } from "../components/Header";
 export default function RootLayout() {
   const [serviceInputValue, setServiceInputValue] = useState("");
   const locationInputRef = useRef<HTMLInputElement>(null);
-  const serviceInputRef = useRef<HTMLInputElement>(null);
   const loadingLocation = useRef(false);
   const toast = useToast();
   const toastIdRef = useRef<string | number | undefined>("");
