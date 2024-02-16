@@ -112,7 +112,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               </Heading>
 
               <Text>
-                {booking.shop.name} - {booking.shop.address} - {booking.status}
+                {booking.shop.name} - {booking.shop.address}
               </Text>
 
               <Text>
