@@ -201,7 +201,7 @@ export const OwnerDashboard = () => {
               My Shops
             </Heading>
             {loading && <Spinner />}
-            {!loading && stores.length > 0 ? (
+            {!loading && (stores?.length ?? 0) > 0 ? (
               <SimpleGrid columns={2} spacing={4}>
                 {stores.map((store) => (
                   <LinkBox
