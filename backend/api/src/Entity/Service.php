@@ -18,8 +18,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-use Symfony\Component\Serializer\Annotation\Groups;
-
 #[ApiResource(
     operations: [
         new Get(),
@@ -54,23 +52,20 @@ class Service
     #[ORM\ManyToOne(targetEntity: Shop::class, inversedBy: 'services')]
     private ?Shop $shop;
 
-    #[Groups(['booking:read'])]
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['service:read'])]
+    #[Groups(['service:read', 'booking:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['service:read'])]
     private ?string $description = null;
 
-    #[Groups(['booking:read'])]
     #[ORM\Column]
-    #[Groups(['service:read'])]
+    #[Groups(['service:read', 'booking:read'])]
     private ?float $price = null;
 
-    #[Groups(['booking:read'])]
     #[ORM\Column]
-    #[Groups(['service:read'])]
+    #[Groups(['service:read', 'booking:read'])]
     private ?int $duration = null;
 
     #[ORM\OneToMany(mappedBy: 'service', targetEntity: Booking::class)]

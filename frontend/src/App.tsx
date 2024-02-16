@@ -26,7 +26,7 @@ import { ShopsProvider } from './hooks/useShops';
 import { EmployeesProvider } from './hooks/useEmployees';
 import { ServicesProvider } from './hooks/useServices';
 import { SchedulesProvider } from './hooks/useSchedules';
-import { BookingsProvider } from "./hooks/useBookings";
+import { BookingsProvider } from './hooks/useBookings';
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -72,6 +72,7 @@ const BookingProviderLayout = () => (
   <BookingsProvider>
     <Outlet />
   </BookingsProvider>
+);
 
 // Routes structure
 const router = createBrowserRouter(
@@ -101,13 +102,13 @@ const router = createBrowserRouter(
             }
           />
           <Route
-          path="profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage mode="past-bookings" />
-            </ProtectedRoute>
-          }
-        />
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage mode="past-bookings" />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route
           path="login"
