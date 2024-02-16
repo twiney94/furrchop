@@ -3,7 +3,7 @@ import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
-import type { SelectedDate, Booking } from "../types/schedule";
+import type { SelectedDate} from "../types/schedule";
 import { useAuth } from "./useAuth";
 import ChopperType from "../types/chopper";
 import EmployeeType from "../types/employeType";

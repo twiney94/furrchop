@@ -1,6 +1,5 @@
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Card, Heading, Link } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box } from "@chakra-ui/react";
 import { FC, ReactNode } from "react";
-import { Link as RouterLink, useLocation } from "react-router-dom";
 
 
 type AccordionGroupLinkProps = {
