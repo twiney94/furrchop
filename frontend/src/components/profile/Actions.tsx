@@ -1,6 +1,7 @@
 import { Box, Card, Heading, Link } from "@chakra-ui/react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useEffect, useState } from "react";
 import AccordionLink from "../common/AccordionGroupLink";
 
 function parseJwt(token) {
@@ -16,7 +17,21 @@ function parseJwt(token) {
 export const Actions = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
-  const { logout , user} = useAuth(); 
+  const { logout , user} = useAuth();
+  const { userRole } = useAuth();
+  const [showShopMenu, setShowShopMenu] = useState(false);
+
+  console.log(userRole?.());
+
+  useEffect(() => {
+    if (!userRole?.()) {
+      window.location.href = "/";
+    } else {
+      if (userRole?.()?.includes("ROLE_OWNER")) {
+        setShowShopMenu(true);
+      }
+    }
+  });
 
   const token = user?.token;
   let roles = [];
@@ -31,7 +46,7 @@ export const Actions = () => {
   // Vérifier si l'utilisateur a le rôle ADMIN ou OWNER
   const hasAccess = roles.includes("ROLE_ADMIN") || roles.includes("ROLE_OWNER");
 
-  
+
   return (
     <Card p={4} className="shadow-xl">
       <Heading as="h1" size="md" textAlign="left" mb={8} fontWeight={500}>
@@ -57,7 +72,7 @@ export const Actions = () => {
           </AccordionLink>
         )}
 
-       
+
         <Link
           as={RouterLink}
           to="/profile"
@@ -72,6 +87,13 @@ export const Actions = () => {
         >
           My informations
         </Link>
+        {showShopMenu && (
+          <>
+            <Link as={RouterLink} to="/my-shops" color={"gray.300"}>
+              My shops
+            </Link>
+          </>
+        )}
         <Link onClick={() => logout()} color={"red.300"}>
           Logout
         </Link>

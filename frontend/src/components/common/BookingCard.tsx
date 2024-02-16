@@ -1,40 +1,162 @@
-import { Card, CardBody, CardFooter, Heading, Stack, Text, Image, Button } from "@chakra-ui/react";
-import { FC } from "react";
-type BookingCardProps = {
-  showImage?: boolean;
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Heading,
+  Stack,
+  Text,
+  Image,
+  Button,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { Booking } from "../../types/schedule";
+import { ConfirmationDialog } from "./ConfirmationDialog";
+
+interface BookingCardProps {
+  booking: Booking;
+  onCancel: () => void;
+  onReschedule: (bookingId: number, serviceId: string, shopId: number) => void;
 }
 
+export const BookingCard: React.FC<BookingCardProps> = ({
+  booking,
+  onCancel,
+  onReschedule,
+}) => {
+  // Thursday, August 19, 2021
+  const humanReadableDateTime = new Date(
+    booking.beginDateTime
+  ).toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
-export const BookingCard:FC<BookingCardProps> = ({showImage=true}) => {
-  return (
-    <Card
-      direction={{ base: "column", sm: "row" }}
-      overflow="hidden"
-      variant="outline"
-    >
-      {showImage&&(<Image
-        objectFit="cover"
-        maxW={{ base: "100%", sm: "200px" }}
-        src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
-        alt="Caffe Latte"
-      />)}
+  const isPastBooking = new Date() > new Date(booking.beginDateTime);
 
-      <Stack>
-        <CardBody>
-          <Heading size="md">The perfect latte</Heading>
+  const europeanHours = new Date(booking.beginDateTime).toLocaleTimeString(
+    "en-US",
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
 
-          <Text py="2">
-            Caffè latte is a coffee beverage of Italian origin made with
-            espresso and steamed milk.
-          </Text>
-        </CardBody>
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-        <CardFooter>
-          <Button variant="solid" colorScheme="blue">
-            Buy Latte
+  const handleCancelBooking = () => {
+    onCancel();
+    onClose();
+  };
+
+  const handleRescheduleBooking = () => {
+    onReschedule(booking.id, booking.service["@id"], booking.shop.id);
+  };
+
+  const cardFooter = () => {
+    if (booking.status === "validated") {
+      return (
+        <CardFooter display={"flex"} justify={"space-between"}>
+          <Button
+            variant="outline"
+            colorScheme="brand"
+            onClick={handleRescheduleBooking}
+          >
+            Reschedule
+          </Button>
+          <Button variant="solid" colorScheme="red" onClick={onOpen}>
+            Cancel
           </Button>
         </CardFooter>
-      </Stack>
-    </Card>
-  );
+      );
+    } else if (isPastBooking) {
+      return (
+        <CardFooter display={"flex"} justifyContent={"center"}>
+          <Button
+            variant="outline"
+            colorScheme="brand"
+            onClick={handleRescheduleBooking}
+          >
+            Reschedule
+          </Button>
+          <Text display={"flex"} alignItems={"center"}>
+            This booking has already happened.
+          </Text>
+        </CardFooter>
+      );
+    } else {
+      return (
+        <CardFooter display={"flex"} justify={"space-between"}>
+          <Button
+            variant="solid"
+            colorScheme="brand"
+            onClick={handleRescheduleBooking}
+          >
+            Reschedule
+          </Button>
+          <Text display={"flex"} alignItems={"center"}>
+            This booking has been cancelled.
+          </Text>
+        </CardFooter>
+      );
+    }
+  };
+  if (booking) {
+    return (
+      <>
+        <Card
+          direction={{ base: "column", sm: "row" }}
+          overflow="hidden"
+          variant="outline"
+          background={booking.status === "validated" ? "white" : "gray.100"}
+        >
+          <Image
+            objectFit="cover"
+            maxW={{ base: "100%", sm: "200px" }}
+            src="https://live.staticflickr.com/754/21616753858_086bd43ee2_z.jpg"
+            alt="Cute Dog"
+          />
+
+          <Stack className="w-full">
+            <CardBody
+              display={"flex"}
+              flexDirection={"column"}
+              alignItems={"baseline"}
+            >
+              <Heading size="md" fontWeight={500}>
+                {humanReadableDateTime} - {europeanHours}
+              </Heading>
+
+              <Text>
+                {booking.shop.name} - {booking.shop.address}
+              </Text>
+
+              <Text>
+                {booking.service?.name || "Default Service Name"} -{" "}
+                {booking.service?.price / 100 || 0}€
+              </Text>
+            </CardBody>
+
+            {cardFooter()}
+          </Stack>
+        </Card>
+        <ConfirmationDialog
+          isOpen={isOpen}
+          onClose={onClose}
+          onConfirm={handleCancelBooking}
+          title="Cancel your booking"
+          message={`Are you sure you want to delete your booking with ${booking.shop.name} on ${humanReadableDateTime} at ${europeanHours}? This action cannot be undone.`}
+        />
+      </>
+    );
+  } else {
+    return (
+      <Card>
+        <CardBody>
+          <Text>Loading...</Text>
+        </CardBody>
+      </Card>
+    );
+  }
 };

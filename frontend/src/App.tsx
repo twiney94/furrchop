@@ -8,6 +8,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
+import {  MultiSelectTheme } from 'chakra-multiselect'
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -22,9 +23,13 @@ import { UnloggedRoute, ProtectedRoute } from "./components/ProtectedRoute";
 import { ProfilePage } from "./pages/ProfilePage";
 import { BookingsProvider } from "./hooks/useBookings";
 import { ReviewProvider } from "./hooks/useReviewCard";
+import OwnerDashboard from "./pages/OwnerDashboard";
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
+  components: {
+    MultiSelect: MultiSelectTheme
+  },
   fonts: {
     heading: `'canada-type-gibson', sans-serif`,
     body: `'canada-type-gibson', sans-serif`,
@@ -73,6 +78,7 @@ const router = createBrowserRouter(
       <Route element={<MainLayout />}>
         <Route path="search" element={<SearchPage />} />
         <Route element={<BookingProviderLayout />}>
+          <Route path="my-shops" element={<ProtectedRoute><OwnerDashboard /></ProtectedRoute>} />
           <Route
             path="book/:shopId"
             element={
@@ -123,6 +129,14 @@ const router = createBrowserRouter(
               </ProtectedRoute>
             }
           />
+          <Route
+          path="profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage mode="past-bookings" />
+            </ProtectedRoute>
+          }
+        />
         </Route>
         <Route
           path="login"
@@ -132,7 +146,7 @@ const router = createBrowserRouter(
             </UnloggedRoute>
           }
         />
-    
+
         <Route
           path="register"
           element={
@@ -148,14 +162,6 @@ const router = createBrowserRouter(
             <UnloggedRoute>
               <AuthPage mode="activate" />
             </UnloggedRoute>
-          }
-        />
-        <Route
-          path="profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage mode="past-bookings" />
-            </ProtectedRoute>
           }
         />
         <Route

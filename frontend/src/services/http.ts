@@ -13,37 +13,57 @@ export const httpCall = (
     headers = {};
   }
 
-  // Set content type to 'application/ld+json' if not already set
-  if (!headers["Content-Type"]) {
-    headers["Content-Type"] = "application/ld+json";
-  }
+  const isPatchOrPut = method === "PATCH" || method === "PUT";
+  headers["Content-Type"] = isPatchOrPut
+    ? "application/merge-patch+json"
+    : headers["Content-Type"] || "application/ld+json";
 
-  // Token is inside user: { token: "..." }
-  const userItem = localStorage.getItem("user");
-  let token = null;
-
-  if (userItem) {
-    try {
-      const user = JSON.parse(userItem);
-      token = user.token;
-    } catch (error) {
-      console.error("Error parsing user data from localStorage:", error);
+  try {
+    const userItem = localStorage.getItem("user");
+    if (userItem) {
+      const parsedUser = JSON.parse(userItem);
+      if (parsedUser) {
+        const { token } = parsedUser;
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+      }
     }
+  } catch (error) {
+    console.error("Error parsing user data from localStorage:", error);
   }
 
-  
-  if (token !== null) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const options = {
+  return axios({
     url: `${API_URI}/${endpoint}`,
     method,
     headers,
     data,
-  };
-
-  return axios(options);
+  }).catch((error) => {
+    // Handle or log error as needed
+    throw error;
+  });
 };
 
-type Method = "GET" | "POST" | "PUT" | "DELETE";
+export const outsideHttpCall = (
+  method: Method,
+  url: string,
+  data: any,
+  headers?: any
+) => {
+  // Initialize headers if not provided
+  if (!headers) {
+    headers = {};
+  }
+
+  return axios({
+    url,
+    method,
+    headers,
+    data,
+  }).catch((error) => {
+    // Handle or log error as needed
+    throw error;
+  });
+};
+
+type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";

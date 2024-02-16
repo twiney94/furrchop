@@ -11,17 +11,17 @@ export const ServiceCard = ({
   mode?: "confirmation";
 }) => {
   const navigate = useNavigate();
-  const { selectedShop, setSelectedService } = useBookings();
+  const { selectedShop, setSelectedService, reset } = useBookings();
 
   const setServiceAndNavigate =
     (service: Service, cancel?: boolean) => async () => {
       setSelectedService(service);
       if (cancel) {
-        setSelectedService(null);
+        reset();
         navigate(`/book/${selectedShop.id}`);
         return;
       }
-      navigate(`/booking/${service.id}`);
+      navigate(`/booking/${selectedShop.id}`);
     };
 
   return (

@@ -14,11 +14,13 @@ import { Service, useBookings } from "../hooks/useBookings";
 import { useEffect } from "react";
 import ServiceCard from "../components/booking/services/ServiceCard";
 import { BookingCalendar } from "../components/booking/BookingCalendar";
+import { useNavigate } from "react-router-dom";
 
 const BookingPage = ({ mode }: { mode: string }) => {
-  const shopId = window.location.pathname.split("/")[2];
-  const { getShop, selectedShop, setSelectedShop, selectedService } =
+  const { getShop, selectedShop, setSelectedShop, selectedService, selectedBooking } =
     useBookings();
+  const shopId = window.location.pathname.split("/")[2];
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getShopInfos = async () => {
@@ -75,7 +77,10 @@ const BookingPage = ({ mode }: { mode: string }) => {
       </Box>
     );
   } else {
-    if (!selectedService) return <div>Loading...</div>;
+    if (!selectedService) {
+      navigate(`/book/${shopId}`);
+      return;
+    }
 
     return (
       <Box display={"flex"} justifyContent={"center"}>
@@ -103,7 +108,7 @@ const BookingPage = ({ mode }: { mode: string }) => {
               mode="confirmation"
             />
             <Heading as="h1" size="md" color={"brand.300"} fontWeight={500}>
-              2. Pick a date
+              {selectedBooking ? "2. Pick a new date to modify your booking" : "2. Pick a date"}
             </Heading>
             <BookingCalendar shopId={shopId} />
           </Flex>

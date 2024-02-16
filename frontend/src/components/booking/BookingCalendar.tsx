@@ -1,162 +1,307 @@
-import { Button, Heading, Flex, Card } from "@chakra-ui/react";
-import dayHours from "./day_hours.json";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+  Button,
+  Heading,
+  Flex,
+  Card,
+  Select,
+  IconButton,
+  Text,
+} from "@chakra-ui/react";
 import { useBookings } from "../../hooks/useBookings";
+import dayHours from "./day_hours.json"; // Make sure to type this import if possible
+import type {
+  BookingCalendarProps,
+  UseBookingsReturn,
+} from "../../types/schedule";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import {
+  generateDateRange,
+  calculateCombinedAvailability,
+  calculateAvailability,
+} from "../../services/calendar";
 
-interface Slot {
-  military_format: string;
-  twenty_four_hour_format: string;
-  standard_format: string;
-  time_of_day: string;
-}
-
-const generateDateRange = (startDate: Date, endDate: Date) => {
-  let dates = [];
-  let currentDate = new Date(startDate);
-
-  while (currentDate <= endDate) {
-    dates.push(new Date(currentDate));
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return dates;
-};
-
-/**
-[
-    {
-        "employee": {
-            "id": 1,
-            "name": "Juanito Rodriguez",
-            "schedules": [
-                {
-                    "id": 1,
-                    "employee": "\/employees\/1",
-                        "dayOfWeek": "Monday",
-                        "startTime": "1970-01-01T09:00:00+00:00",
-                        "endTime": "1970-01-01T17:00:00+00:00"
-                },
-                {
-                    "id": 2,
-                    "employee": "\/employees\/1",
-                    "dayOfWeek": "Tuesday",
-                    "startTime": "1970-01-01T09:00:00+00:00",
-                    "endTime": "1970-01-01T17:00:00+00:00"
-                },
-                {
-                    "id": 3,
-                    "employee": "\/employees\/1",
-                    "dayOfWeek": "Wednesday",
-                    "startTime": "1970-01-01T09:00:00+00:00",
-                    "endTime": "1970-01-01T17:00:00+00:00"
-                },
-                {
-                    "id": 4,
-                    "employee": "\/employees\/1",
-                    "dayOfWeek": "Thursday",
-                    "startTime": "1970-01-01T09:00:00+00:00",
-                    "endTime": "1970-01-01T17:00:00+00:00"
-                },
-                {
-                    "id": 5,
-                    "employee": "\/employees\/1",
-                    "dayOfWeek": "Friday",
-                    "startTime": "1970-01-01T09:00:00+00:00",
-                    "endTime": "1970-01-01T17:00:00+00:00"
-                }
-            ],
-            "leaves": [
-                {
-                    "id": 1,
-                    "beginsAt": "2024-02-16T09:30:07+00:00",
-                    "endsAt": "2024-02-17T16:30:07+00:00",
-                    "employee": "\/employees\/1"
-                }
-            ],
-            "bookings": [
-                {
-                    "id": 1,
-                    "beginDateTime": "2024-02-15T11:00:00+00:00",
-                    "endDateTime": "2024-02-15T11:30:00+00:00",
-                    "service": "\/services\/1",
-                    "comment": null,
-                    "status": "validated",
-                    "user": "\/users\/1eec9958-af2d-63a0-aaa3-378fb6639009",
-                    "shop": "\/shops\/1",
-                    "employee": "\/employees\/1"
-                }
-            ]
-        }
-    },
-    {
-        "employee": {
-            "id": 2,
-            "name": "Michelle Gonzales",
-            "schedules": [],
-            "leaves": [],
-            "bookings": []
-        }
-    },
-    {
-        "employee": {
-            "id": 3,
-            "name": "Papito Munito",
-            "schedules": [],
-            "leaves": [],
-            "bookings": []
-        }
-    }
-]
- */
-
-// We want to filter timeSlots based on employees availability.
-// A button will display if one of the employee is available on the slot
-// Availability is based on the shopSchedule, more preciseley on schedules, leaves and bookings of each employee
-// We have to calculate the available time slots based on the shopSchedule
-
-export const BookingCalendar = ({ shopId }: { shopId: string }) => {
+export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
   const beginDate = new Date();
-  const endDate = new Date(beginDate.getTime() + 6 * 24 * 60 * 60 * 1000); // 6 days added to include the total of 7 days including the start date
-  const dateRange = generateDateRange(beginDate, endDate);
-  const { shopSchedule, getSchedule } = useBookings();
+  const [dateRange, setDateRange] = useState<Date[]>([]);
+  const {
+    shopSchedule,
+    getSchedule,
+    selectedDate,
+    setSelectedDate,
+    createBooking,
+    selectedBooking,
+    editBooking,
+  }: UseBookingsReturn = useBookings();
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("all");
+  const [currentBeginDate, setCurrentBeginDate] = useState<Date>(beginDate);
+  const [weekOffset, setWeekOffset] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const getShopSchedule = async () => {
-      await getSchedule(shopId, beginDate.toISOString(), endDate.toISOString());
-    };
-    getShopSchedule();
-  }, []);
-
-  const renderTimeSlots = (slots: Slot[]) => {    
-
-    return slots.map((slot, index) => (
-      <Button key={index} size="sm" m={1} fontWeight={400}>
-        {slot.twenty_four_hour_format}
-      </Button>
-    ));
+  const handlePreviousWeek = () => {
+    if (new Date(currentBeginDate).getTime() > new Date(beginDate).getTime()) {
+      setCurrentBeginDate((prevDate) => {
+        const newDate = new Date(prevDate);
+        newDate.setDate(newDate.getDate() - 7);
+        return newDate;
+      });
+      setWeekOffset((prevOffset) => prevOffset - 1);
+    }
   };
 
-  return (
-    <Card p={8}>
-      {shopSchedule?.map((employee, index) => {
-        return (
-          <Flex key={index} justifyContent={"center"} gap={4}>
-            {employee.employee.name}
-          </Flex>
+  const handleNextWeek = () => {
+    setCurrentBeginDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setDate(newDate.getDate() + 7);
+      return newDate;
+    });
+    setWeekOffset((prevOffset) => prevOffset + 1);
+  };
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      setIsLoading(true);
+      const endDate = new Date(currentBeginDate);
+      endDate.setDate(currentBeginDate.getDate() + 6);
+      const newDateRange = generateDateRange(currentBeginDate, endDate);
+      setDateRange(newDateRange);
+
+      await getSchedule(
+        shopId,
+        currentBeginDate.toISOString(),
+        endDate.toISOString()
+      );
+      setIsLoading(false);
+    };
+
+    fetchSchedule();
+  }, [currentBeginDate]);
+
+  const handleEmployeeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = e.target.value;
+    setSelectedEmployeeId(id);
+  };
+
+  const handleTimeSlotClick = (date: Date, twentyFourHourFormat: string) => {
+    let incrementedDate = new Date(date);
+
+    incrementedDate.setDate(incrementedDate.getDate());
+
+    const selectedDateTime = new Date(
+      `${incrementedDate.toISOString().split("T")[0]}T${twentyFourHourFormat}`
+    );
+
+    const formatted = `${selectedDateTime.toDateString()} - at ${twentyFourHourFormat}`;
+
+    if (selectedEmployeeId === "all") {
+      const specificSlotAvailableEmployees = shopSchedule.filter(
+        ({ employee }) => {
+          const employeeAvailability = calculateAvailability(
+            employee,
+            date,
+            dayHours
+          );
+          return employeeAvailability.some(
+            (slot) => slot.twenty_four_hour_format === twentyFourHourFormat
+          );
+        }
+      );
+
+      if (specificSlotAvailableEmployees.length > 0) {
+        const randomIndex = Math.floor(
+          Math.random() * specificSlotAvailableEmployees.length
         );
-      })    }
-      <Flex justifyContent={"center"} gap={4}>
-        {dateRange.map((date, index) => (
-          <Flex direction={"column"} key={index}>
-            <Heading size="sm" mb={2} fontWeight={400}>
-              {date.toDateString()}
-            </Heading>
-            <Flex flexWrap="wrap" direction={"column"} gap={2}>
-              {renderTimeSlots(dayHours)}
+        const randomEmployee =
+          specificSlotAvailableEmployees[randomIndex].employee;
+
+        setSelectedDate({
+          date: selectedDateTime,
+          formatted,
+          employee: { id: randomEmployee.id.toString() },
+        });
+      } else {
+        console.error("No available employees for the selected time slot.");
+      }
+    } else {
+      setSelectedDate({
+        date: selectedDateTime,
+        formatted,
+        employee: { id: selectedEmployeeId },
+      });
+    }
+  };
+
+  if (!shopSchedule) {
+    return <Card p={8}>Loading...</Card>;
+  }
+  if (!isLoading && !selectedDate.date) {
+    return (
+      <Card p={8}>
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          mb={8}
+          gap={64}
+        >
+          <IconButton
+            aria-label=" Previous"
+            icon={<ChevronLeftIcon />}
+            onClick={handlePreviousWeek}
+            isDisabled={
+              new Date(currentBeginDate).getTime() <= new Date(beginDate).getTime()
+            }
+          />
+          <Select value={selectedEmployeeId} onChange={handleEmployeeChange}>
+            <option className="p-4" value="all">
+              All Employees
+            </option>
+            {shopSchedule?.map((employee) => (
+              <option key={employee.employee.id} value={employee.employee.id}>
+                {employee.employee.name}
+              </option>
+            ))}
+          </Select>
+          <IconButton
+            aria-label="Next"
+            icon={<ChevronRightIcon />}
+            onClick={handleNextWeek}
+            isDisabled={weekOffset >= 3}
+          />
+        </Flex>
+
+        {selectedEmployeeId === "all" ? (
+          <Flex direction={"column"}>
+            <Flex direction="row" mb={4} gap={8} justify={"center"}>
+              {dateRange.map((date, dateIndex) => (
+                <Flex direction="column" key={dateIndex}>
+                  <Heading size="sm" mb={2} fontWeight={400}>
+                    {date.toDateString()}
+                  </Heading>
+                  <Flex flexWrap="wrap" direction="column">
+                    {calculateCombinedAvailability(
+                      date,
+                      dayHours,
+                      shopSchedule.map((employee) => employee.employee)
+                    ).map((slot, slotIndex) => (
+                      <Button
+                        key={slotIndex}
+                        size="sm"
+                        m={1}
+                        onClick={() => {
+                          handleTimeSlotClick(
+                            date,
+                            slot.twenty_four_hour_format
+                          );
+                        }}
+                      >
+                        {slot.twenty_four_hour_format}
+                      </Button>
+                    ))}
+                  </Flex>
+                </Flex>
+              ))}
             </Flex>
           </Flex>
-        ))}
-      </Flex>
-    </Card>
-  );
+        ) : (
+          shopSchedule
+            ?.filter(
+              (employee) => String(employee.employee.id) === selectedEmployeeId
+            )
+            .map((employee, index) => (
+              <Flex direction={"column"} key={index}>
+                <Flex
+                  key={index}
+                  direction="row"
+                  mb={4}
+                  justify={"center"}
+                  gap={8}
+                >
+                  {dateRange.map((date, dateIndex) => (
+                    <Flex direction="column" key={dateIndex}>
+                      <Heading size="sm" mb={2} fontWeight={400}>
+                        {date.toDateString()}
+                      </Heading>
+                      <Flex flexWrap="wrap" direction="column">
+                        {calculateAvailability(
+                          employee.employee,
+                          date,
+                          dayHours
+                        ).map((slot, slotIndex) => (
+                          <Button
+                            key={slotIndex}
+                            size="sm"
+                            m={1}
+                            onClick={() => {
+                              handleTimeSlotClick(
+                                date,
+                                slot.twenty_four_hour_format
+                              );
+                            }}
+                          >
+                            {slot.twenty_four_hour_format}
+                          </Button>
+                        ))}
+                      </Flex>
+                    </Flex>
+                  ))}
+                </Flex>
+              </Flex>
+            ))
+        )}
+      </Card>
+    );
+  } else if (selectedDate.date !== null) {
+    return (
+      <>
+        <Card p={8}>
+          <Heading
+            as="h1"
+            size="md"
+            fontWeight={500}
+            display={"flex"}
+            gap={2}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Flex gap={2}>
+              <Text color={"brand.300"}>
+                {selectedBooking ? "Reschedule" : "Book"} for
+              </Text>
+              <Text color={"black"}>{selectedDate.date.toDateString()}</Text>-
+              <Text color={"brand.300"}>
+                {selectedDate.date
+                  .toTimeString()
+                  .split(":")
+                  .slice(0, 2)
+                  .join("h")}
+              </Text>
+            </Flex>
+            <Button
+              colorScheme="brand"
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedDate({ date: null, formatted: "" })}
+            >
+              Change
+            </Button>
+          </Heading>
+        </Card>
+        <Button
+          mt={8}
+          colorScheme="brand"
+          variant="solid"
+          size="lg"
+          onClick={() => {
+            if (selectedBooking) {
+              editBooking();
+            } else {
+              createBooking();
+            }
+          }}
+        >
+          {selectedBooking ? "Confirm new date" : "Confirm"}
+        </Button>
+      </>
+    );
+  }
 };

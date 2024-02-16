@@ -7,6 +7,8 @@ import "./profilepage.module.css";
 import AlreadyReview from "../components/profile/AlreadyReview";
 import WaitReview from "../components/profile/WaitReview";
 
+
+
 export const ProfilePage = ({ mode }: { mode: string }) => {
 
   const renderContent = () => {
