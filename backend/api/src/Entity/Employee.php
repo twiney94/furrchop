@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 #[ApiResource(
@@ -31,7 +32,9 @@ use ApiPlatform\Metadata\Delete;
         new Post(
             securityPostDenormalize: "is_granted('ROLE_ADMIN') or (object.getShop().getUser() == user and is_granted('ROLE_OWNER'))"
         )
-    ]
+    ],
+    normalizationContext: ['groups' => ['employee:read']],
+
 )]
 class Employee
 {
@@ -42,6 +45,7 @@ class Employee
 
     #[ORM\ManyToOne(inversedBy: 'employees')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['employee:read'])]
     private ?Shop $shop = null;
 
     #[ORM\OneToMany(mappedBy: 'employee', targetEntity: Booking::class)]
@@ -54,14 +58,23 @@ class Employee
     private Collection $schedules;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:schedules'])]
+    #[Groups(['shop:schedules', 'employee:read'])]
     private ?string $name = null;
+
+    #[ORM\Column(type: 'datetime_immutable')]
+    #[Groups(['shop:schedules', 'employee:read'])]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[Groups(['shop:schedules', 'employee:read'])]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
         $this->bookings = new ArrayCollection();
         $this->leaves = new ArrayCollection();
         $this->schedules = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -182,6 +195,30 @@ class Employee
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

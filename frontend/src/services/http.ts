@@ -13,7 +13,7 @@ export const httpCall = (
     headers = {};
   }
 
-  const isPatchOrPut = method === "PATCH" || method === "PUT";
+  const isPatchOrPut = method === "PATCH";
   headers["Content-Type"] = isPatchOrPut
     ? "application/merge-patch+json"
     : headers["Content-Type"] || "application/ld+json";

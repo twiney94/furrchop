@@ -23,7 +23,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
-use ApiPlatform\Core\Annotation\ApiFilter;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "`user`")]
@@ -38,7 +37,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
             security: "is_granted('ROLE_ADMIN') or object == user",
         ),
         new GetCollection(
-            controller: CustomUserController::class,
+            // controller: CustomUserController::class,
             name: 'get_user_collection',
         ),
 
@@ -52,7 +51,8 @@ use ApiPlatform\Core\Annotation\ApiFilter;
             security: "is_granted('ROLE_ADMIN') or object == user",
         )
     ],
-    normalizationContext: ['groups' => 'user:read']
+    normalizationContext: ['groups' => 'user:read'],
+    denormalizationContext: ['groups' => 'user:write']
 )]
 #[ApiResource(
     operations: [
@@ -117,30 +117,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Uuid $id;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $lastName = null;
 
     #[ORM\Column(name: 'email', type: 'string', length: 255, unique: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:write'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $phoneNumber = null;
 
     #[ORM\Column]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private array $roles = ['ROLE_USER'];
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    #[Groups(['user:read', 'user:activate'])]
+    #[Groups(['user:read', 'user:activate', 'user:write'])]
     private ?bool $isVerified = false;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
@@ -166,12 +167,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Booking::class)]
     private Collection $bookings;
 
+    #[ORM\OneToMany(mappedBy: 'userId', targetEntity: Review::class)]
+    private Collection $reviews;
+
 
     public function __construct()
     {
         $this->id = Uuid::v4();
         $this->createdAt = new \DateTimeImmutable();
         $this->bookings = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -358,6 +363,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->bookings->removeElement($booking);
         $booking->setUser(null);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): static
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): static
+    {
+        if ($this->reviews->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getUserId() === $this) {
+                $review->setUserId(null);
+            }
+        }
 
         return $this;
     }

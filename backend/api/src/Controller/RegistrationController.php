@@ -48,7 +48,6 @@ class RegistrationController extends AbstractController
         );
 
 
-
         return new Response("User account has been created.", 201);
     }
 }

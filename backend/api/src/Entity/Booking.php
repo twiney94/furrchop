@@ -18,6 +18,7 @@ use App\Controller\CreateBookingController;
 use App\DataProvider\BookingProvider;
 use App\Enum\Booking\StatusEnum;
 use ApiPlatform\Metadata\ApiResource;
+use App\Controller\KpiController;
 use App\Repository\BookingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -84,6 +85,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(
             provider: BookingProvider::class
         ),
+        new GetCollection(
+            uriTemplate: "/booking-kpis",
+            security: "is_granted('ROLE_ADMIN')",
+            controller: KpiController::class . '::fetchBookingKpis',
+        ),
         new Patch(
             security: 'object.getUser() == user or is_granted("ROLE_ADMIN")',
         ),
@@ -93,7 +99,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(
             security: "is_granted('ROLE_ADMIN') or object == user",
         ),
-        new Post(controller: CreateBookingController::class)
+        new Post(controller: CreateBookingController::class),
+
     ],
     normalizationContext: ['groups' => 'booking:read'],
 )]
@@ -142,6 +149,20 @@ class Booking
     #[ORM\ManyToOne(inversedBy: 'bookings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Employee $employee = null;
+
+    #[Groups(['booking:read'])]
+    #[ORM\Column(type: 'datetime_immutable')]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[Groups(['booking:read'])]
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -231,6 +252,30 @@ class Booking
     public function setEmployee(?Employee $employee): static
     {
         $this->employee = $employee;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
