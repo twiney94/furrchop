@@ -1,6 +1,5 @@
 import { Box, IconButton, Spinner, useToast } from "@chakra-ui/react";
 import Chopper from "../components/search/Chopper";
-import Filters from "../components/search/Filters";
 import { Map, Marker, MapProvider, MapRef } from "react-map-gl";
 import { useEffect, useRef, useState } from "react";
 import { httpCall, outsideHttpCall } from "../services/http";
@@ -10,12 +9,12 @@ import * as turf from "@turf/turf";
 import "./searchpage.module.css";
 
 // type data
-import type ChopperType from "../types/chopper";
 import { StarIcon } from "@chakra-ui/icons";
 import { MdAccountCircle } from "react-icons/md";
+import { BookingShopResponse } from "../types/schedule";
 
 const SearchPage = () => {
-  const [results, setResults] = useState<ChopperType[]>([]);
+  const [results, setResults] = useState<BookingShopResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const mapRef = useRef<MapRef>();
@@ -25,7 +24,11 @@ const SearchPage = () => {
   const fetchChoppers = async () => {
     const searchParams = new URLSearchParams(window.location.search);
     const service = searchParams.get("service");
-    const response = await httpCall("GET", `shops?services.name=${service}`, {});
+    const response = await httpCall(
+      "GET",
+      `shops?services.name=${service}`,
+      {}
+    );
     // then batch geocode for each shop
     const shops = response.data["hydra:member"];
     // put each shop location in a string with ; separator
@@ -109,14 +112,15 @@ const SearchPage = () => {
         console.log(data);
 
         // Calculate the bounding box
-        const points = data.map((chopper: { location: { lng: any; lat: any; }; }) => [
-          chopper.location.lng,
-          chopper.location.lat,
-        ]);
+        const points = data.map(
+          (chopper: { location: { lng: any; lat: any } }) => [
+            chopper.location.lng,
+            chopper.location.lat,
+          ]
+        );
         if (userLocation.lat && userLocation.lon) {
           points.push([userLocation.lon, userLocation.lat]);
         }
-
 
         setResults(data);
       } catch (err) {
@@ -136,13 +140,14 @@ const SearchPage = () => {
     loadChoppers();
   }, [toast]);
 
-  const handleChopperClick = (chopper: ChopperType) => {
-    mapRef.current?.flyTo({
-      center: [chopper.location.lng, chopper.location.lat],
-    });
+  const handleChopperClick = (chopper: BookingShopResponse) => {
+    if (chopper.location)
+      mapRef.current?.flyTo({
+        center: [chopper.location.lng, chopper.location.lat],
+      });
   };
 
-  const goToChopperOnList = (chopper: ChopperType) => {
+  const goToChopperOnList = (chopper: BookingShopResponse) => {
     const chopperElement = document.getElementById(`chopper-${chopper.id}`);
     chopperElement?.scrollIntoView({ behavior: "smooth" });
   };
@@ -157,7 +162,6 @@ const SearchPage = () => {
 
   return (
     <Box w="100%" h="100%" className="flex flex-col">
-      {/* <Filters /> */}
       <Box w="100%" bg="blue.500" className="flex grow max-h-[84vh] min-h-full">
         <MapProvider>
           <Box
@@ -196,8 +200,8 @@ const SearchPage = () => {
                   <>
                     <Marker
                       key={result.id}
-                      longitude={result.location.lng}
-                      latitude={result.location.lat}
+                      longitude={result.location ? result.location.lng : 0}
+                      latitude={result.location ? result.location.lat : 0}
                     >
                       <IconButton
                         isRound={true}
