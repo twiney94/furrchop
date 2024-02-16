@@ -30,7 +30,7 @@ const EmployeeManager = () => {
   const editDisclosure = useDisclosure();
   const createDisclosure = useDisclosure();
   const deleteAlertDisclosure = useDisclosure();
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
 
   useEffect(() => {
     fetchEmployees();

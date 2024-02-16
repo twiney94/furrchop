@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, SetStateAction } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Box,
   Heading,
@@ -33,7 +33,6 @@ const UserManager = () => {
   const editDisclosure = useDisclosure();
   const createDisclosure = useDisclosure();
   const deleteAlertDisclosure = useDisclosure();
-  const cancelRef = useRef();
   const [selectedUser, setSelectedUser] = useState(null);
   const { userFullData } = useAuth();
 
@@ -144,7 +143,7 @@ const UserManager = () => {
                   aria-label="Delete user"
                   icon={<DeleteIcon />}
                   colorScheme="red"
-                  onClick={() => handleDeleteUserConfirmation(user['id'], user)}
+                  onClick={() => handleDeleteUserConfirmation(user.id, user)}
                 />
               </Td>
             </Tr>
@@ -164,7 +163,7 @@ const UserManager = () => {
         entity="users"
         isOpen={deleteAlertDisclosure.isOpen}
         onClose={deleteAlertDisclosure.onClose}
-        cancelRef={cancelRef}
+        cancelRef={React.useRef<HTMLButtonElement>(null)}
         onConfirm={handleDeleteUser}
       />
       {/* Create User Modal */}

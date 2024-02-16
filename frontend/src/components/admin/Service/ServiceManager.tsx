@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, SetStateAction } from 'react';
+import React, { useEffect, useState, useRef, SetStateAction } from 'react';
 import {
   Box,
   Heading,
@@ -32,8 +32,7 @@ const ServiceManager = () => {
   const editDisclosure = useDisclosure();
   const createDisclosure = useDisclosure();
   const deleteAlertDisclosure = useDisclosure();
-  const cancelRef = useRef();
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedService, setSelectedService] = useState<any>(null);
 
   useEffect(() => {
     fetchServices();
@@ -173,7 +172,7 @@ const ServiceManager = () => {
         entity="Service"
         isOpen={deleteAlertDisclosure.isOpen}
         onClose={deleteAlertDisclosure.onClose}
-        cancelRef={cancelRef}
+        cancelRef={React.useRef<HTMLButtonElement>(null)}
         onConfirm={handleDeleteService}
       />
     </Box>

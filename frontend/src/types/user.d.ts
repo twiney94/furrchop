@@ -1,4 +1,5 @@
 export interface User {
+  id: any;
   '@id': string;
   firstName: string;
   lastName: string;
