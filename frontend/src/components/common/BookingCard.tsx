@@ -33,6 +33,8 @@ export const BookingCard: React.FC<BookingCardProps> = ({
     day: "numeric",
   });
 
+  const isPastBooking = new Date() > new Date(booking.beginDateTime);
+
   const europeanHours = new Date(booking.beginDateTime).toLocaleTimeString(
     "en-US",
     {
@@ -66,6 +68,21 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           <Button variant="solid" colorScheme="red" onClick={onOpen}>
             Cancel
           </Button>
+        </CardFooter>
+      );
+    } else if (isPastBooking) {
+      return (
+        <CardFooter display={"flex"} justifyContent={"center"}>
+          <Button
+            variant="outline"
+            colorScheme="brand"
+            onClick={handleRescheduleBooking}
+          >
+            Reschedule
+          </Button>
+          <Text display={"flex"} alignItems={"center"}>
+            This booking has already happened.
+          </Text>
         </CardFooter>
       );
     } else {
@@ -116,7 +133,8 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               </Text>
 
               <Text>
-                {booking.service.name} - {booking.service.price / 100}€
+                {booking.service?.name || "Default Service Name"} -{" "}
+                {booking.service?.price / 100 || 0}€
               </Text>
             </CardBody>
 
@@ -139,6 +157,6 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           <Text>Loading...</Text>
         </CardBody>
       </Card>
-    )
+    );
   }
 };

@@ -23,22 +23,29 @@ export const PastBookings = () => {
     handleRescheduleBooking(bookingId, serviceId, shopId);
   };
 
-  const sortedBookings: Booking[] = bookings?.sort((a, b) => {
-    if (a.status === "validated" && b.status === "canceled") {
-      return -1;
-    } else if (a.status === "canceled" && b.status === "validated") {
-      return 1;
-    } else {
-      return (
-        new Date(b.beginDateTime).getTime() -
-        new Date(a.beginDateTime).getTime()
-      );
-    }
-  }) ?? [];
+  const sortedBookings: Booking[] =
+    bookings?.sort((a, b) => {
+      if (a.status === "validated" && b.status === "canceled") {
+        return -1;
+      } else if (a.status === "canceled" && b.status === "validated") {
+        return 1;
+      } else {
+        return (
+          new Date(b.beginDateTime).getTime() -
+          new Date(a.beginDateTime).getTime()
+        );
+      }
+    }) ?? [];
+
+  const validBookings: Booking[] = sortedBookings.filter(
+    (booking) =>
+      booking.hasOwnProperty("service") &&
+      booking.service.hasOwnProperty("name")
+  );
 
   const currentBookings: Booking[] =
-    sortedBookings && sortedBookings.length > 0
-      ? sortedBookings.slice(
+    validBookings && validBookings.length > 0
+      ? validBookings.slice(
           (currentPage - 1) * bookingsPerPage,
           currentPage * bookingsPerPage
         )
@@ -49,7 +56,6 @@ export const PastBookings = () => {
     : 0;
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
 
   return (
     <Card p={8} h={"100%"} maxH={"100%"}>
