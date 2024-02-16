@@ -3,7 +3,7 @@ import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
-import type { SelectedDate, Booking } from "../types/schedule";
+import type { SelectedDate, Booking} from "../types/schedule";
 import { useAuth } from "./useAuth";
 
 export interface Service {
@@ -14,7 +14,8 @@ export interface Service {
   price: number;
 }
 
-interface BookingsContextType {
+
+export interface BookingsContextType {
   bookings: Booking[] | null;
   loading: boolean;
   error: string | null;
@@ -102,8 +103,7 @@ export const BookingsProvider = ({
     try {
       const response = await httpCall("GET", "bookings", {});
       if (response.data["hydra:member"]) {
-        const bookings: Booking[] = response.data["hydra:member"].map(
-          (bookingData: any): Booking => {
+        const bookings: Booking[] = response.data["hydra:member"].map((bookingData: any): Booking => {
             return {
               id: bookingData.id,
               beginDateTime: bookingData.beginDateTime,
