@@ -1,14 +1,12 @@
 import { Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react"
 import React, { FC, useCallback, useState } from "react"
 import { useReviewCard } from "../../hooks/useReviewCard";
-import { useNavigate } from "react-router-dom";
 
 type ButtonModalProps = {
     bookingId: number;
 }
 
 const ButtonModal: FC<ButtonModalProps> = ({bookingId}) =>{
-    const navigate = useNavigate();
 
     const { createReviewBooking} = useReviewCard();
     const [comment, setComment] = useState("");

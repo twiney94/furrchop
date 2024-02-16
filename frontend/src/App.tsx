@@ -21,10 +21,6 @@ import AuthPage from "./pages/AuthPage";
 import { UnloggedRoute, ProtectedRoute } from "./components/ProtectedRoute";
 import { ProfilePage } from "./pages/ProfilePage";
 import { BookingsProvider } from "./hooks/useBookings";
-import WaitReview from "./components/profile/WaitReview";
-import AlreadyReview from "./components/profile/AlreadyReview";
-import WaitReviewPage from "./components/profile/WaitReview";
-import AlreadyReviewPage from "./components/profile/AlreadyReview";
 import { ReviewProvider } from "./hooks/useReviewCard";
 
 // Adding Gibson font to Chakra UI
