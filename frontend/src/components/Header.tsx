@@ -26,7 +26,7 @@ export const Header = (props?: Props) => {
           <Button
             aria-label="Groomer"
             variant="outline"
-			colorScheme="purple"
+            colorScheme="purple"
             onClick={() => navigate("/enroll")}
           >
             Are you a groomer?

@@ -17,6 +17,7 @@ import MainLayout from "./layouts/MainLayout";
 import BookingPage from "./pages/BookingPage";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
+import EnrollPage from "./pages/EnrollPage";
 import { UnloggedRoute, ProtectedRoute } from "./components/ProtectedRoute";
 import { ProfilePage } from "./pages/ProfilePage";
 import { BookingsProvider } from "./hooks/useBookings";
@@ -81,13 +82,13 @@ const router = createBrowserRouter(
             }
           />
           <Route
-          path="profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage mode="past-bookings" />
-            </ProtectedRoute>
-          }
-        />
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage mode="past-bookings" />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route
           path="login"
@@ -112,6 +113,14 @@ const router = createBrowserRouter(
             <UnloggedRoute>
               <AuthPage mode="activate" />
             </UnloggedRoute>
+          }
+        />
+        <Route
+          path="enroll"
+          element={
+            <ProtectedRoute>
+              <EnrollPage />
+            </ProtectedRoute>
           }
         />
         <Route
