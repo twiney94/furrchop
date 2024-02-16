@@ -5,6 +5,8 @@ import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import type { SelectedDate, Booking } from "../types/schedule";
 import { useAuth } from "./useAuth";
+import ChopperType from "../types/chopper";
+import EmployeeType from "../types/employeType";
 
 export interface Service {
   description: string;
@@ -14,7 +16,19 @@ export interface Service {
   price: number;
 }
 
-interface BookingsContextType {
+export interface Booking {
+  id: number;
+  beginDateTime: string; // ou Date si vous convertissez les chaînes de date en objets Date
+  endDateTime: string; // ou Date
+  service: Service;
+  comment: string;
+  status: string;
+  shop: ChopperType;
+  employee : EmployeeType;
+}
+
+
+export interface BookingsContextType {
   bookings: Booking[] | null;
   loading: boolean;
   error: string | null;

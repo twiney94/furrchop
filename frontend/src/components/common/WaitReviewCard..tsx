@@ -4,38 +4,17 @@ import {
   CardFooter,
   Stack, 
   Text, 
-  Image, 
-  Box,
   Heading,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  IconButton,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  Button,
-  useDisclosure,
-  Flex,
-  Badge,
   } from "@chakra-ui/react";
-import { FC, useEffect } from "react";
-import { useReviewCard } from "../../hooks/useReviewCard";
+import { FC } from "react";
 import { Booking } from "../../hooks/useBookings";
 import ButtonModal  from "../UI/buttonModal";
 type WaitReviewCardProps = {
-  showImage?: boolean;
   booking: Booking
 }
 
 
-export const WaitReviewCard:FC<WaitReviewCardProps> = ({showImage=true, booking}) => {
+export const WaitReviewCard:FC<WaitReviewCardProps> = ({booking}) => {
   return (
     <Card
       direction={{ base: "column", sm: "row" }}
@@ -60,4 +39,4 @@ export const WaitReviewCard:FC<WaitReviewCardProps> = ({showImage=true, booking}
   );
 };
 
-
+export default WaitReviewCard;

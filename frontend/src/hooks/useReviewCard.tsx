@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
@@ -17,46 +17,6 @@ export interface Booking {
   employee : EmployeeType;
 }
 
-/**
- * [
-    {
-        "employee": {
-            "id": 1,
-            "name": "Juanito Rodriguez",
-            "schedules": [],
-            "leaves": [],
-            "bookings": []
-        }
-    },
-    {
-        "employee": {
-            "id": 2,
-            "name": "Michelle Gonzales",
-            "schedules": [],
-            "leaves": [],
-            "bookings": []
-        }
-    },
-    {
-        "employee": {
-            "id": 3,
-            "name": "Papito Munito",
-            "schedules": [],
-            "leaves": [],
-            "bookings": []
-        }
-    }
-]
- */
-interface Schedule {
-  employee: {
-    id: number;
-    name: string;
-    schedules: any[];
-    leaves: any[];
-    bookings: any[];
-  }[];
-}
 
 export interface Service {
   description: string;
@@ -403,6 +363,7 @@ export const ReviewProvider = ({
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useReviewCard = (): BookingsContextType => {
   return useContext(BookingsContext);
 };

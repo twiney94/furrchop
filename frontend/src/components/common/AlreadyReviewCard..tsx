@@ -1,40 +1,17 @@
 import { 
   Card,
   CardBody,
-  CardFooter,
   Stack, 
-  Text, 
-  Image, 
-  Box,
   Heading,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  IconButton,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  Button,
-  useDisclosure,
-  Flex,
-  Badge,
   } from "@chakra-ui/react";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { Reviews } from "../../hooks/useReviewCard";
-import ButtonModal  from "../UI/buttonModal";
 type AlreadyReviewCardProps = {
-  showImage?: boolean;
   reviews: Reviews;
 }
 
 
-export const AlreadyReviewCard:FC<AlreadyReviewCardProps> = ({showImage=true, reviews}) => {
+export const AlreadyReviewCard:FC<AlreadyReviewCardProps> = ({reviews}) => {
   return (
     <Card
       direction={{ base: "column", sm: "row" }}

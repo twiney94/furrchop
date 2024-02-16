@@ -1,24 +1,11 @@
 import {
   Box,
-  SimpleGrid,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  Flex,
   Card,
   Heading,
   Button,
   Stack,
 } from "@chakra-ui/react";
-import groomingDog from "/groomingdog.jpeg";
-import Login from "../auth/Login";
-import Register from "../auth/Register";
 import { SetStateAction, useEffect, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { BookingCard } from "../common/BookingCard";
-import { WaitReviewCard } from "../common/WaitReviewCard.";
-import { Booking } from "../../hooks/useBookings";
 import { useReviewCard } from "../../hooks/useReviewCard";
 import { AlreadyReviewCard } from "../common/AlreadyReviewCard.";
 
@@ -27,7 +14,7 @@ const AlreadyReview = () => {
 
   useEffect(()  => {    
     getReviewBookings()
-  }, []);
+  }, [getReviewBookings]);
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 3; // Adjust the number of bookings per page as needed
   const indexOfLastReview = currentPage * reviewsPerPage;
@@ -52,7 +39,7 @@ const AlreadyReview = () => {
       </Heading>
       <Stack spacing={4}>
         {currentReviews?.map((_review, index) => (
-          <AlreadyReviewCard key={index} showImage={false} reviews={_review} /> // Render BookingCard for each booking
+          <AlreadyReviewCard key={index}  reviews={_review} /> // Render BookingCard for each booking
         ))}
       </Stack>
       <Box display="flex" justifyContent="center" mt={4}>

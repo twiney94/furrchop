@@ -44,7 +44,7 @@ interface Leave {
   endsAt: string; // ISO string
   employee: string; // Assuming it's a URL or ID reference
 }
-interface Booking {
+export interface Booking {
   id: number;
   beginDateTime: string;
   endDateTime: string;

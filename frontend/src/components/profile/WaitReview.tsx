@@ -1,24 +1,12 @@
 import {
   Box,
-  SimpleGrid,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  Flex,
   Card,
   Heading,
   Button,
   Stack,
 } from "@chakra-ui/react";
-import groomingDog from "/groomingdog.jpeg";
-import Login from "../auth/Login";
-import Register from "../auth/Register";
 import { SetStateAction, useEffect, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { BookingCard } from "../common/BookingCard";
 import { WaitReviewCard } from "../common/WaitReviewCard.";
-import { Booking } from "../../hooks/useBookings";
 import { useReviewCard } from "../../hooks/useReviewCard";
 
 
@@ -34,7 +22,7 @@ const WaitReview = () => {
 
   useEffect(()  => {    
     getUnreviewBookings()
-  }, []);
+  }, [getUnreviewBookings]);
 
 
 
@@ -61,7 +49,7 @@ const WaitReview = () => {
       </Heading>
       <Stack spacing={4}>
         {currentBookings?.map((_booking, index) => (
-          <WaitReviewCard key={index} showImage={false} booking={_booking} /> // Render BookingCard for each booking
+          <WaitReviewCard key={index}  booking={_booking} /> // Render BookingCard for each booking
         ))}
       </Stack>
       <Box display="flex" justifyContent="center" mt={4}>
