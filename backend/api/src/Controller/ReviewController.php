@@ -39,7 +39,7 @@ class ReviewController extends AbstractController
         ]);
 
         // Vérifier si la réservation existe, est validée et appartient à l'utilisateur actuel || $booking->getBeginDateTime() > new \DateTime('now')
-        if (!$booking || $booking->getStatus() !== 'validated'|| $booking->getBeginDateTime() < new \DateTime()) {
+        if (!$booking & $booking->getStatus() === 'validated' & $booking->getBeginDateTime() < new \DateTime()) {
             return $this->json(['message' => 'Invalid booking for review.'], Response::HTTP_BAD_REQUEST);
         }
 

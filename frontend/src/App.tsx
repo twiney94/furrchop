@@ -25,6 +25,7 @@ import WaitReview from "./components/profile/WaitReview";
 import AlreadyReview from "./components/profile/AlreadyReview";
 import WaitReviewPage from "./components/profile/WaitReview";
 import AlreadyReviewPage from "./components/profile/AlreadyReview";
+import { ReviewProvider } from "./hooks/useReviewCard";
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -59,6 +60,12 @@ const BookingProviderLayout = () => (
   </BookingsProvider>
 );
 
+const ReviewProviderLayout = () => (
+  <ReviewProvider>
+    <Outlet />
+  </ReviewProvider>
+);
+
 // Routes structure
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -87,6 +94,40 @@ const router = createBrowserRouter(
             }
           />
         </Route>
+        <Route element={<ReviewProviderLayout />}>
+        <Route
+          path="wait-reviews"
+          element={
+            <ProtectedRoute>
+              <ProfilePage mode="wait-reviews" />
+              </ProtectedRoute>
+          }
+        />
+          <Route
+            path="already-reviews"
+            element={
+              <ProtectedRoute>
+                <ProfilePage mode="already-reviews" />
+              </ProtectedRoute>
+            }
+        />
+          <Route
+            path="unreviewed-bookings"
+            element={
+              <ProtectedRoute>
+                <ProfilePage mode="reviews" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="booking/:serviceId"
+            element={
+              <ProtectedRoute>
+                <BookingPage mode="confirmation" />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
         <Route
           path="login"
           element={
@@ -95,22 +136,7 @@ const router = createBrowserRouter(
             </UnloggedRoute>
           }
         />
-       <Route
-      path="wait-reviews"
-      element={
-        <ProtectedRoute>
-          <ProfilePage mode="wait-reviews" />
-          </ProtectedRoute>
-      }
-        />
-          <Route
-      path="already-reviews"
-      element={
-        <ProtectedRoute>
-          <ProfilePage mode="already-reviews" />
-        </ProtectedRoute>
-      }
-        />
+    
         <Route
           path="register"
           element={

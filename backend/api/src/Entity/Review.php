@@ -64,32 +64,32 @@ use Doctrine\ORM\Mapping as ORM;
                 ],
             ],
         ),
-        new Get(
-            uriTemplate: '/reviews/{id}',
-            openapiContext: [
-                'summary' => 'Get a review',
-                'description' => 'Get a review',
-                'responses' => [
-                    '200' => [
-                        'description' => 'Review has been retrieved',
-                        'content' => [
-                            'application/json' => [
-                                'example' => ['message' => 'Review has been retrieved'],
-                            ],
-                        ],
-                    ],
-                    '404' => [
-                        'description' => 'Not Found',
-                        'content' => [
-                            'application/json' => [
-                                'example' => ['message' => 'Not Found'],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ),
-        new Get(
+        // new Get(
+        //     uriTemplate: '/reviews/{id}',
+        //     openapiContext: [
+        //         'summary' => 'Get a review',
+        //         'description' => 'Get a review',
+        //         'responses' => [
+        //             '200' => [
+        //                 'description' => 'Review has been retrieved',
+        //                 'content' => [
+        //                     'application/json' => [
+        //                         'example' => ['message' => 'Review has been retrieved'],
+        //                     ],
+        //                 ],
+        //             ],
+        //             '404' => [
+        //                 'description' => 'Not Found',
+        //                 'content' => [
+        //                     'application/json' => [
+        //                         'example' => ['message' => 'Not Found'],
+        //                     ],
+        //                 ],
+        //             ],
+        //         ],
+        //     ],
+        // ),
+        new GetCollection(
             uriTemplate: '/reviews',
             openapiContext: [
                 'summary' => 'Get all reviews',
@@ -106,7 +106,7 @@ use Doctrine\ORM\Mapping as ORM;
                 ],
             ],
         ),
-         new GetCollection(
+        new GetCollection(
             uriTemplate: '/unreviewed-bookings',
             controller: UnreviewedController::class,
             openapiContext: [

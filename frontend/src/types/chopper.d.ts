@@ -1,7 +1,8 @@
 interface ChopperType {
   id: number;
   image: string;
-  title: string;
+  name: string;
+  description: string;
   address: string;
   rating: number;
   reviews: number;

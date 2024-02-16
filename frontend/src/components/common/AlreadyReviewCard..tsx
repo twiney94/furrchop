@@ -26,16 +26,15 @@ import {
   Badge,
   } from "@chakra-ui/react";
 import { FC, useEffect } from "react";
-import { useReviewCard } from "../../hooks/useReviewCard";
-import { Booking } from "../../hooks/useBookings";
+import { Reviews } from "../../hooks/useReviewCard";
 import ButtonModal  from "../UI/buttonModal";
-type WaitReviewCardProps = {
+type AlreadyReviewCardProps = {
   showImage?: boolean;
-  booking: Booking
+  reviews: Reviews;
 }
 
 
-export const WaitReviewCard:FC<WaitReviewCardProps> = ({showImage=true, booking}) => {
+export const AlreadyReviewCard:FC<AlreadyReviewCardProps> = ({showImage=true, reviews}) => {
   return (
     <Card
       direction={{ base: "column", sm: "row" }}
@@ -45,19 +44,10 @@ export const WaitReviewCard:FC<WaitReviewCardProps> = ({showImage=true, booking}
   
       <Stack>
         <CardBody>
-          <Heading size="md">{booking.shop.name}</Heading>
-
-          <Text py="2">
-            {booking.service.description}
-          </Text>
+          <Heading size="md">{reviews.comment}</Heading>
         </CardBody>
-
-        <CardFooter>
-          <ButtonModal bookingId = {booking.id} />
-        </CardFooter>
       </Stack>
     </Card>
   );
 };
-
 
