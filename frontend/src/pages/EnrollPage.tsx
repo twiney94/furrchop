@@ -18,14 +18,14 @@ const enrollSchema = Yup.object().shape({
 const Enroll = () => {
 
   return (
-    <Flex direction={"column"} justifyContent={"center"} h={"100%"} background={"gray.300"} gap={4}>
-      <Heading color={"brand.300"} fontWeight={600} size={"4xl"}>
+    <Flex direction={"column"} justifyContent={"center"} h={"100%"} background={"brand.300"} gap={4}>
+      <Heading color={"white"} fontWeight={600} size={"4xl"}>
         Hop, hop, it's time to chop!
       </Heading>
-      <Heading as="h2" size="md" color={"brand.300"} fontWeight={500}>
+      <Heading as="h2" size="md" color={"white"} fontWeight={500}>
         Enroll your business and start grooming!
       </Heading>
-      <Card p={8} m={16}>
+      <Card p={8} py={32} m={16}>
         <Formik
           initialValues={{
             kbis: "",
