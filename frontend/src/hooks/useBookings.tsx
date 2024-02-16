@@ -39,7 +39,7 @@ interface BookingsContextType {
   setShopSchedule: (schedule: any) => void;
   setSelectedDate: (selectedDate: SelectedDate) => void;
   cancelBooking: (id: number) => Promise<void>;
-  getOwnerShops: () => Promise<void>;
+  getOwnerShops: () => Promise<any[] | undefined>;
   handleRescheduleBooking: (
     id: number,
     serviceIRI: string,
@@ -70,7 +70,7 @@ const defaultContextValue: BookingsContextType = {
   setSelectedDate: () => {},
   setSelectedBooking: () => {},
   cancelBooking: async () => {},
-  getOwnerShops: async () => {},
+  getOwnerShops: async () => [],
   reset: () => {},
 };
 
