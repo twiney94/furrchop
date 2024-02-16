@@ -116,7 +116,15 @@ export const OwnerDashboard = () => {
     }
   }, [getOwnerShops, toast]);
 
-  const createShop = async (values: { openDays: string[]; openHours: { day: string; beginning: string; end: string; }[]; name: string; description: string; open_hours: { beginning: string; end: string; }; open_days: never[]; address: string; }) => {
+  const createShop = async (values: {
+    openDays: string[];
+    openHours: { day: string; beginning: string; end: string }[];
+    name: string;
+    description: string;
+    open_hours: { beginning: string; end: string };
+    open_days: never[];
+    address: string;
+  }) => {
     setLoading(true);
     try {
       await httpCall("POST", "shops", values);
@@ -142,11 +150,9 @@ export const OwnerDashboard = () => {
     }
   };
 
-
   useEffect(() => {
     fetchShops();
   }, []);
-
 
   const handleOpenDaysChange = (selectedOptions: any[]) => {
     if (!selectedOptions) return;
@@ -195,7 +201,7 @@ export const OwnerDashboard = () => {
               My Shops
             </Heading>
             {loading && <Spinner />}
-            {!loading && (
+            {!loading && stores.length > 0 ? (
               <SimpleGrid columns={2} spacing={4}>
                 {stores.map((store) => (
                   <LinkBox
@@ -223,6 +229,8 @@ export const OwnerDashboard = () => {
                   <LinkOverlay href="#">Add a new shop</LinkOverlay>
                 </LinkBox>
               </SimpleGrid>
+            ) : (
+              !loading && <Text>No stores yet.</Text> // This line will be shown if there are no stores and not loading
             )}
           </Box>
         </GridItem>
