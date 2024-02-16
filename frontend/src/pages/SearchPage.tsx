@@ -23,7 +23,9 @@ const SearchPage = () => {
   const [userLocation, setUserLocation] = useState<any>({});
 
   const fetchChoppers = async () => {
-    const response = await httpCall("GET", "shops", {});
+    const searchParams = new URLSearchParams(window.location.search);
+    const service = searchParams.get("service");
+    const response = await httpCall("GET", `shops?services.name=${service}`, {});
     // then batch geocode for each shop
     const shops = response.data["hydra:member"];
     // put each shop location in a string with ; separator
@@ -60,7 +62,6 @@ const SearchPage = () => {
       };
     });
 
-    const searchParams = new URLSearchParams(window.location.search);
     const location = searchParams.get("location");
 
     // get the user search "location" like choppers
@@ -156,8 +157,8 @@ const SearchPage = () => {
 
   return (
     <Box w="100%" h="100%" className="flex flex-col">
-      <Filters />
-      <Box w="100%" bg="blue.500" className="flex grow max-h-[84vh]">
+      {/* <Filters /> */}
+      <Box w="100%" bg="blue.500" className="flex grow max-h-[84vh] min-h-full">
         <MapProvider>
           <Box
             h={{ base: "auto", sm: "100%" }}
