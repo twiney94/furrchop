@@ -17,7 +17,7 @@ const CreateEmployeeSchema = Yup.object().shape({
   shop: Yup.string().required('Shop selection is required'),
 });
 
-const CreateEmployee = ({ onClose }) => {
+const CreateEmployee = ({ onClose }: { onClose: any }) => {
   const { createEmployee } = useEmployees();
   const { shops } = useShops();
   const toast = useToast();
@@ -39,10 +39,10 @@ const CreateEmployee = ({ onClose }) => {
             isClosable: true,
           });
           onClose();
-        } catch (error) {
+        } catch (error: any) {
           toast({
             title: 'Error creating employee',
-            description: error.message,
+            description: error.message, // Add a comma here
             status: 'error',
             duration: 5000,
             isClosable: true,

@@ -40,7 +40,7 @@ const EmployeeManager = () => {
     setSelectedEmployee(employee);
     editDisclosure.onOpen();
   };
-  const truncateId = (employeeId: string) => {
+  const truncateId = (employeeId: any) => {
     return employeeId.split('/').pop();
   };
 

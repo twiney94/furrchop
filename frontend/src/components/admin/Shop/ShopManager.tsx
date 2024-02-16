@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   useDisclosure,
   Flex,
@@ -21,22 +21,20 @@ const ShopManager = () => {
   const { shops, fetchShops, deleteShop, updateShop } = useShops();
   const editDisclosure = useDisclosure();
   const deleteAlertDisclosure = useDisclosure();
-  const cancelRef = useRef();
   const [selectedShop, setSelectedShop] = useState(null);
 
   useEffect(() => {
     fetchShops();
   }, []);
 
-  const handleEditShop = (shop) => {
+  const handleEditShop = (shop: React.SetStateAction<null>) => {
     setSelectedShop(shop);
     editDisclosure.onOpen();
   };
-  const truncateId = (shopId: string) => {
-    return shopId.split('/').pop();
+  const truncateId = (employeeId: any) => {
+    return employeeId.split('/').pop();
   };
-
-  const handleDeleteShopConfirmation = (shopId) => {
+  const handleDeleteShopConfirmation = (shopId: any) => {
     setSelectedShop(truncateId(shopId));
     deleteAlertDisclosure.onOpen();
   };

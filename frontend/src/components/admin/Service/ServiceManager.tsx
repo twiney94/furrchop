@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, SetStateAction } from 'react';
 import {
   Box,
   Heading,
@@ -18,7 +18,6 @@ import {
   Button,
   useDisclosure,
   Flex,
-  Badge,
 } from '@chakra-ui/react';
 
 import { useServices } from '../../../hooks/useServices';
@@ -40,15 +39,15 @@ const ServiceManager = () => {
     fetchServices();
   }, []);
 
-  const handleEditService = (service) => {
+  const handleEditService = (service: SetStateAction<null>) => {
     setSelectedService(service);
     editDisclosure.onOpen();
   };
-  const truncateId = (serviceId: string) => {
-    return serviceId.split('/').pop();
+  const truncateId = (employeeId: any) => {
+    return employeeId.split('/').pop();
   };
 
-  const handleDeleteServiceConfirmation = (serviceId) => {
+  const handleDeleteServiceConfirmation = (serviceId: any) => {
     setSelectedService(truncateId(serviceId));
     deleteAlertDisclosure.onOpen();
   };

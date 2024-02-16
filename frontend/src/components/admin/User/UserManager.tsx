@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, SetStateAction } from 'react';
 import {
   Box,
   Heading,
@@ -26,6 +26,7 @@ import CreateUser from './CreatUser';
 import DeleteDialog from '../sharedComponents/DeleteDialog';
 import UpdateUserModal from './UpdateUserModal';
 import { useAuth } from '../../../hooks/useAuth';
+import { User } from '../../../types/user';
 
 const UserManager = () => {
   const { users, fetchUsers, deleteUser, updateUser } = useUsers();
@@ -40,20 +41,18 @@ const UserManager = () => {
     fetchUsers();
   }, []);
 
-  const truncateId = (userId: string) => {
-    return userId.split('/')?.pop();
+  const truncateId = (employeeId: any) => {
+    return employeeId.split('/').pop();
   };
 
-  const handleEditUser = (user) => {
-    console.log([user.email, userFullData.username]);
-
-    if (user.email !== userFullData?.username) {
+  const handleEditUser = (user: any) => {
+    if (user && 'email' in user && user.email !== userFullData?.username) {
       setSelectedUser(user);
       editDisclosure.onOpen();
     }
   };
 
-  const handleDeleteUserConfirmation = (userId, user) => {
+  const handleDeleteUserConfirmation = (userId: any, user: User) => {
     if (user.email !== userFullData?.username) {
       console.log('asas', userId);
 
@@ -69,7 +68,7 @@ const UserManager = () => {
     }
   };
 
-  const handleUpdateUser = async (updatedUser) => {
+  const handleUpdateUser = async (updatedUser: { [x: string]: any }) => {
     await updateUser(truncateId(updatedUser['id']), updatedUser);
     editDisclosure.onClose();
     fetchUsers();
