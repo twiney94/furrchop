@@ -3,10 +3,8 @@ import { useToast } from "@chakra-ui/react";
 import { httpCall } from "../services/http";
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
-import type { SelectedDate} from "../types/schedule";
+import type { SelectedDate, Booking} from "../types/schedule";
 import { useAuth } from "./useAuth";
-import ChopperType from "../types/chopper";
-import EmployeeType from "../types/employeType";
 
 export interface Service {
   description: string;
@@ -14,17 +12,6 @@ export interface Service {
   id: string;
   name: string;
   price: number;
-}
-
-export interface Booking {
-  id: number;
-  beginDateTime: string; // ou Date si vous convertissez les chaînes de date en objets Date
-  endDateTime: string; // ou Date
-  service: Service;
-  comment: string;
-  status: string;
-  shop: ChopperType;
-  employee : EmployeeType;
 }
 
 
@@ -116,8 +103,7 @@ export const BookingsProvider = ({
     try {
       const response = await httpCall("GET", "bookings", {});
       if (response.data["hydra:member"]) {
-        const bookings: Booking[] = response.data["hydra:member"].map(
-          (bookingData: any): Booking => {
+        const bookings: Booking[] = response.data["hydra:member"].map((bookingData: any): Booking => {
             return {
               id: bookingData.id,
               beginDateTime: bookingData.beginDateTime,
@@ -126,7 +112,6 @@ export const BookingsProvider = ({
               employee: bookingData.employee,
               service: bookingData.service,
               status: bookingData.status,
-              user: bookingData.user,
               comment: bookingData.comment ? bookingData.comment : "",
             };
           }

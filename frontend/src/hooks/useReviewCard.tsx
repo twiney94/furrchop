@@ -174,7 +174,7 @@ export const ReviewProvider = ({
     }
   };
 
-  const createReviewBooking = async (id:number, reviewDetails: {
+  const createReviewBooking = async (_id:number, reviewDetails: {
     bookings: string;
     comment: string;
     rating: number;
