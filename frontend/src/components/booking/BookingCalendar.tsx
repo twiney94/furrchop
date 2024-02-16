@@ -57,7 +57,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
     });
     setWeekOffset((prevOffset) => prevOffset + 1);
   };
-  
+
   useEffect(() => {
     const fetchSchedule = async () => {
       setIsLoading(true);
@@ -85,7 +85,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
   const handleTimeSlotClick = (date: Date, twentyFourHourFormat: string) => {
     let incrementedDate = new Date(date);
 
-    incrementedDate.setDate(incrementedDate.getDate() + 1);
+    incrementedDate.setDate(incrementedDate.getDate());
 
     const selectedDateTime = new Date(
       `${incrementedDate.toISOString().split("T")[0]}T${twentyFourHourFormat}`
@@ -143,14 +143,14 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
           mb={8}
           gap={64}
         >
-          {new Date(currentBeginDate).getTime() >
-            new Date(beginDate).getTime() && (
-            <IconButton
-              aria-label=" Previous"
-              icon={<ChevronLeftIcon />}
-              onClick={handlePreviousWeek}
-            />
-          )}
+          <IconButton
+            aria-label=" Previous"
+            icon={<ChevronLeftIcon />}
+            onClick={handlePreviousWeek}
+            isDisabled={
+              new Date(currentBeginDate).getTime() <= new Date(beginDate).getTime()
+            }
+          />
           <Select value={selectedEmployeeId} onChange={handleEmployeeChange}>
             <option className="p-4" value="all">
               All Employees
@@ -161,13 +161,12 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({ shopId }) => {
               </option>
             ))}
           </Select>
-          {weekOffset < 3 && (
-            <IconButton
-              aria-label="Next"
-              icon={<ChevronRightIcon />}
-              onClick={handleNextWeek}
-            />
-          )}
+          <IconButton
+            aria-label="Next"
+            icon={<ChevronRightIcon />}
+            onClick={handleNextWeek}
+            isDisabled={weekOffset >= 3}
+          />
         </Flex>
 
         {selectedEmployeeId === "all" ? (

@@ -8,7 +8,8 @@ export const PastBookings = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const bookingsPerPage = 3; // Adjust the number of bookings per page as needed
-  const { fetchBookings, bookings, cancelBooking, handleRescheduleBooking } = useBookings();
+  const { fetchBookings, bookings, cancelBooking, handleRescheduleBooking } =
+    useBookings();
 
   useEffect(() => {
     fetchBookings();
@@ -19,18 +20,21 @@ export const PastBookings = () => {
   };
 
   const reschedule = (bookingId: number, serviceId: string, shopId: number) => {
-    console.log(`Rescheduling booking with ID: ${bookingId}, service ID: ${serviceId}, and shop ID: ${shopId}`);
     handleRescheduleBooking(bookingId, serviceId, shopId);
   };
 
-
-  const sortedBookings: Booking[] =
-    bookings?.sort((a, b) => {
+  const sortedBookings: Booking[] = bookings?.sort((a, b) => {
+    if (a.status === "validated" && b.status === "canceled") {
+      return -1;
+    } else if (a.status === "canceled" && b.status === "validated") {
+      return 1;
+    } else {
       return (
         new Date(b.beginDateTime).getTime() -
         new Date(a.beginDateTime).getTime()
       );
-    }) ?? [];
+    }
+  }) ?? [];
 
   const currentBookings: Booking[] =
     sortedBookings && sortedBookings.length > 0
@@ -46,7 +50,6 @@ export const PastBookings = () => {
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  console.log(bookings);
 
   return (
     <Card p={8} h={"100%"} maxH={"100%"}>

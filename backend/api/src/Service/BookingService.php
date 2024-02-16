@@ -67,8 +67,16 @@ class BookingService
         $overlappingBookings = $this->entityManager->getRepository(Booking::class)->findByEmployeeAndTimeRange(
             $booking->getEmployee()->getId(),
             $booking->getBeginDateTime(),
-            $booking->getEndDateTime()
+            $booking->getEndDateTime(),
+            $booking->getStatus()
         );
+
+        foreach ($overlappingBookings as $overlappingBooking) {
+            if ($overlappingBooking->getStatus() === 'canceled') {
+                $key = array_search($overlappingBooking, $overlappingBookings);
+                unset($overlappingBookings[$key]);
+            }
+        }
 
         return count($overlappingBookings) > 0;
     }

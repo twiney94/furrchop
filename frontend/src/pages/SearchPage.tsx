@@ -170,7 +170,6 @@ const SearchPage = () => {
   const mapRef = useRef<MapRef>();
 
   const handleChopperClick = (chopper: ChopperType) => {
-    console.log("Chopper clicked", chopper.id);
     if (mapRef) {
       mapRef.current?.flyTo({
         center: [chopper.location.lng, chopper.location.lat],

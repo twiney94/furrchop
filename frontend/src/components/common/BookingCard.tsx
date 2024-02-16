@@ -85,51 +85,60 @@ export const BookingCard: React.FC<BookingCardProps> = ({
       );
     }
   };
+  if (booking) {
+    return (
+      <>
+        <Card
+          direction={{ base: "column", sm: "row" }}
+          overflow="hidden"
+          variant="outline"
+          background={booking.status === "validated" ? "white" : "gray.100"}
+        >
+          <Image
+            objectFit="cover"
+            maxW={{ base: "100%", sm: "200px" }}
+            src="https://live.staticflickr.com/754/21616753858_086bd43ee2_z.jpg"
+            alt="Cute Dog"
+          />
 
-  return (
-    <>
-      <Card
-        direction={{ base: "column", sm: "row" }}
-        overflow="hidden"
-        variant="outline"
-        background={booking.status === "validated" ? "white" : "gray.100"}
-      >
-        <Image
-          objectFit="cover"
-          maxW={{ base: "100%", sm: "200px" }}
-          src="https://live.staticflickr.com/754/21616753858_086bd43ee2_z.jpg"
-          alt="Cute Dog"
+          <Stack className="w-full">
+            <CardBody
+              display={"flex"}
+              flexDirection={"column"}
+              alignItems={"baseline"}
+            >
+              <Heading size="md" fontWeight={500}>
+                {humanReadableDateTime} - {europeanHours}
+              </Heading>
+
+              <Text>
+                {booking.shop.name} - {booking.shop.address} - {booking.status}
+              </Text>
+
+              <Text>
+                {booking.service.name} - {booking.service.price / 100}€
+              </Text>
+            </CardBody>
+
+            {cardFooter()}
+          </Stack>
+        </Card>
+        <ConfirmationDialog
+          isOpen={isOpen}
+          onClose={onClose}
+          onConfirm={handleCancelBooking}
+          title="Cancel your booking"
+          message={`Are you sure you want to delete your booking with ${booking.shop.name} on ${humanReadableDateTime} at ${europeanHours}? This action cannot be undone.`}
         />
-
-        <Stack className="w-full">
-          <CardBody
-            display={"flex"}
-            flexDirection={"column"}
-            alignItems={"baseline"}
-          >
-            <Heading size="md" fontWeight={500}>
-              {humanReadableDateTime} - {europeanHours}
-            </Heading>
-
-            <Text>
-              {booking.shop.name} - {booking.shop.address} - {booking.status}
-            </Text>
-
-            <Text>
-              {booking.service.name} - {booking.service.price / 100}€
-            </Text>
-          </CardBody>
-
-          {cardFooter()}
-        </Stack>
+      </>
+    );
+  } else {
+    return (
+      <Card>
+        <CardBody>
+          <Text>Loading...</Text>
+        </CardBody>
       </Card>
-      <ConfirmationDialog
-        isOpen={isOpen}
-        onClose={onClose}
-        onConfirm={handleCancelBooking}
-        title="Cancel your booking"
-        message={`Are you sure you want to delete your booking with ${booking.shop.name} on ${humanReadableDateTime} at ${europeanHours}? This action cannot be undone.`}
-      />
-    </>
-  );
+    )
+  }
 };

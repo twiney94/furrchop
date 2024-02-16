@@ -225,6 +225,7 @@ export const BookingsProvider = ({
         selectedBooking.status === "canceled"
       ) {
         await createBooking();
+        fetchBookings();
         return;
       } else {
         await httpCall("PATCH", `bookings/${selectedBooking.id}`, {
@@ -259,7 +260,6 @@ export const BookingsProvider = ({
       setSelectedShop(shop.data);
       setSelectedBooking(booking.data);
       navigate(`/booking/${shop.data.id}`);
-      console.log("Rescheduling booking with ID:", id);
     } catch (error) {
       setError("Failed to reschedule booking.");
       toast({
