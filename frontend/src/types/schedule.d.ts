@@ -121,4 +121,5 @@ export type {
   BookingCalendarProps,
   UseBookingsReturn,
   SelectedDate,
+  BookingShopResponse
 };

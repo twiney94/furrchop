@@ -44,4 +44,26 @@ export const httpCall = (
   });
 };
 
+export const outsideHttpCall = (
+  method: Method,
+  url: string,
+  data: any,
+  headers?: any
+) => {
+  // Initialize headers if not provided
+  if (!headers) {
+    headers = {};
+  }
+
+  return axios({
+    url,
+    method,
+    headers,
+    data,
+  }).catch((error) => {
+    // Handle or log error as needed
+    throw error;
+  });
+};
+
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";

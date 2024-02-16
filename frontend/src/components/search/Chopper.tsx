@@ -11,10 +11,17 @@ import {
 } from "@chakra-ui/react";
 import { MdLocationOn, MdOutlineStarBorder } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import type ChopperType from "../../types/chopper";
+import { BookingShopResponse } from "../../types/schedule";
 
-const ChopperCard = ({ infos, id }: { infos: ChopperType; id: string }) => {
+const ChopperCard = ({
+  infos,
+  id,
+}: {
+  infos: BookingShopResponse;
+  id: string;
+}) => {
   const navigate = useNavigate();
+
 
   return (
     <Card
@@ -38,7 +45,7 @@ const ChopperCard = ({ infos, id }: { infos: ChopperType; id: string }) => {
       <Stack>
         <CardBody display={"flex"} alignItems={"left"} flexDir={"column"}>
           <Text fontSize="xl" fontWeight="500" textAlign="left">
-            {infos.title}
+            {infos.name}
           </Text>
           <Text
             fontSize="md"
@@ -47,7 +54,7 @@ const ChopperCard = ({ infos, id }: { infos: ChopperType; id: string }) => {
             className="flex items-center text-gray-400"
           >
             <Icon as={MdLocationOn} />
-            {infos.location.address}
+            {infos.address}
           </Text>
           <Text
             fontSize="md"
@@ -56,15 +63,25 @@ const ChopperCard = ({ infos, id }: { infos: ChopperType; id: string }) => {
             className="flex items-center text-gray-400"
           >
             <Icon as={MdOutlineStarBorder} />
-            {infos.rating} ({infos.reviews} reviews)
+            No reviews yet
           </Text>
           <Flex direction="column" align="left" gap={2} marginTop={4}>
             <Flex gap={2} align="center" justify="flex-start">
               <Text className="w-20">Morning:</Text>
-              <Button variant="outline" size="sm" colorScheme="purple" isDisabled>
+              <Button
+                variant="outline"
+                size="sm"
+                colorScheme="purple"
+                isDisabled
+              >
                 Sun 04
               </Button>
-              <Button variant="outline" size="sm" colorScheme="purple"isDisabled>
+              <Button
+                variant="outline"
+                size="sm"
+                colorScheme="purple"
+                isDisabled
+              >
                 Mon 05
               </Button>
               <Button variant="outline" size="sm" colorScheme="purple">
@@ -73,13 +90,23 @@ const ChopperCard = ({ infos, id }: { infos: ChopperType; id: string }) => {
             </Flex>
             <Flex gap={2} align="center" justify="flex-start">
               <Text className="w-20">Afternoon:</Text>
-              <Button variant="outline" size="sm" colorScheme="purple" isDisabled>
+              <Button
+                variant="outline"
+                size="sm"
+                colorScheme="purple"
+                isDisabled
+              >
                 Sun 04
               </Button>
               <Button variant="outline" size="sm" colorScheme="purple">
                 Mon 05
               </Button>
-              <Button variant="outline" size="sm" colorScheme="purple" isDisabled>
+              <Button
+                variant="outline"
+                size="sm"
+                colorScheme="purple"
+                isDisabled
+              >
                 Tue 06
               </Button>
             </Flex>
@@ -87,7 +114,11 @@ const ChopperCard = ({ infos, id }: { infos: ChopperType; id: string }) => {
         </CardBody>
 
         <CardFooter py={0}>
-          <Button variant="solid" colorScheme="purple" onClick={() => navigate("/book/" + infos.id)}>
+          <Button
+            variant="solid"
+            colorScheme="purple"
+            onClick={() => navigate("/book/" + infos.id)}
+          >
             Book
           </Button>
         </CardFooter>
