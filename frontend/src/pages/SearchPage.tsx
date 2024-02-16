@@ -40,7 +40,7 @@ const SearchPage = () => {
     const requestStrings = [];
     for (let i = 0; i < batchGeocode.length; i++) {
       requestStrings.push(
-        `https://api.geoapify.com/v1/geocode/search?text=${batchGeocode[i]}}&format=json&apiKey=f9b24a987b114229bf26ac6072d9f004`
+        `https://api.geoapify.com/v1/geocode/search?text=${batchGeocode[i]}}&format=json&apiKey=${import.meta.env.VITE_GEOCODER_API}`
       );
     }
     // call for each shop
@@ -70,7 +70,7 @@ const SearchPage = () => {
     // get the user search "location" like choppers
     const userLocation = await outsideHttpCall(
       "GET",
-      `https://api.geoapify.com/v1/geocode/search?text=${location}&apiKey=f9b24a987b114229bf26ac6072d9f004`,
+      `https://api.geoapify.com/v1/geocode/search?text=${location}&apiKey=${import.meta.env.VITE_GEOCODER_API}`,
       {}
     ).then((response) => response.data);
 
