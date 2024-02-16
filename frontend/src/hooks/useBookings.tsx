@@ -112,6 +112,7 @@ export const BookingsProvider = ({
               employee: bookingData.employee,
               service: bookingData.service,
               status: bookingData.status,
+              user: bookingData.user,
               comment: bookingData.comment ? bookingData.comment : "",
             };
           }
