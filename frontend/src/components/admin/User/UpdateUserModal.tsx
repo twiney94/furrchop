@@ -58,8 +58,12 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
   }, [user]);
 
   const handleIsVerifiedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsVerified(e.target.checked);
-    handleChange({ target: { name: 'isVerified', value: e.target.checked } });
+    const checked = e.target.checked;
+    setIsVerified(checked);
+    // Convert boolean to string to match expected type
+    handleChange({
+      target: { name: 'isVerified', value: String(checked) },
+    } as unknown as React.ChangeEvent<HTMLInputElement>);
   };
   const handleRoleChange = (role: string) => {
     setRoles((prevRoles) => ({

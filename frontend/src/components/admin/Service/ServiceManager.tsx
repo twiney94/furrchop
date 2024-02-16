@@ -75,9 +75,9 @@ const ServiceManager = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
-    setSelectedService((prev) => ({
+    setSelectedService((prev: Event) => ({
       ...prev,
       [name]: value,
     }));

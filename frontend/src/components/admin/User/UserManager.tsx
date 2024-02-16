@@ -75,7 +75,7 @@ const UserManager = () => {
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
-    setSelectedUser((prev) => ({
+    setSelectedUser((prev: any) => ({
       ...prev,
       [name]: value,
     }));

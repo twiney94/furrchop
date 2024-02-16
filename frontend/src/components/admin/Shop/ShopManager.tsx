@@ -57,7 +57,7 @@ const ShopManager = () => {
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
-    setSelectedShop((prev) => ({
+    setSelectedShop((prev: any) => ({
       ...prev,
       [name]: value,
     }));
