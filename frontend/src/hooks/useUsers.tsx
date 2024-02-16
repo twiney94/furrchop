@@ -35,8 +35,8 @@ export const UsersProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     try {
       const response = await userService.fetchUsers();
-      // console.log(response);us
-      setUsers(response); // Add type assertion to ensure response is not undefined
+
+      setUsers(response!['hydra:member']); // Add type assertion to ensure response is not undefined
     } catch (error) {
       console.error('Failed to fetch users:', error);
       setError('Failed to fetch users.');

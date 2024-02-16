@@ -23,7 +23,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
-use ApiPlatform\Core\Annotation\ApiFilter;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "`user`")]
@@ -38,7 +37,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
             security: "is_granted('ROLE_ADMIN') or object == user",
         ),
         new GetCollection(
-            controller: CustomUserController::class,
+            // controller: CustomUserController::class,
             name: 'get_user_collection',
         ),
 

@@ -68,7 +68,7 @@ const UserManager = () => {
   };
 
   const handleUpdateUser = async (updatedUser: { [x: string]: any }) => {
-    await updateUser(truncateId(updatedUser['id']), updatedUser);
+    await updateUser(truncateId(updatedUser['@id']), updatedUser);
     editDisclosure.onClose();
     fetchUsers();
   };
@@ -107,7 +107,7 @@ const UserManager = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {users.map((user) => (
+          {users?.map((user) => (
             <Tr key={user['@id']}>
               <Td>{user.firstName}</Td>
               <Td>{user.lastName}</Td>
@@ -143,7 +143,9 @@ const UserManager = () => {
                   aria-label="Delete user"
                   icon={<DeleteIcon />}
                   colorScheme="red"
-                  onClick={() => handleDeleteUserConfirmation(user.id, user)}
+                  onClick={() =>
+                    handleDeleteUserConfirmation(user['@id'], user)
+                  }
                 />
               </Td>
             </Tr>

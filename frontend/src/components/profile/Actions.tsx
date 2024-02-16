@@ -30,8 +30,6 @@ export const Actions = () => {
   const { userRole } = useAuth();
   const [showShopMenu, setShowShopMenu] = useState(false);
 
-  console.log(userRole?.());
-
   useEffect(() => {
     if (!userRole?.()) {
       window.location.href = '/';

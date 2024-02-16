@@ -30,7 +30,7 @@ const BookingKPIViewer = () => {
             <StatArrow
               type={bookingKpiData.dailyChange >= 0 ? 'increase' : 'decrease'}
             />
-            {Math.abs(bookingKpiData.dailyChange)}%
+            {/* {Math.abs(bookingKpiData.dailyChange)}% */}
           </StatHelpText>
         </Stat>
 
@@ -43,7 +43,7 @@ const BookingKPIViewer = () => {
                 bookingKpiData.yersterdayChange >= 0 ? 'increase' : 'decrease'
               }
             />
-            {Math.abs(bookingKpiData.yersterdayChange)}%
+            {/* {Math.abs(bookingKpiData.yersterdayChange)}% */}
           </StatHelpText>
         </Stat>
 
@@ -54,7 +54,7 @@ const BookingKPIViewer = () => {
             <StatArrow
               type={bookingKpiData.weeklyChange >= 0 ? 'increase' : 'decrease'}
             />
-            {Math.abs(bookingKpiData.weeklyChange)}%
+            {/* {Math.abs(bookingKpiData.weeklyChange)}% */}
           </StatHelpText>
         </Stat>
 
@@ -65,7 +65,7 @@ const BookingKPIViewer = () => {
             <StatArrow
               type={bookingKpiData.monthlyChange >= 0 ? 'increase' : 'decrease'}
             />
-            {Math.abs(bookingKpiData.monthlyChange)}%
+            {/* {Math.abs(bookingKpiData.monthlyChange)}% */}
           </StatHelpText>
         </Stat>
 
