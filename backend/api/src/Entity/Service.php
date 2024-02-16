@@ -69,6 +69,9 @@ class Service
     #[ORM\OneToMany(mappedBy: 'service', targetEntity: Booking::class)]
     private Collection $bookings;
 
+    #[ORM\OneToMany(mappedBy: 'service', targetEntity: CustomerReview::class)]
+    private Collection $customerReviews;
+
     public function __construct()
     {
         $this->bookings = new ArrayCollection();
@@ -156,6 +159,27 @@ class Service
     public function removeBooking(Booking $booking): static
     {
         $this->bookings->removeElement($booking);
+
+        return $this;
+    }
+    public function getCustomerReviews(): Collection
+    {
+        return $this->customerReviews;
+    }
+
+    public function addCustomerReview(CustomerReview $customerReview): self
+    {
+        if (!$this->customerReviews->contains($customerReview)) {
+            $this->customerReviews[] = $customerReview;
+            $customerReview->setService($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomerReview(CustomerReview $customerReview): self
+    {
+        $this->customerReviews->removeElement($customerReview);
 
         return $this;
     }
