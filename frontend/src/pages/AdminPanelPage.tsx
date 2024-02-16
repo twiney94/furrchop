@@ -14,7 +14,7 @@ import ShopManager from '../components/admin/Shop/ShopManager';
 import EmployeeManager from '../components/admin/Employee/EmployeeManager';
 import ServiceManager from '../components/admin/Service/ServiceManager';
 import BookingKPIViewer from '../components/admin/kpis/BookingKPIViewer';
-import ShopKPIViewer from '../components/admin/kpis/ShopKPIViewr';
+import ShopKPIViewer from '../components/admin/kpis/ShopKPIViewer';
 
 const AdminPanelPage = () => {
   return (

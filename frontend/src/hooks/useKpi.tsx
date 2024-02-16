@@ -4,8 +4,8 @@ import { httpCall } from '../services/http';
 
 interface KPIContextType {
   kpiData: unknown;
-  shopKpiData: unknown;
-  bookingKpiData: unknown;
+  shopKpiData: any;
+  bookingKpiData: any;
   loading: boolean;
   error: string | null;
   fetchUserKPIs: () => Promise<void>;
