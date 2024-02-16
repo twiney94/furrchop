@@ -16,7 +16,6 @@ use App\Repository\ServiceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     operations: [
@@ -55,23 +54,23 @@ class Service
     #[ORM\ManyToOne(targetEntity: Shop::class, inversedBy: 'services')]
     private ?Shop $shop;
 
-    #[Groups(['booking:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(['booking:read'])]
     #[ORM\Column]
     private ?float $price = null;
 
-    #[Groups(['booking:read'])]
     #[ORM\Column]
     private ?int $duration = null;
 
     #[ORM\OneToMany(mappedBy: 'service', targetEntity: Booking::class)]
     private Collection $bookings;
+
+    #[ORM\OneToMany(mappedBy: 'service', targetEntity: CustomerReview::class)]
+    private Collection $customerReviews;
 
     public function __construct()
     {
