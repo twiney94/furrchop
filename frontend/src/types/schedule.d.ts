@@ -60,6 +60,10 @@ interface BookingShopResponse {
   id: number;
   name: string;
   address: string;
+  location?: {
+    lat: number;
+    lng: number;
+  };
 }
 
 interface BookingServiceResponse {
@@ -121,4 +125,5 @@ export type {
   BookingCalendarProps,
   UseBookingsReturn,
   SelectedDate,
+  BookingShopResponse
 };

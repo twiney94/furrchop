@@ -39,6 +39,8 @@ interface AuthContextType {
   activateAccount: () => Promise<void>;
   loading: boolean;
   showToast: (options: ToastOptions) => void;
+  userRole?: () => Array<string> | null;
+  userId?: () => string | null;
 }
 
 const defaultContextValue: AuthContextType = {
@@ -51,6 +53,8 @@ const defaultContextValue: AuthContextType = {
   loading: false,
   activateAccount: async () => {},
   showToast: () => {},
+  userRole: () => null,
+  userId: () => null,
 };
 
 const AuthContext = createContext<AuthContextType>(defaultContextValue);
@@ -109,6 +113,26 @@ export const AuthProvider = ({ children }: Children) => {
     setUser(null);
     navigate('/', { replace: true });
   };
+
+  const userId = () => {
+    const jwt = user?.token;
+    if (!jwt) return null;
+
+    const payload = jwt.split(".")[1];
+    const decodedPayload = atob(payload);
+    const parsedPayload = JSON.parse(decodedPayload);
+    return parsedPayload.username;
+  }
+
+  const userRole = () => {
+    const jwt = user?.token;
+    if (!jwt) return null;
+
+    const payload = jwt.split(".")[1];
+    const decodedPayload = atob(payload);
+    const parsedPayload = JSON.parse(decodedPayload);
+    return parsedPayload.roles;
+  }
 
   const register = async (userDetails: {
     email: string;
@@ -182,6 +206,8 @@ export const AuthProvider = ({ children }: Children) => {
       activateAccount,
       loading,
       showToast,
+      userRole,
+      userId,
     }),
     [user, userFullData, isAdmin, loading]
   );

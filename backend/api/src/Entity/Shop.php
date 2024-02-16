@@ -56,13 +56,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
         )
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['services.name' => 'ipartial', 'name' => 'ipartial', 'description' => 'ipartial', 'openHours' => 'ipartial', 'openDays' => 'ipartial', 'address' => 'iexact'])]
+#[ApiFilter(SearchFilter::class, properties: ['services.name' => 'ipartial', 'name' => 'ipartial', 'description' => 'ipartial', 'openHours' => 'ipartial', 'openDays' => 'ipartial', 'address' => 'iexact', 'user' => 'exact'])]
 class Shop
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['shop:read', 'booking:read'])]
+    #[Groups(['shop:read', 'booking:read', 'user:read'])]
     private ?int $id = null;
 
     #[Groups(['shop:read'])]
@@ -70,11 +70,11 @@ class Shop
     private ?User $user = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['shop:read', 'employee:read', 'service:read', 'booking:read'])]
+    #[Groups(['shop:read', 'employee:read', 'service:read', 'booking:read', 'user:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['shop:read'])]
+    #[Groups(['shop:read', 'user:read'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
@@ -86,7 +86,7 @@ class Shop
     private ?array $openDays = [];
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:read', 'booking:read'])]
+    #[Groups(['shop:read', 'booking:read', 'user:read'])]
     private ?string $address = null;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: Service::class)]

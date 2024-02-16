@@ -8,6 +8,7 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth';
+import { MultiSelectTheme } from 'chakra-multiselect';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -32,9 +33,13 @@ import { ServicesProvider } from './hooks/useServices';
 import { SchedulesProvider } from './hooks/useSchedules';
 import { BookingsProvider } from './hooks/useBookings';
 import { KPIProvider } from './hooks/useKpi';
+import OwnerDashboard from './pages/OwnerDashboard';
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
+  components: {
+    MultiSelect: MultiSelectTheme,
+  },
   fonts: {
     heading: `'canada-type-gibson', sans-serif`,
     body: `'canada-type-gibson', sans-serif`,
@@ -92,6 +97,14 @@ const router = createBrowserRouter(
       <Route element={<MainLayout />}>
         <Route path="search" element={<SearchPage />} />
         <Route element={<BookingProviderLayout />}>
+          <Route
+            path="my-shops"
+            element={
+              <ProtectedRoute>
+                <OwnerDashboard />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="book/:shopId"
             element={

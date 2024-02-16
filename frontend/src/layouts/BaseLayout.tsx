@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { SetStateAction, useRef, useState } from "react";
 import homePageJumbo from "/happydog.png";
 import {
   Container,
@@ -24,8 +24,8 @@ import {
 import { Header } from "../components/Header";
 
 export default function RootLayout() {
+  const [serviceInputValue, setServiceInputValue] = useState("");
   const locationInputRef = useRef<HTMLInputElement>(null);
-  const serviceInputRef = useRef<HTMLInputElement>(null);
   const loadingLocation = useRef(false);
   const toast = useToast();
   const toastIdRef = useRef<string | number | undefined>("");
@@ -84,10 +84,10 @@ export default function RootLayout() {
   };
 
   const handleSearch = () => {
-    if (locationInputRef.current && serviceInputRef.current) {
-      if (locationInputRef.current.value && serviceInputRef.current.value) {
+    if (serviceInputValue && locationInputRef.current) {
+      if (locationInputRef.current.value) {
         navigate(
-          `/search?service=${serviceInputRef.current.value}&location=${locationInputRef.current.value}`
+          `/search?service=${serviceInputValue}&location=${locationInputRef.current.value}`
         );
       }
     }
@@ -106,7 +106,7 @@ export default function RootLayout() {
         }}
       >
         <div className="root-layout p-6">
-          <Header/>
+          <Header />
           <Container
             maxW="100%"
             minH={`calc(100% - 48px)`}
@@ -147,8 +147,8 @@ export default function RootLayout() {
                       <AutoCompleteInput
                         variant="filled"
                         placeholder="Groomer, haircut, special services..."
-                        value={serviceInputRef.current?.value}
-                        ref={serviceInputRef}
+                        value={serviceInputValue}
+                        onChange={(e: { target: { value: SetStateAction<string>; }; }) => setServiceInputValue(e.target.value)}
                       />
                       <AutoCompleteList>
                         {servicesSuggestions.map((suggestion, cid) => (
@@ -156,10 +156,7 @@ export default function RootLayout() {
                             key={`option-${cid}`}
                             value={suggestion}
                             textTransform="capitalize"
-                            onClick={() => {
-                              if (serviceInputRef.current)
-                                serviceInputRef.current.value = suggestion;
-                            }}
+                            onClick={() => setServiceInputValue(suggestion)}
                           >
                             {suggestion}
                           </AutoCompleteItem>
