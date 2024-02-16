@@ -20,7 +20,7 @@ const CreateUserSchema = Yup.object().shape({
   phoneNumber: Yup.string(),
 });
 
-const CreateUser = ({ onClose }) => {
+const CreateUser = ({ onClose }: { onClose: any }) => {
   const { createUser } = useUsers();
   const toast = useToast();
   const basePassword = 'Test1234';

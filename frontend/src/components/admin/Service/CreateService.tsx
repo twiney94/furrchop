@@ -38,7 +38,7 @@ const CreateServiceSchema = Yup.object().shape({
   shop: Yup.string().required('Shop selection is required'),
 });
 
-const CreateService = ({ onClose }) => {
+const CreateService = ({ onClose }: { onClose: any }) => {
   const { createService } = useServices();
   const { shops } = useShops();
   const toast = useToast();
@@ -62,7 +62,7 @@ const CreateService = ({ onClose }) => {
           };
           await createService(payload);
           onClose();
-        } catch (error) {
+        } catch (error: any) {
           toast({
             title: 'Error creating service',
             description: error.message,

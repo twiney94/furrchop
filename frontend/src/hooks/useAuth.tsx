@@ -61,8 +61,8 @@ const AuthContext = createContext<AuthContextType>(defaultContextValue);
 
 export const AuthProvider = ({ children }: Children) => {
   const [user, setUser] = useLocalStorage('user', null);
-  const [userFullData, setUserFullData] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [userFullData, setUserFullData] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState<any>(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();

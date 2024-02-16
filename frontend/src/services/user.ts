@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HydraPaginateResp } from "../types/Fetch";
+// import { HydraPaginateResp } from "../types/Fetch";
 import { httpCall } from "./http";
 
 export const fetchUsers = async () => {
   const response = await httpCall("GET", "users", {});
   if (response.data) {
-    return response.data as HydraPaginateResp<any>; 
+    return response.data as any; 
   }
 }
 
