@@ -1,14 +1,19 @@
 import axios from 'axios';
 import { Box, Text, Spinner } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 
-const SimilarServices = ({ serviceId }) => {
-  const [loading, setLoading] = useState(true);
-  const [similarServices, setSimilarServices] = useState([]);
+interface SimilarServicesProps {
+  serviceId: string;
+}
+
+const SimilarServices: React.FC<SimilarServicesProps> = ({ serviceId }) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [similarServices, setSimilarServices] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchSimilarServices = async () => {
       try {
-        const response = await axios.get(`/service/${serviceId}/suggest`);
+        const response = await axios.get<string[]>(`/service/${serviceId}/suggest`);
         setSimilarServices(response.data);
       } catch (error) {
         console.error('Error fetching similar services:', error);
@@ -29,7 +34,7 @@ const SimilarServices = ({ serviceId }) => {
         similarServices.map((similarServiceId) => (
           <Box key={similarServiceId} mb="2">
             <Text>{similarServiceId}</Text>
-            {/* Vous pouvez ajouter plus de détails sur chaque service ici */}
+            {/* Ajouter plus de détails sur chaque service */}
           </Box>
         ))
       )}
