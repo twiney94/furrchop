@@ -25,6 +25,7 @@ import { UsersProvider } from './hooks/useUsers';
 import { ShopsProvider } from './hooks/useShops';
 import { EmployeesProvider } from './hooks/useEmployees';
 import { ServicesProvider } from './hooks/useServices';
+import { SchedulesProvider } from './hooks/useSchedules';
 
 // Adding Gibson font to Chakra UI
 const theme = extendTheme({
@@ -58,7 +59,9 @@ const AdmminProviderLayout = () => (
     <ShopsProvider>
       <ServicesProvider>
         <EmployeesProvider>
-          <Outlet />
+          <SchedulesProvider>
+            <Outlet />
+          </SchedulesProvider>
         </EmployeesProvider>
       </ServicesProvider>
     </ShopsProvider>

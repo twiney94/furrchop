@@ -41,12 +41,6 @@ const CreateUser = ({ onClose }) => {
             password: basePassword,
             confirmPassword: basePassword,
           });
-          toast({
-            title: 'User created successfully',
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          });
           onClose(); // Close the modal after successful creation
         } catch (error) {
           toast({

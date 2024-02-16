@@ -61,12 +61,6 @@ const CreateService = ({ onClose }) => {
             duration: parseInt(values.duration, 10),
           };
           await createService(payload);
-          toast({
-            title: 'Service created successfully',
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          });
           onClose();
         } catch (error) {
           toast({
