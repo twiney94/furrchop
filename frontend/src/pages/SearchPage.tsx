@@ -76,8 +76,8 @@ const SearchPage = () => {
 
     console.log(userLocation);
 
-    const userLat = userLocation.features[0].bbox[1];
-    const userLon = userLocation.features[0].bbox[0];
+    const userLat = userLocation.features[0].geometry.coordinates[1];
+    const userLon = userLocation.features[0].geometry.coordinates[0];
     setUserLocation({ lat: userLat, lon: userLon });
 
     // then calculate the distance between the user and each chopper using turf
@@ -125,6 +125,7 @@ const SearchPage = () => {
         setResults(data);
       } catch (err) {
         setError("Failed to load data");
+        console.log(err)
         toast({
           title: "Error loading data",
           description: "Could not load chopper data from the server.",
